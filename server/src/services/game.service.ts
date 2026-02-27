@@ -155,6 +155,10 @@ export interface GameUpdateResult {
   views: GameViewUpdates;
   moveDescription: string;
   chatId: string;
+  done: boolean;
+  winnerUserId: string | null;
+  playerUserIds: string[];
+  gameType: GameKey;
 }
 
 /**
@@ -180,17 +184,27 @@ export async function updateGame(
   if (playerIndex < 0) {
     throw new Error(`user ${user.username} made a move in a game they weren't playing`);
   }
-  const result = gameServices[game.type].update(game.state, move, playerIndex, game.players);
+  const result = gameServices[game.type].update(game.state, move, playerIndex, game.players) as {
+    state: unknown;
+    views: GameViewUpdates;
+    done: boolean;
+    moveDescription: string;
+  } | null;
   if (!result) throw new Error(`user ${user.username} made an invalid move in ${game.type}`);
 
   game.state = result.state;
   game.done = game.done || result.done;
   await GameRepo.set(gameId, game);
+  const service = gameServices[game.type];
 
   return {
     views: result.views,
     moveDescription: result.moveDescription,
     chatId: game.chat,
+    done: result.done,
+    winnerUserId: result.done ? service.getWinner(result.state, game.players) : null,
+    playerUserIds: game.players,
+    gameType: game.type,
   };
 }
 
