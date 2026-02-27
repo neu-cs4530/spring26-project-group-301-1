@@ -164,6 +164,7 @@ describe("POST /api/user/signup", () => {
       username,
       display: username,
       createdAt: expect.anything(),
+      hideUsername: false,
     });
   });
 
