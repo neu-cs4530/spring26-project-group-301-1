@@ -114,9 +114,11 @@ export interface ThreadRecord {
  * - `password`: user's password
  * - `display`: A display name
  * - `createdAt`: when this user registered.
+ * - `hideUsername`: privacy preference for user, will hide username if true
  */
 export interface UserRecord {
   username: string; // References Auth records
   display: string;
   createdAt: DateISO;
+  hideUsername: boolean;
 }

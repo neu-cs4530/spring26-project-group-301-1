@@ -16,6 +16,7 @@ export default function useEditProfileForm() {
   const { user, reset } = useLoginContext();
   const [display, setDisplay] = useState(user.display);
   const [password, setPassword] = useState("");
+  const [hideUsername, setHideUsername] = useState<boolean>(user.hideUsername);
   const [confirm, setConfirm] = useState("");
   const [err, setErr] = useState<null | string>(null);
   const auth = useAuth();
@@ -26,7 +27,12 @@ export default function useEditProfileForm() {
   const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (user.display === display && password === confirm && password === "") {
+    if (
+      user.display === display &&
+      password === confirm &&
+      password === "" &&
+      user.hideUsername === hideUsername
+    ) {
       setErr("No changes to submit");
       return;
     }
@@ -54,6 +60,7 @@ export default function useEditProfileForm() {
     const updates: UserUpdateRequest = {};
     if (display !== user.display) updates.display = display;
     if (password !== "") updates.password = password;
+    if (user.hideUsername !== hideUsername) updates.hideUsername = hideUsername;
     const response = await updateUser(auth, updates);
     if ("error" in response) {
       setErr(response.error);
@@ -71,6 +78,8 @@ export default function useEditProfileForm() {
     setPassword,
     confirm,
     setConfirm,
+    hideUsername,
+    setHideUsername,
     err,
     handleSubmit,
   };

@@ -27,6 +27,7 @@ describe("GET /api/thread/list", () => {
         createdAt: expect.anything(),
         display: "Yāo",
         username: "user1",
+        hideUsername: false,
       },
     });
   });
@@ -46,7 +47,12 @@ describe("GET /api/thread/:id", () => {
       title: "Hello game knights",
       text: "I'm a big Nim buff and am excited to join this community.",
       comments: [],
-      createdBy: { username: "user1", display: "Yāo", createdAt: expect.anything() },
+      createdBy: {
+        username: "user1",
+        display: "Yāo",
+        createdAt: expect.anything(),
+        hideUsername: false,
+      },
       createdAt: new Date("2025-04-02").toISOString(),
     });
   });
@@ -82,6 +88,7 @@ describe("POST /api/thread/create", () => {
         username: "user2",
         display: expect.any(String),
         createdAt: expect.anything(),
+        hideUsername: false,
       },
       comments: [],
     });
@@ -122,7 +129,12 @@ describe("POST /api/thread/:id/comment", () => {
         commentId: expect.anything(),
         createdAt: expect.anything(),
         text: "FIRST!",
-        createdBy: { username: "user2", display: "Sénior Dos", createdAt: expect.anything() },
+        createdBy: {
+          username: "user2",
+          display: "Sénior Dos",
+          createdAt: expect.anything(),
+          hideUsername: false,
+        },
       },
     ]);
   });
