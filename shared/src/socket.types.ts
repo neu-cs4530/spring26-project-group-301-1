@@ -21,6 +21,7 @@ export interface ClientToServerEvents {
   gameMakeMove: (payload: WithAuth<GameMakeMovePayload>) => void;
   gameStart: (payload: WithAuth<string>) => void;
   gameWatch: (payload: WithAuth<string>) => void;
+  gameNotWatched: (payload: WithAuth<string>) => void;
 }
 
 /**
@@ -35,4 +36,5 @@ export interface ServerToClientEvents {
   gamePlayersUpdated: (payload: SafeUserInfo[]) => void;
   gameStateUpdated: (payload: TaggedGameView & { forPlayer: boolean }) => void;
   gameWatched: (payload: GamePlayInfo) => void;
+  gameViewCountUpdated: (payload: number) => void;
 }

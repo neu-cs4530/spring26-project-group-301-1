@@ -20,10 +20,8 @@ export default function GamePanel({
   const { user } = useLoginContext();
   const timeSince = useTimeSince();
 
-  const { view, players, userPlayerIndex, hasWatched, joinGame, startGame } = useSocketsForGame(
-    gameId,
-    initialPlayers,
-  );
+  const { view, players, viewers, userPlayerIndex, hasWatched, joinGame, startGame } =
+    useSocketsForGame(gameId, initialPlayers);
 
   return hasWatched ? (
     <div className="gamePanel">
@@ -42,6 +40,7 @@ export default function GamePanel({
               )}
             </div>
           ))}
+          <div className="dottedListItem">Viewers: {viewers}</div>
         </div>
         {
           // If the game hasn't started and user hasn't joined, they can join
