@@ -53,6 +53,14 @@ export interface GameServicer {
     done: boolean;
     moveDescription: string;
   };
+
+  /**
+   * Given a completed game state, returns the user ID of the winner, or null in the case of a tie
+   * @param state - The game state (must be the structure the underlying game expects — TypeScript won't check this!)
+   * @param players - All game players' user IDs
+   * @returns winner's user ID, or null in the case of a tie
+   */
+  getWinner: (state: any, players: string[]) => string | null;
 }
 
 export class GameService<State, View> implements GameServicer {
@@ -103,5 +111,8 @@ export class GameService<State, View> implements GameServicer {
   view(state: any, playerIndex: number) {
     if (!state) throw new Error("Game state does not exist");
     return this._view(state, playerIndex);
+  }
+  getWinner(state: any, players: string[]): string | null {
+    return this._logic.getWinner(state, players);
   }
 }

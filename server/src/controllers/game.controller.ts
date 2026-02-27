@@ -11,9 +11,11 @@ import {
   viewGame,
 } from "../services/game.service.ts";
 import { addMoveLogToChat } from "../services/chat.service.ts";
+import { recordGameResult } from "../services/stats.service.ts";
 import { z } from "zod";
 import { logSocketError } from "./socket.controller.ts";
 import { checkAuth, enforceAuth } from "../services/auth.service.ts";
+import { populateSafeUserInfo } from "../services/user.service.ts";
 
 /**
  * Handle POST requests to `/api/game/create` by creating a game. The game
@@ -153,8 +155,20 @@ export const socketMakeMove: SocketAPI = (socket, io) => async (body) => {
       payload: { gameId, move },
     } = withAuth(zGameMakeMovePayload).parse(body);
     const user = await enforceAuth(auth);
-    const { views, moveDescription, chatId } = await updateGame(gameId, user, move);
+    const { views, moveDescription, chatId, done, winnerUserId, playerUserIds, gameType } =
+      await updateGame(gameId, user, move);
     sendViewUpdates(io, gameId, views);
+
+    // Store the game result if the game is done in leadersboards and update all players' stats.
+    if (done) {
+      const playerInfos = await Promise.all(playerUserIds.map(populateSafeUserInfo));
+      await Promise.all(
+        playerUserIds.map((userId, i) => {
+          const outcome = winnerUserId === null ? "draw" : userId === winnerUserId ? "win" : "loss";
+          return recordGameResult(playerInfos[i].username, gameType, outcome);
+        }),
+      );
+    }
 
     // Store the move description suffix and broadcast to the chat room
     const now = new Date();
