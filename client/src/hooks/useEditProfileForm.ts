@@ -33,7 +33,7 @@ export default function useEditProfileForm() {
   }
   const { user, reset } = useLoginContext();
   const [display, setDisplay] = useState(user.display);
-  // backgroundType: 'color' or 'image'
+  // backgroundType: 'color' or 'preset'
   const initialBg = user.customBackground || "";
   const presetColors = [
     "#ffffff",
@@ -47,17 +47,20 @@ export default function useEditProfileForm() {
     "#ffb347",
     "#77dd77",
   ];
-  // If initialBg is a valid hex color, treat as color; else treat as image
   function isHexColor(str: string) {
     return /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(str);
   }
+  function isPresetImage(str: string) {
+    return str.startsWith("/backgrounds/");
+  }
   const isPreset = presetColors.includes(initialBg);
   const isColor = isPreset || isHexColor(initialBg);
+  const isPresetImg = isPresetImage(initialBg);
   const [backgroundType, setBackgroundType] = useState(
-    isColor ? "color" : initialBg ? "image" : "color",
+    isColor ? "color" : isPresetImg ? "preset" : initialBg ? "image" : "color",
   );
   const [color, setColor] = useState(isColor ? initialBg : presetColors[0]);
-  const [imageUrl, setImageUrl] = useState(!isColor ? initialBg : "");
+  const [imageUrl, setImageUrl] = useState(isPresetImg || !isColor ? initialBg : "");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [err, setErr] = useState<null | string>(null);

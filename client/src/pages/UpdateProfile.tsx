@@ -39,7 +39,7 @@ export default function UpdateProfile() {
         <div style={{ display: "flex", flexDirection: "row", gap: "0.5rem", alignItems: "center" }}>
           <select value={backgroundType} onChange={(e) => setBackgroundType(e.target.value)}>
             <option value="color">Color</option>
-            <option value="preset">Preset Image</option>
+            <option value="preset">Image</option>
           </select>
           {backgroundType === "color" ? (
             <>
@@ -58,7 +58,9 @@ export default function UpdateProfile() {
                 onChange={(e) => setImageUrl(e.target.value)}
                 className="widefill notTooWide"
               >
-                <option value="">Select a preset image</option>
+                <option value="" disabled>
+                  Select an image
+                </option>
                 <option value="/backgrounds/stripes.jpeg">Stripes</option>
                 <option value="/backgrounds/sky.jpeg">Sky</option>
                 <option value="/backgrounds/pastel.jpeg">Pastels</option>
@@ -91,7 +93,7 @@ export default function UpdateProfile() {
             Reset
           </button>
         </div>
-        <div className="smallAndGray">Choose a color or preset image for your game background.</div>
+        <div className="smallAndGray">Choose a color or image for your game background.</div>
       </div>
       <div className="spacedSection">
         <h3>Password</h3>
