@@ -1,4 +1,5 @@
 import { z, ZodNumber } from "zod";
+import { type GameMove } from "./games.types.ts";
 
 /**
  * The internal state of the guessing game is both the number (a secret that
@@ -8,6 +9,7 @@ import { z, ZodNumber } from "zod";
 export interface GuessState {
   secret: number;
   guesses: (number | null)[];
+  forfeits: boolean[];
 }
 
 /**
@@ -19,6 +21,7 @@ export type UnfinishedGuesView = {
   finished: false;
   guesses: boolean[];
   myGuess?: number;
+  forfeits: boolean[];
 };
 
 /**
@@ -29,6 +32,7 @@ export type FinishedGuessView = {
   finished: true;
   secret: number;
   guesses: number[];
+  forfeits: boolean[];
 };
 
 /**
@@ -38,9 +42,13 @@ export type FinishedGuessView = {
 export type GuessView = UnfinishedGuesView | FinishedGuessView;
 
 /**
- * A move in the guessing game is an integer is an integer between 1 and 100,
- * representing your guess. You can only guess if you haven't guessed yet,
- * but everyone can guess in any order.
+ * A move in the guessing game is either a forfeit or a normal move. A normal
+ * move is an integer between 1 and 100, representing the player's guess.
  */
-export type GuessMove = z.infer<typeof zGuessMove>;
-export const zGuessMove: ZodNumber = z.int().gte(1).lte(100);
+export interface GuessMove extends GameMove {
+  guess?: number;
+}
+export const zGuessMove = z.object({
+  type: z.enum(["move", "forfeit"]),
+  guess: (z.int().gte(1).lte(100) as ZodNumber).optional(),
+});

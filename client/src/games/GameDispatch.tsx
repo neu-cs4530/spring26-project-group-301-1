@@ -25,11 +25,26 @@ export default function GameDispatch({
     socket.emit("gameMakeMove", { auth, payload: { gameId, move } });
   }
 
-  const childProps = { userPlayerIndex, players, makeMove };
-  switch (view.type) {
-    case "nim":
-      return <NimGame {...{ ...childProps, view: view.view }} />;
-    case "guess":
-      return <GuessGame {...{ ...childProps, view: view.view }} />;
+  /**
+   * Helper function to get the right game component based on the type.
+   * @returns component for the game specified by the view
+   */
+  function getGame() {
+    switch (view.type) {
+      case "nim":
+        return <NimGame {...{ ...childProps, view: view.view }} />;
+      case "guess":
+        return <GuessGame {...{ ...childProps, view: view.view }} />;
+    }
   }
+
+  const childProps = { userPlayerIndex, players, makeMove };
+  return (
+    <div className="content">
+      <button className="primary narrow" onClick={() => makeMove({ type: "forfeit" })}>
+        Forfeit Game
+      </button>
+      {getGame()}
+    </div>
+  );
 }

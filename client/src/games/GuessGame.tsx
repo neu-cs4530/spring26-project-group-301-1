@@ -9,7 +9,10 @@ export default function GuessGame({
   makeMove,
 }: GameProps<GuessView, GuessMove>) {
   const [guess, setGuess] = useState(16);
-  const playerHasGuessed = view.finished || view.guesses[userPlayerIndex] !== false;
+  const playerHasGuessed =
+    view.finished ||
+    view.guesses[userPlayerIndex] !== false ||
+    view.forfeits[userPlayerIndex] === true;
 
   /** Checks if a best is the best guess */
   function isBestGuess(index: number) {
@@ -35,6 +38,9 @@ export default function GuessGame({
     if (guess === true) {
       return `${players[index].display} has guessed`;
     }
+    if (view.forfeits[index] === true) {
+      return `${players[index].display} forfeited`;
+    }
     return `${players[index].display} guessed ${guess}`;
   }
 
@@ -56,24 +62,26 @@ export default function GuessGame({
         (playerHasGuessed ? (
           <>Waiting for other players...</>
         ) : (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              makeMove(guess);
-            }}
-          >
-            <div>Guess a number between 1 and 100!</div>
-            <input
-              type="range"
-              value={guess}
-              min={1}
-              max={100}
-              step={1}
-              onChange={(e) => setGuess(parseInt(e.target.value))}
-            />
-            <div>Ready to guess {guess}?</div>
-            <button className="primary narrow">Submit Guess</button>
-          </form>
+          <div>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                makeMove({ type: "move", guess: guess });
+              }}
+            >
+              <div>Guess a number between 1 and 100!</div>
+              <input
+                type="range"
+                value={guess}
+                min={1}
+                max={100}
+                step={1}
+                onChange={(e) => setGuess(parseInt(e.target.value))}
+              />
+              <div>Ready to guess {guess}?</div>
+              <button className="primary narrow">Submit Guess</button>
+            </form>
+          </div>
         ))}
     </div>
   );
