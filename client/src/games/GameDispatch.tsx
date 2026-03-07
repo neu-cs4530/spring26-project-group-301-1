@@ -30,10 +30,6 @@ export default function GameDispatch({
   if (user.customBackground) {
     if (user.customBackground.startsWith("#") || user.customBackground.startsWith("rgb")) {
       backgroundStyle.background = user.customBackground;
-    } else if (user.customBackground.match(/^https?:\/\//)) {
-      backgroundStyle.backgroundImage = `url('${user.customBackground}')`;
-      backgroundStyle.backgroundSize = "cover";
-      backgroundStyle.backgroundPosition = "center";
     } else if (user.customBackground.startsWith("/")) {
       // Local preset image path
       backgroundStyle.backgroundImage = `url('${user.customBackground}')`;
