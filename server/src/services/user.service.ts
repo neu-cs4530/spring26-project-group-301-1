@@ -16,6 +16,7 @@ export async function populateSafeUserInfo(userId: string): Promise<SafeUserInfo
     username: record.username,
     display: record.display,
     createdAt: new Date(record.createdAt),
+    customBackground: record.customBackground,
   });
 }
 
@@ -78,13 +79,14 @@ export async function getUsersByUsername(usernames: string[]): Promise<SafeUserI
  */
 export async function updateUser(
   username: string,
-  { display, password }: UserUpdateRequest,
+  { display, password, customBackground }: UserUpdateRequest,
 ): Promise<SafeUserInfo> {
   const user = await getUserByUsername(username);
   if (!user) throw new Error(`No user ${username}`);
   if (password !== undefined) await updateAuth(username, password, user.userId);
   const newUser = await UserRepo.get(user.userId);
   if (display !== undefined) newUser.display = display;
+  if (customBackground !== undefined) newUser.customBackground = customBackground;
   await UserRepo.set(user.userId, newUser);
   return populateSafeUserInfo(user.userId);
 }
