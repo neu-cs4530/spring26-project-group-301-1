@@ -2,24 +2,33 @@ import "./MessageCreation.css";
 import { type SubmitEvent, type KeyboardEvent, useState } from "react";
 
 interface MessageCreationProps {
-  handleMessageCreation: (text: string) => void;
+  handleMessageCreation: (text: string) => boolean;
+  cooldownUntil: number;
+  cooldownMessage: string | null;
 }
 
-export default function MessageCreation({ handleMessageCreation }: MessageCreationProps) {
+export default function MessageCreation({
+  handleMessageCreation,
+  cooldownUntil: _cooldownUntil,
+  cooldownMessage,
+}: MessageCreationProps) {
   const [text, setText] = useState<string>("");
+
+  function trySend() {
+    const sent = handleMessageCreation(text);
+    if (sent) setText("");
+  }
 
   function handleKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
     if (e.code === "Enter" && !e.shiftKey) {
-      e.preventDefault(); // Don't edit text
-      handleMessageCreation(text);
-      setText("");
+      e.preventDefault();
+      trySend();
     }
   }
 
   function handleSubmit(e: SubmitEvent) {
     e.preventDefault();
-    handleMessageCreation(text);
-    setText("");
+    trySend();
   }
 
   return (
@@ -29,7 +38,12 @@ export default function MessageCreation({ handleMessageCreation }: MessageCreati
         value={text}
         onKeyDown={handleKeyDown}
         onChange={(e) => setText(e.target.value)}
-      ></textarea>
+      />
+      {cooldownMessage && (
+        <p className="messageCooldown" role="status">
+          {cooldownMessage}
+        </p>
+      )}
       <button className="visuallyHidden">Submit</button>
     </form>
   );

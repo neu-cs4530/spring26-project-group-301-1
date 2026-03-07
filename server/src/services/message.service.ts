@@ -3,6 +3,31 @@ import { populateSafeUserInfo } from "./user.service.ts";
 import { type UserWithId } from "../types.ts";
 import { MessageRepo } from "../repository.ts";
 
+const MESSAGE_COOLDOWN_MS = 10000; // 10 seconds
+const lastMessageAtByUser = new Map<string, number>();
+
+export class MessageCooldownError extends Error {
+  public readonly retryAfterMs: number;
+
+  constructor(retryAfterMs: number) {
+    super("You are sending messages too quickly.");
+    this.name = "MessageCooldownError";
+    this.retryAfterMs = retryAfterMs;
+  }
+}
+
+function enforceMessageCooldown(userId: string, createdAt: Date): void {
+  const nowMs = createdAt.getTime();
+  const lastMs = lastMessageAtByUser.get(userId) ?? 0;
+  const elapsedMs = nowMs - lastMs;
+
+  if (elapsedMs < MESSAGE_COOLDOWN_MS) {
+    throw new MessageCooldownError(MESSAGE_COOLDOWN_MS - elapsedMs);
+  }
+
+  lastMessageAtByUser.set(userId, nowMs);
+}
+
 /**
  * Expand a stored message
  *
@@ -32,6 +57,8 @@ export async function createMessage(
   text: string,
   createdAt: Date,
 ): Promise<MessageInfo> {
+  enforceMessageCooldown(user.userId, createdAt);
+
   const messageId = await MessageRepo.add({
     text,
     createdAt: createdAt.toISOString(),
