@@ -12,6 +12,7 @@ export interface SafeUserInfo {
   username: string;
   display: string;
   createdAt: Date;
+  customBackground?: string;
   hideUsername: boolean;
 }
 
@@ -24,5 +25,6 @@ export type UserUpdateRequest = z.infer<typeof zUserUpdateRequest>;
 export const zUserUpdateRequest = z.object({
   password: z.string().optional(),
   display: z.string().optional(),
+  customBackground: z.string().optional(),
   hideUsername: z.boolean().optional(),
 });

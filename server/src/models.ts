@@ -120,5 +120,6 @@ export interface UserRecord {
   username: string; // References Auth records
   display: string;
   createdAt: DateISO;
+  customBackground?: string;
   hideUsername: boolean;
 }
