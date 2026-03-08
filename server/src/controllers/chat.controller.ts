@@ -3,7 +3,7 @@ import { type SocketAPI } from "../types.ts";
 import { z } from "zod";
 import { addMessageToChat, forceChatById } from "../services/chat.service.ts";
 import { populateSafeUserInfo } from "../services/user.service.ts";
-import { createMessage } from "../services/message.service.ts";
+import { createMessage, MessageCooldownError } from "../services/message.service.ts";
 import { logSocketError } from "./socket.controller.ts";
 import { enforceAuth } from "../services/auth.service.ts";
 
@@ -70,6 +70,14 @@ export const socketSendMessage: SocketAPI = (socket, io) => async (body) => {
     // Send the message to everyone, including the sender
     io.to(chatId).emit("chatNewMessage", { chatId, message });
   } catch (err) {
+    if (err instanceof MessageCooldownError) {
+      socket.emit("chatSendError", {
+        code: "MESSAGE_COOLDOWN",
+        message: err.message,
+        retryAfterMs: err.retryAfterMs,
+      });
+      return;
+    }
     logSocketError(socket, err);
   }
 };
