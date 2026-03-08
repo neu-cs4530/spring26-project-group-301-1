@@ -230,4 +230,13 @@ describe(`Nim's getWinner() logic`, () => {
       nimLogic.getWinner({ remaining: 0, nextPlayer: 1, forfeits: false }, ["user1", "user2"]),
     ).toBe("user1");
   });
+
+  it("Should return the player who did not forfeit", () => {
+    expect(
+      nimLogic.getWinner({ remaining: 12, nextPlayer: 0, forfeits: true }, ["user1", "user2"]),
+    ).toBe("user2");
+    expect(
+      nimLogic.getWinner({ remaining: 12, nextPlayer: 1, forfeits: true }, ["user1", "user2"]),
+    ).toBe("user1");
+  });
 });

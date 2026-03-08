@@ -64,10 +64,14 @@ export default function GameDispatch({
   const childProps = { userPlayerIndex, players, makeMove };
   return (
     <div className="content">
-      <button className="primary narrow" onClick={() => makeMove({ type: "forfeit" })}>
-        Forfeit Game
-      </button>
       {getGame()}
+      {userPlayerIndex === -1 ? (
+        <></>
+      ) : (
+        <button className="primary narrow" onClick={() => makeMove({ type: "forfeit" })}>
+          Forfeit Game
+        </button>
+      )}
     </div>
   );
 }

@@ -63,6 +63,7 @@ export interface TicTacToeView {
   ];
   nextPlayer: number;
   winningEntry: null | [[number, number], [number, number], [number, number]];
+  forfeits: boolean[];
 }
 
 /**

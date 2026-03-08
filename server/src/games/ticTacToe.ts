@@ -218,6 +218,7 @@ export const ticTacToeLogic: GameLogic<TicTacToeState, TicTacToeView> = {
       board: state.board,
       nextPlayer: state.nextPlayer,
       winningEntry: getWinningEntry(state.board),
+      forfeits: state.forfeits,
     };
     return stateView;
   },

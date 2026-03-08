@@ -846,6 +846,7 @@ describe(`Tic Tac Toe's viewAs() logic`, () => {
       ],
       nextPlayer: 1,
       winningEntry: null,
+      forfeits: [false, false],
     });
 
     expect(
@@ -869,6 +870,7 @@ describe(`Tic Tac Toe's viewAs() logic`, () => {
       ],
       nextPlayer: 1,
       winningEntry: null,
+      forfeits: [false, false],
     });
   });
 
@@ -894,6 +896,7 @@ describe(`Tic Tac Toe's viewAs() logic`, () => {
       ],
       nextPlayer: 1,
       winningEntry: null,
+      forfeits: [false, false],
     });
   });
 
@@ -1286,6 +1289,7 @@ describe(`Tic Tac Toe's tagView() logic`, () => {
           [1, 0],
           [2, 0],
         ],
+        forfeits: [false, false],
       }),
     ).toStrictEqual({
       type: "tictactoe",
@@ -1301,6 +1305,7 @@ describe(`Tic Tac Toe's tagView() logic`, () => {
           [1, 0],
           [2, 0],
         ],
+        forfeits: [false, false],
       },
     });
   });

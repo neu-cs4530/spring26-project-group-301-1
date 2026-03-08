@@ -29,6 +29,7 @@ export default function GuessGame({
   /** Get the response text for a specific player's guess */
   function getGuessText(guess: boolean | number, index: number) {
     if (index === userPlayerIndex) {
+      if (view.forfeits[index] === true) return `You forfeited`;
       if (view.finished) return `You guessed ${guess}`;
       return view.myGuess ? `You guessed ${view.myGuess}` : "You haven't guessed yet";
     }

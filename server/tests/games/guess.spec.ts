@@ -387,4 +387,26 @@ describe(`Guessing game's getWinner() logic`, () => {
       ]),
     ).toBeNull();
   });
+  it("Should pick players who have not forfeited", () => {
+    expect(
+      guessLogic.getWinner(
+        { secret: 44, guesses: [null, 42, 48], forfeits: [true, false, false] },
+        ["user1", "user2", "user3"],
+      ),
+    ).toBe("user2");
+    expect(
+      guessLogic.getWinner(
+        { secret: 44, guesses: [12, null, null], forfeits: [false, true, true] },
+        ["user1", "user2", "user3"],
+      ),
+    ).toBe("user1");
+  });
+  it("Should return null if all players have forfeited", () => {
+    expect(
+      guessLogic.getWinner(
+        { secret: 44, guesses: [null, null, null], forfeits: [true, true, true] },
+        ["user1", "user2", "user3"],
+      ),
+    ).toBeNull();
+  });
 });
