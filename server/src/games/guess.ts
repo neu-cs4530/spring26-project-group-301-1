@@ -89,6 +89,12 @@ export const guessLogic: GameLogic<GuessState, GuessView> = {
     }
     return ` made a guess`;
   },
+  getWinner: ({ secret, guesses }, players) => {
+    const distances = (guesses as number[]).map((g) => Math.abs(g - secret));
+    const min = Math.min(...distances);
+    const winners = players.filter((_, i) => distances[i] === min);
+    return winners.length === 1 ? winners[0] : null;
+  },
 };
 
 export const guessGameService = new GameService<GuessState, GuessView>(guessLogic);

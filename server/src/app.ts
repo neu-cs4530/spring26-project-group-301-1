@@ -8,6 +8,8 @@ import * as chat from "./controllers/chat.controller.ts";
 import * as game from "./controllers/game.controller.ts";
 import * as user from "./controllers/user.controller.ts";
 import * as thread from "./controllers/thread.controller.ts";
+import * as stats from "./controllers/stats.controller.ts";
+import * as friends from "./controllers/friends.controller.ts";
 import { type GameServer } from "./types.ts";
 
 export const app = express();
@@ -44,6 +46,23 @@ app.use(
         .post("/signup", user.postSignup)
         .post("/:username", user.postByUsername)
         .get("/:username", user.getByUsername),
+    )
+    .use(
+      "/stats",
+      Router()
+        .get("/leaderboard", stats.getLeaderboardRoute)
+        .get("/:username", stats.getStatsByUsername),
+    )
+
+    .use(
+      "/friends",
+      express
+        .Router()
+        .post("/:username/requests", friends.getRequests)
+        .get("/:username", friends.getByUsername)
+        .post("/request", friends.postRequest)
+        .post("/request/:requestId/resolve", friends.postResolve)
+        .post("/remove", friends.postRemove),
     ),
 );
 

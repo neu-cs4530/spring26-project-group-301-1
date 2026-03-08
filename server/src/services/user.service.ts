@@ -16,6 +16,8 @@ export async function populateSafeUserInfo(userId: string): Promise<SafeUserInfo
     username: record.username,
     display: record.display,
     createdAt: new Date(record.createdAt),
+    customBackground: record.customBackground,
+    hideUsername: record.hideUsername,
   });
 }
 
@@ -40,12 +42,14 @@ export async function createUser(
     username,
     createdAt: createdAt.toISOString(),
     display: username,
+    hideUsername: false,
   });
   await updateAuth(username, password, id);
   return Promise.resolve({
     username,
     createdAt,
     display: username,
+    hideUsername: false,
   });
 }
 
@@ -69,6 +73,16 @@ export async function getUsersByUsername(usernames: string[]): Promise<SafeUserI
 }
 
 /**
+ * Returns the SafeUserInfo object corresponding to a given username
+ * @param username a username
+ * @returns user information for that username, if valid
+ */
+export async function safeUserFromUsername(username: string): Promise<SafeUserInfo> {
+  const [user] = await getUsersByUsername([username]);
+  return user;
+}
+
+/**
  * Updates user information in the database
  *
  * @param username - A valid username for the user to update
@@ -78,13 +92,15 @@ export async function getUsersByUsername(usernames: string[]): Promise<SafeUserI
  */
 export async function updateUser(
   username: string,
-  { display, password }: UserUpdateRequest,
+  { display, password, customBackground, hideUsername }: UserUpdateRequest,
 ): Promise<SafeUserInfo> {
   const user = await getUserByUsername(username);
   if (!user) throw new Error(`No user ${username}`);
   if (password !== undefined) await updateAuth(username, password, user.userId);
   const newUser = await UserRepo.get(user.userId);
   if (display !== undefined) newUser.display = display;
+  if (customBackground !== undefined) newUser.customBackground = customBackground;
+  if (hideUsername !== undefined) newUser.hideUsername = hideUsername;
   await UserRepo.set(user.userId, newUser);
   return populateSafeUserInfo(user.userId);
 }

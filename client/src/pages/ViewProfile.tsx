@@ -45,7 +45,11 @@ export default function ViewProfile({ username }: ViewProfileProps) {
           <h2>Profile for {componentState.user.display}</h2>
           <div>
             <ul>
-              <li>Username: {componentState.user.username}</li>
+              {componentState.user.hideUsername ? (
+                <></>
+              ) : (
+                <li>Username: {componentState.user.username}</li>
+              )}
               <li>Account created {timeSince(componentState.user.createdAt)}</li>
             </ul>
           </div>
