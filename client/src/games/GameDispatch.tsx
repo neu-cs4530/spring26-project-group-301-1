@@ -1,6 +1,7 @@
 import type { SafeUserInfo, TaggedGameView } from "@gamenite/shared";
 import NimGame from "./NimGame.tsx";
 import GuessGame from "./GuessGame.tsx";
+import TicTacToeGame from "./TicTacToeGame.tsx";
 import { type JSX } from "react";
 import useLoginContext from "../hooks/useLoginContext.ts";
 import useAuth from "../hooks/useAuth.ts";
@@ -50,6 +51,8 @@ export default function GameDispatch({
     case "guess":
       gameComponent = <GuessGame {...{ ...childProps, view: view.view }} />;
       break;
+    case "tictactoe":
+      return <TicTacToeGame {...{ ...childProps, view: view.view }} />;
   }
   return <div style={{ minHeight: "100vh", ...backgroundStyle }}>{gameComponent}</div>;
 }
