@@ -70,8 +70,7 @@ export const postRequest: RestAPI<{ message: string }> = async (req, res) => {
 };
 
 /**
- * POST /api/friends/request/:requestId/accept
- * POST /api/friends/request/:requestId/decline
+ * POST /api/friends/request/:requestId/resolve
  */
 export const postResolve: RestAPI<{ message: string }, { requestId: string }> = async (
   req,
