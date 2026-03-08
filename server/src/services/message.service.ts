@@ -1,9 +1,8 @@
-import { type MessageInfo } from "@gamenite/shared";
+import { MESSAGE_COOLDOWN_MS, type MessageInfo } from "@gamenite/shared";
 import { populateSafeUserInfo } from "./user.service.ts";
 import { type UserWithId } from "../types.ts";
 import { MessageRepo } from "../repository.ts";
 
-const MESSAGE_COOLDOWN_MS = 3000; // 3 seconds
 const lastMessageAtByUser = new Map<string, number>();
 
 export class MessageCooldownError extends Error {
