@@ -1,5 +1,5 @@
 import "./MessageCreation.css";
-import { type SubmitEvent, type KeyboardEvent, useState } from "react";
+import { type SubmitEvent, type KeyboardEvent, useEffect, useState } from "react";
 
 interface MessageCreationProps {
   handleMessageCreation: (text: string) => boolean;
@@ -9,10 +9,25 @@ interface MessageCreationProps {
 
 export default function MessageCreation({
   handleMessageCreation,
-  cooldownUntil: _cooldownUntil,
+  cooldownUntil,
   cooldownMessage,
 }: MessageCreationProps) {
   const [text, setText] = useState<string>("");
+  const [now, setNow] = useState<number>(0);
+
+  useEffect(() => {
+    if (cooldownUntil <= 0) return;
+
+    const timer = window.setInterval(() => {
+      setNow(Date.now());
+    }, 250);
+
+    return () => window.clearInterval(timer);
+  }, [cooldownUntil]);
+
+  const effectiveNow = now === 0 ? cooldownUntil : now;
+  const cooldownMsLeft = Math.max(0, cooldownUntil - effectiveNow);
+  const cooldownSecondsLeft = Math.ceil(cooldownMsLeft / 1000);
 
   function trySend() {
     const sent = handleMessageCreation(text);
@@ -39,9 +54,11 @@ export default function MessageCreation({
         onKeyDown={handleKeyDown}
         onChange={(e) => setText(e.target.value)}
       />
-      {cooldownMessage && (
+      {(cooldownMsLeft > 0 || cooldownMessage) && (
         <p className="messageCooldown" role="status">
-          {cooldownMessage}
+          {cooldownMsLeft > 0
+            ? `Cooldown active. Try again in ${cooldownSecondsLeft}s.`
+            : cooldownMessage}
         </p>
       )}
       <button className="visuallyHidden">Submit</button>

@@ -1,12 +1,12 @@
 import { test, expect, type BrowserContext, type Page } from "@playwright/test";
 import { createAndLoadGame } from "./testUtils.ts";
+import { MESSAGE_COOLDOWN_MS } from "@gamenite/shared";
 
 let userContext1: BrowserContext;
 let userContext2: BrowserContext;
 let page1: Page;
 let page2: Page;
 
-const MESSAGE_COOLDOWN_MS = 3000;
 const ITERATIONS = 3; // keep runtime reasonable with cooldown
 
 test.beforeEach(async ({ browser }) => {
