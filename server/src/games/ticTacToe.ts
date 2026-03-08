@@ -232,6 +232,17 @@ export const ticTacToeLogic: GameLogic<TicTacToeState, TicTacToeView> = {
     }
     return ` moved at (${i}, ${j})`;
   },
+  getWinner: (state, players) => {
+    const board = state.board as TicTacToeBoard;
+
+    if (checkWinbyEntry(board, "X")) {
+      return players[1];
+    }
+    if (checkWinbyEntry(board, "O")) {
+      return players[0];
+    }
+    return null;
+  },
 };
 
 export const ticTacToeGameService = new GameService<TicTacToeState, TicTacToeView>(ticTacToeLogic);

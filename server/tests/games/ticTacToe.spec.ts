@@ -1104,3 +1104,54 @@ describe(`Tic Tac Toe's tagView() logic`, () => {
     });
   });
 });
+
+describe(`Tic Tac Toe's getWinner() logic`, () => {
+  it("Should return the correct winner when player 1 wins", () => {
+    expect(
+      ticTacToeLogic.getWinner(
+        {
+          board: [
+            ["X", "O", null],
+            ["X", null, "O"],
+            ["X", null, null],
+          ],
+
+          nextPlayer: 1,
+        },
+        ["player0", "player1"],
+      ),
+    ).toBe("player1");
+  });
+
+  it("Should return the correct winner when player 0 wins", () => {
+    expect(
+      ticTacToeLogic.getWinner(
+        {
+          board: [
+            ["O", "O", "O"],
+            ["X", "X", null],
+            [null, null, "X"],
+          ],
+          nextPlayer: 1,
+        },
+        ["player0", "player1"],
+      ),
+    ).toBe("player0");
+  });
+
+  it("Should return null when there is no winner", () => {
+    expect(
+      ticTacToeLogic.getWinner(
+        {
+          board: [
+            ["X", "O", "X"],
+            ["X", "O", "O"],
+            ["O", "X", "X"],
+          ],
+          nextPlayer: 0,
+        },
+        ["player0", "player1"],
+      ),
+    ).toBe(null);
+  });
+});
