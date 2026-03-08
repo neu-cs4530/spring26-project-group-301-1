@@ -62,6 +62,7 @@ export default function useEditProfileForm() {
   const [color, setColor] = useState(isColor ? initialBg : presetColors[0]);
   const [imageUrl, setImageUrl] = useState(isPresetImg || !isColor ? initialBg : "");
   const [password, setPassword] = useState("");
+  const [hideUsername, setHideUsername] = useState<boolean>(user.hideUsername);
   const [confirm, setConfirm] = useState("");
   const [err, setErr] = useState<null | string>(null);
   const auth = useAuth();
@@ -77,7 +78,8 @@ export default function useEditProfileForm() {
       user.display === display &&
       (user.customBackground || "") === newBg &&
       password === confirm &&
-      password === ""
+      password === "" &&
+      user.hideUsername === hideUsername
     ) {
       setErr("No changes to submit");
       return;
@@ -107,6 +109,7 @@ export default function useEditProfileForm() {
     if (display !== user.display) updates.display = display;
     if (newBg !== (user.customBackground || "")) updates.customBackground = newBg;
     if (password !== "") updates.password = password;
+    if (user.hideUsername !== hideUsername) updates.hideUsername = hideUsername;
     const response = await updateUser(auth, updates);
     if ("error" in response) {
       setErr(response.error);
@@ -131,6 +134,8 @@ export default function useEditProfileForm() {
     setPassword,
     confirm,
     setConfirm,
+    hideUsername,
+    setHideUsername,
     err,
     setErr,
     handleSubmit,

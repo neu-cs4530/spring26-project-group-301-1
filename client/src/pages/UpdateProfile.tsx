@@ -19,6 +19,8 @@ export default function UpdateProfile() {
     setPassword,
     confirm,
     setConfirm,
+    hideUsername,
+    setHideUsername,
     err,
     handleSubmit,
   } = useEditProfileForm();
@@ -126,9 +128,27 @@ export default function UpdateProfile() {
         </div>
       </div>
       <hr />
+      <div className="spacedSection">
+        <h3>Privacy</h3>
+        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "0.5rem" }}>
+          <button
+            className="secondary narrow"
+            aria-label="Toggle hide username"
+            onClick={(e) => {
+              e.preventDefault(); // Don't submit form
+              setHideUsername((v) => !v);
+            }}
+          >
+            {hideUsername ? "Unhide username" : "Hide username"}
+          </button>
+        </div>
+      </div>
+      <hr />
       {err && <p className="error-message">{err}</p>}
       <div>
-        <button className="primary narrow">Submit</button>
+        <button aria-label="Submit profile edits" className="primary narrow">
+          Submit
+        </button>
       </div>
       <div className="smallAndGray">After updating your profile, you will be logged out</div>
     </form>

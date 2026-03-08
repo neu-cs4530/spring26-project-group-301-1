@@ -17,6 +17,7 @@ export async function populateSafeUserInfo(userId: string): Promise<SafeUserInfo
     display: record.display,
     createdAt: new Date(record.createdAt),
     customBackground: record.customBackground,
+    hideUsername: record.hideUsername,
   });
 }
 
@@ -41,12 +42,14 @@ export async function createUser(
     username,
     createdAt: createdAt.toISOString(),
     display: username,
+    hideUsername: false,
   });
   await updateAuth(username, password, id);
   return Promise.resolve({
     username,
     createdAt,
     display: username,
+    hideUsername: false,
   });
 }
 
@@ -79,7 +82,7 @@ export async function getUsersByUsername(usernames: string[]): Promise<SafeUserI
  */
 export async function updateUser(
   username: string,
-  { display, password, customBackground }: UserUpdateRequest,
+  { display, password, customBackground, hideUsername }: UserUpdateRequest,
 ): Promise<SafeUserInfo> {
   const user = await getUserByUsername(username);
   if (!user) throw new Error(`No user ${username}`);
@@ -87,6 +90,7 @@ export async function updateUser(
   const newUser = await UserRepo.get(user.userId);
   if (display !== undefined) newUser.display = display;
   if (customBackground !== undefined) newUser.customBackground = customBackground;
+  if (hideUsername !== undefined) newUser.hideUsername = hideUsername;
   await UserRepo.set(user.userId, newUser);
   return populateSafeUserInfo(user.userId);
 }
