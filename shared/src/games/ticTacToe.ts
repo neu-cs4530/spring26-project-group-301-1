@@ -26,7 +26,7 @@ export interface TicTacToeState {
     [TicTacEntry, TicTacEntry, TicTacEntry],
   ];
   nextPlayer: number;
-  forfeited: boolean;
+  forfeits: boolean[];
 }
 
 /**

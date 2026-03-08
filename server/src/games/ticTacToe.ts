@@ -153,20 +153,20 @@ function getWinningEntry(board: TicTacToeBoard) {
  * @returns true if the game is done, otherwise false
  */
 function isGameDone(state: TicTacToeState) {
-  return state.forfeited === true || checkWinbyEntry(state.board, "X") || checkWinbyEntry(state.board, "O") || isBoardFull(state.board);
+  return state.forfeits.some((forfeit) => forfeit) || checkWinbyEntry(state.board, "X") || checkWinbyEntry(state.board, "O") || isBoardFull(state.board);
 }
 
 export const ticTacToeLogic: GameLogic<TicTacToeState, TicTacToeView> = {
   minPlayers: 2,
   maxPlayers: 2,
-  start: () => ({
+  start: (numPlayers) => ({
     board: [
       [null, null, null],
       [null, null, null],
       [null, null, null],
     ],
     nextPlayer: 1,
-    forfeited: false,
+    forfeits: Array.from({ length: numPlayers }).map(() => false),
   }),
   update: (state, payload, playerIndex) => {
     const move = zTicTacToeMove.safeParse(payload);
@@ -178,13 +178,17 @@ export const ticTacToeLogic: GameLogic<TicTacToeState, TicTacToeView> = {
 
     const newBoard: TicTacToeBoard = [...state.board];
     if (move.data.type === "forfeit") {
-      if (state.forfeited === true) return null;
+      if (state.forfeits.some((forfeit) => forfeit)) return null;
+      const newForfeits = [...state.forfeits];
+      newForfeits[playerIndex] = true;
       return {
         board: newBoard,
         nextPlayer: (state.nextPlayer + 1) % NUM_PLAYERS,
-        forfeited: true
+        forfeits: newForfeits
       }
     }
+
+    if (move.data.coord === undefined) return null;
 
     const [i, j] = move.data.coord;
 
@@ -196,7 +200,7 @@ export const ticTacToeLogic: GameLogic<TicTacToeState, TicTacToeView> = {
     const nextState: TicTacToeState = {
       board: newBoard,
       nextPlayer: (state.nextPlayer + 1) % NUM_PLAYERS,
-      forfeited: state.forfeited
+      forfeits: state.forfeits
     };
 
     return nextState;
@@ -239,6 +243,13 @@ export const ticTacToeLogic: GameLogic<TicTacToeState, TicTacToeView> = {
       return players[1];
     }
     if (checkWinbyEntry(board, "O")) {
+      return players[0];
+    }
+    // only one of two players are able to forfeit
+    if (state.forfeits[0] === true) {
+      return players[1];
+    }
+    if (state.forfeits[1] === true) {
       return players[0];
     }
     return null;
