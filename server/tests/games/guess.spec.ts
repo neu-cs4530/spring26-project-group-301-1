@@ -357,18 +357,34 @@ describe(`Guessing game's describeMove() logic`, () => {
 describe(`Guessing game's getWinner() logic`, () => {
   it("Should pick the closest guess as the winner", () => {
     expect(
-      guessLogic.getWinner({ secret: 44, guesses: [30, 40, 50], forfeits: [false, false, false] }, ["user1", "user2", "user3"]),
+      guessLogic.getWinner({ secret: 44, guesses: [30, 40, 50], forfeits: [false, false, false] }, [
+        "user1",
+        "user2",
+        "user3",
+      ]),
     ).toBe("user2");
     expect(
-      guessLogic.getWinner({ secret: 44, guesses: [30, 45, 50], forfeits: [false, false, false]  }, ["user1", "user2", "user3"]),
+      guessLogic.getWinner({ secret: 44, guesses: [30, 45, 50], forfeits: [false, false, false] }, [
+        "user1",
+        "user2",
+        "user3",
+      ]),
     ).toBe("user2");
     expect(
-      guessLogic.getWinner({ secret: 44, guesses: [30, 43, 50], forfeits: [false, false, false]  }, ["user1", "user2", "user3"]),
+      guessLogic.getWinner({ secret: 44, guesses: [30, 43, 50], forfeits: [false, false, false] }, [
+        "user1",
+        "user2",
+        "user3",
+      ]),
     ).toBe("user2");
   });
   it("Should declare a tie if multiple players are tied for closest", () => {
     expect(
-      guessLogic.getWinner({ secret: 44, guesses: [30, 40, 48], forfeits: [false, false, false] }, ["user1", "user2", "user3"]),
+      guessLogic.getWinner({ secret: 44, guesses: [30, 40, 48], forfeits: [false, false, false] }, [
+        "user1",
+        "user2",
+        "user3",
+      ]),
     ).toBeNull();
   });
 });

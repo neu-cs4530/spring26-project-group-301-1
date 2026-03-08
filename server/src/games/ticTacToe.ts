@@ -153,7 +153,12 @@ function getWinningEntry(board: TicTacToeBoard) {
  * @returns true if the game is done, otherwise false
  */
 function isGameDone(state: TicTacToeState) {
-  return state.forfeits.some((forfeit) => forfeit) || checkWinbyEntry(state.board, "X") || checkWinbyEntry(state.board, "O") || isBoardFull(state.board);
+  return (
+    state.forfeits.some((forfeit) => forfeit) ||
+    checkWinbyEntry(state.board, "X") ||
+    checkWinbyEntry(state.board, "O") ||
+    isBoardFull(state.board)
+  );
 }
 
 export const ticTacToeLogic: GameLogic<TicTacToeState, TicTacToeView> = {
@@ -184,8 +189,8 @@ export const ticTacToeLogic: GameLogic<TicTacToeState, TicTacToeView> = {
       return {
         board: newBoard,
         nextPlayer: (state.nextPlayer + 1) % NUM_PLAYERS,
-        forfeits: newForfeits
-      }
+        forfeits: newForfeits,
+      };
     }
 
     if (move.data.coord === undefined) return null;
@@ -200,7 +205,7 @@ export const ticTacToeLogic: GameLogic<TicTacToeState, TicTacToeView> = {
     const nextState: TicTacToeState = {
       board: newBoard,
       nextPlayer: (state.nextPlayer + 1) % NUM_PLAYERS,
-      forfeits: state.forfeits
+      forfeits: state.forfeits,
     };
 
     return nextState;

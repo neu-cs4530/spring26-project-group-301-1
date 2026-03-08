@@ -48,15 +48,15 @@ export default function GameDispatch({
    */
   function getGame() {
     let gameComponent: JSX.Element | null = null;
-  switch (view.type) {
-    case "nim":
-      gameComponent = <NimGame {...{ ...childProps, view: view.view }} />;
-      break;
-    case "guess":
-      gameComponent = <GuessGame {...{ ...childProps, view: view.view }} />;
-      break;
-    case "tictactoe":
-      gameComponent = <TicTacToeGame {...{ ...childProps, view: view.view }} />;
+    switch (view.type) {
+      case "nim":
+        gameComponent = <NimGame {...{ ...childProps, view: view.view }} />;
+        break;
+      case "guess":
+        gameComponent = <GuessGame {...{ ...childProps, view: view.view }} />;
+        break;
+      case "tictactoe":
+        gameComponent = <TicTacToeGame {...{ ...childProps, view: view.view }} />;
     }
     return gameComponent;
   }

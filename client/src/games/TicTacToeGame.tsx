@@ -19,7 +19,7 @@ export default function TicTacToeGame({
     if (userPlayerIndex === -1) return "";
     if (view.winningEntry) return "";
     return (
-      <button disabled={disabled} onClick={() => makeMove({type: "move", coord: [row, col]})}>
+      <button disabled={disabled} onClick={() => makeMove({ type: "move", coord: [row, col] })}>
         {me}?
       </button>
     );
