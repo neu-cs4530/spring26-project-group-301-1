@@ -10,7 +10,7 @@ import type {
 import type { ChatMessage } from "../util/types.ts";
 import useAuth from "./useAuth.ts";
 
-const MESSAGE_COOLDOWN_MS = 10000;
+const MESSAGE_COOLDOWN_MS = 3000; // 3 seconds
 
 /** Extract the timestamp from any ChatMessage variant */
 function messageTime(msg: ChatMessage): number {
