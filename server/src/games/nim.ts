@@ -21,8 +21,7 @@ export const nimLogic: GameLogic<NimState, NimView> = {
     if (playerIndex !== nextPlayer) return null;
     if (move.error) return null;
 
-    const moveData: NimMove = move.data;
-    if (moveData.type === "forfeit") {
+    if (move.data.type === "forfeit") {
       // do not allow multiple forfeits
       if (forfeits === true) return null;
       // do not allow a forfeit after the game has ended
@@ -37,12 +36,12 @@ export const nimLogic: GameLogic<NimState, NimView> = {
     if (forfeits === true) {
       return null;
     }
-    if (moveData.count === undefined) {
+    if (move.data.count === undefined) {
       return null;
     }
-    if (moveData.count > remaining) return null;
+    if (move.data.count > remaining) return null;
     return {
-      remaining: remaining - moveData.count,
+      remaining: remaining - move.data.count,
       nextPlayer: nextPlayer === 0 ? 1 : 0,
       forfeits: false,
     };

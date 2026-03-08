@@ -152,8 +152,8 @@ function getWinningEntry(board: TicTacToeBoard) {
  * @param board the board representing the current game state
  * @returns true if the game is done, otherwise false
  */
-function isGameDone(board: TicTacToeBoard) {
-  return checkWinbyEntry(board, "X") || checkWinbyEntry(board, "O") || isBoardFull(board);
+function isGameDone(state: TicTacToeState) {
+  return state.forfeited === true || checkWinbyEntry(state.board, "X") || checkWinbyEntry(state.board, "O") || isBoardFull(state.board);
 }
 
 export const ticTacToeLogic: GameLogic<TicTacToeState, TicTacToeView> = {
@@ -166,35 +166,43 @@ export const ticTacToeLogic: GameLogic<TicTacToeState, TicTacToeView> = {
       [null, null, null],
     ],
     nextPlayer: 1,
+    forfeited: false,
   }),
   update: (state, payload, playerIndex) => {
     const move = zTicTacToeMove.safeParse(payload);
     if (move.error) return null;
+    // reject moves from the wrong player
+    if (playerIndex !== state.nextPlayer) return null;
+    // reject moves if game is already done
+    if (isGameDone(state)) return null;
 
-    const [i, j] = move.data;
+    const newBoard: TicTacToeBoard = [...state.board];
+    if (move.data.type === "forfeit") {
+      if (state.forfeited === true) return null;
+      return {
+        board: newBoard,
+        nextPlayer: (state.nextPlayer + 1) % NUM_PLAYERS,
+        forfeited: true
+      }
+    }
+
+    const [i, j] = move.data.coord;
 
     // reject moves that would overwrite existing moves
     if (state.board[i][j] !== null) return null;
-
-    // reject moves from the wrong player
-    if (playerIndex !== state.nextPlayer) return null;
-
-    // reject moves if the game is already done
-    if (isGameDone(state.board)) return null;
-
-    const newBoard: TicTacToeBoard = [...state.board];
 
     newBoard[i][j] = PLAYER_IDX_TO_ENTRY_MAP[playerIndex];
 
     const nextState: TicTacToeState = {
       board: newBoard,
       nextPlayer: (state.nextPlayer + 1) % NUM_PLAYERS,
+      forfeited: state.forfeited
     };
 
     return nextState;
   },
   isDone: (state) => {
-    return isGameDone(state.board);
+    return isGameDone(state);
   },
   viewAs: (state) => {
     const stateView: TicTacToeView = {
@@ -207,10 +215,16 @@ export const ticTacToeLogic: GameLogic<TicTacToeState, TicTacToeView> = {
   tagView: (view) => ({ type: "tictactoe", view }),
   describeMove: (_prevState, newState, payload) => {
     const move = zTicTacToeMove.parse(payload);
-    const [i, j] = move;
+    if (move.type === "forfeit") {
+      return ` forfeited the game`;
+    }
+    if (move.coord === undefined) {
+      return ` made an invalid move`;
+    }
+    const [i, j] = move.coord;
 
     // next move is a winning move, assumes this is not called after game is over with additional moves
-    if (isGameDone(newState.board) && getWinningEntry(newState.board)) {
+    if (isGameDone(newState) && getWinningEntry(newState.board)) {
       return ` moved at (${i}, ${j}) and won the game`;
     }
     if (isBoardFull(newState.board)) {

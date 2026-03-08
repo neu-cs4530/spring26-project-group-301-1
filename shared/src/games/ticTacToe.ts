@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { type GameMove } from "./games.types.ts";
 
 export type TicTacEntry = null | "O" | "X";
 
@@ -25,6 +26,7 @@ export interface TicTacToeState {
     [TicTacEntry, TicTacEntry, TicTacEntry],
   ];
   nextPlayer: number;
+  forfeited: boolean;
 }
 
 /**
@@ -98,6 +100,13 @@ export interface TicTacToeView {
  *     XOX
  *
  */
-export type TicTacToeMove = z.infer<typeof zTicTacToeMove>;
+
+export interface TicTacToeMove extends GameMove {
+  coord?: [number, number];
+}
+
 const tttPos = z.int().gte(0).lt(3);
-export const zTicTacToeMove = z.tuple([tttPos, tttPos]);
+export const zTicTacToeMove = z.object({
+  type: z.enum(["move", "forfeit"]),
+  coord: z.tuple([tttPos, tttPos]).optional(),
+});
