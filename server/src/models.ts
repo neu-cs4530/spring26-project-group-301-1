@@ -86,11 +86,15 @@ export interface GameRecord {
  * - `text`: message contents
  * - `createdBy`: username of message sender
  * - `createdAt`: when the message was sent
+ * - `deleted`: whether the message has been deleted
+ * - `deletedAt`: when the message was deleted, if applicable
  */
 export interface MessageRecord {
   text: string;
   createdBy: RecordId; // References User records
   createdAt: DateISO;
+  deleted?: boolean;
+  deletedAt?: DateISO;
 }
 
 /**
