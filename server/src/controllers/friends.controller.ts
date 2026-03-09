@@ -14,6 +14,7 @@ import {
   removeFriend,
   getFriends,
   getPendingRequests,
+  getFriendStatus,
 } from "../services/friends.service.ts";
 import { type FriendInfo, type FriendRequestInfo } from "@gamenite/shared";
 
@@ -122,4 +123,25 @@ export const postRemove: RestAPI<{ message: string }> = async (req, res) => {
   } catch (error) {
     res.status(400).send({ error: "Failed to remove friend" });
   }
+};
+
+/**
+ * POST /api/friends/:username/status
+ * Returns the friendship status between the caller and the given user.
+ */
+export const getStatus: RestAPI<{ status: string }, { username: string }> = async (req, res) => {
+  const body = z.object({ auth: zUserAuth }).safeParse(req.body);
+  if (body.error) {
+    res.status(400).send({ error: "Poorly-formed request" });
+    return;
+  }
+
+  const caller = await checkAuth(body.data.auth);
+  if (!caller) {
+    res.status(403).send({ error: "Invalid credentials" });
+    return;
+  }
+
+  const status = await getFriendStatus(caller.username, req.params.username);
+  res.send({ status });
 };

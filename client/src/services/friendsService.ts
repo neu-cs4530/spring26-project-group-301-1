@@ -70,3 +70,17 @@ export const removeFriend = async (
     return exceptionToErrorMsg(error);
   }
 };
+
+export const getFriendStatus = async (
+  auth: UserAuth,
+  username: string,
+): APIResponse<{ status: "friends" | "request-sent" | "request-received" | "not-friends" }> => {
+  try {
+    const res = await api.post<
+      { status: "friends" | "request-sent" | "request-received" | "not-friends" } | ErrorMsg
+    >(`${FRIENDS_API_URL}/${username}/status`, { auth });
+    return res.data;
+  } catch (error) {
+    return exceptionToErrorMsg(error);
+  }
+};

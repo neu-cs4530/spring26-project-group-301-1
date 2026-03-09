@@ -3,9 +3,15 @@ import { useEffect, useState } from "react";
 import useTimeSince from "../hooks/useTimeSince";
 import useLoginContext from "../hooks/useLoginContext";
 import { getUserById } from "../services/userService";
-import { getFriends, sendFriendRequest, removeFriend } from "../services/friendsService";
+import { getFriendStatus, sendFriendRequest, removeFriend } from "../services/friendsService";
 
-type FriendStatus = "loading" | "friends" | "not-friends" | "request-sent" | "error";
+type FriendStatus =
+  | "loading"
+  | "friends"
+  | "not-friends"
+  | "request-sent"
+  | "request-received"
+  | "error";
 
 interface ViewProfileProps {
   username: string;
@@ -47,26 +53,29 @@ export default function ViewProfile({ username }: ViewProfileProps) {
   useEffect(() => {
     let cancel = false;
 
-    getFriends(username).then((res) => {
+    getFriendStatus({ username: self.username, password: pass }, username).then((res) => {
       if (cancel) return;
       if ("error" in res) {
         setFriendStatus("error");
         return;
       }
-      const isFriend = res.some((f) => f.user.username === self.username);
-      setFriendStatus(isFriend ? "friends" : "not-friends");
+      setFriendStatus(res.status as FriendStatus);
     });
 
     return () => {
       cancel = true;
     };
-  }, [username, self.username]);
+  }, [pass, self.username, username]);
 
   async function handleSendRequest() {
     setFriendActionErr(null);
     const res = await sendFriendRequest({ username: self.username, password: pass }, username);
     if ("error" in res) {
-      setFriendActionErr(res.error);
+      if (res.error.includes("Conflict")) {
+        setFriendStatus("request-sent");
+      } else {
+        setFriendActionErr(res.error);
+      }
     } else {
       setFriendStatus("request-sent");
     }
@@ -90,6 +99,8 @@ export default function ViewProfile({ username }: ViewProfileProps) {
         return "Friends";
       case "not-friends":
         return "Not Friends";
+      case "request-received":
+        return "Request Received";
       case "request-sent":
         return "Request Sent";
       case "error":

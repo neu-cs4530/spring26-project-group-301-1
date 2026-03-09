@@ -148,3 +148,35 @@ describe("GET /api/friends/:username", () => {
     expect(response.body).toMatchObject([{ user: { username: "user1" } }]);
   });
 });
+
+describe("POST /api/friends/:username/status", () => {
+  it("should return 'not_friends' for users who are not friends", async () => {
+    response = await supertest(app)
+      .post("/api/friends/user0/status")
+      .send({ auth: auth0, payload: { otherUsername: "user1" } });
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ status: "not-friends" });
+  });
+
+  it("should return 'friends' for users who are friends", async () => {
+    await supertest(app)
+      .post("/api/friends/request")
+      .send({
+        auth: auth0,
+        payload: { toUsername: "user1" },
+      });
+    const requests = await supertest(app)
+      .post("/api/friends/user1/requests")
+      .send({ auth: auth1, payload: {} });
+    const requestId = requests.body[0].requestId;
+    await supertest(app)
+      .post(`/api/friends/request/${requestId}/resolve`)
+      .send({ auth: auth1, payload: { requestId, action: "accept" } });
+
+    response = await supertest(app)
+      .post("/api/friends/user1/status")  // check user0's status with user1
+.send({ auth: auth0 });
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ status: "friends" });
+  });
+});
