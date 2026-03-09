@@ -10,6 +10,7 @@ import useLoginContext from "./useLoginContext.ts";
  * - `hasWatched`: Boolean that goes from false to true once the server has
  *   acknowledged the socket connection request
  * - `players`: The current list of game players.
+ * - `viewers`: The current number of viewers.
  * - `userPlayerIndex`: The index of the current user in the `players` array,
  *   or null if the user is not a player
  * - `view`: The current game view for this user
@@ -22,6 +23,7 @@ export default function useSocketsForGame(gameId: string, initialPlayers: SafeUs
   const [view, setView] = useState<null | TaggedGameView>(null);
   const [hasWatched, setHasWatched] = useState<boolean>(false);
   const [players, setPlayers] = useState<SafeUserInfo[]>(initialPlayers);
+  const [viewers, setViewers] = useState<number>(0);
   const userPlayerIndex = players.findIndex(({ username }) => username === user.username);
 
   useEffect(() => {
@@ -43,15 +45,23 @@ export default function useSocketsForGame(gameId: string, initialPlayers: SafeUs
       setView(view);
     };
 
+    const handleViewersUpdated = (currentViewers: number) => {
+      setViewers(currentViewers);
+    };
+
     socket.on("gameWatched", handleWatched);
     socket.on("gamePlayersUpdated", handlePlayersUpdated);
     socket.on("gameStateUpdated", handleStateUpdated);
+    socket.on("gameViewCountUpdated", handleViewersUpdated);
     socket.emit("gameWatch", { auth, payload: gameId });
 
     return () => {
+      socket.emit("gameNotWatched", { auth, payload: gameId });
+
       socket.off("gameWatched", handleWatched);
       socket.off("gamePlayersUpdated", handlePlayersUpdated);
       socket.off("gameStateUpdated", handleStateUpdated);
+      socket.off("gameViewCountUpdated", handleViewersUpdated);
     };
   }, [gameId, socket, userPlayerIndex, auth]);
 
@@ -66,6 +76,7 @@ export default function useSocketsForGame(gameId: string, initialPlayers: SafeUs
   return {
     hasWatched,
     players,
+    viewers,
     userPlayerIndex,
     view,
     joinGame,

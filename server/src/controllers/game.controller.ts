@@ -79,7 +79,7 @@ function userRoom(gameId: string, user: string) {
  * players and the appropriate view of the game's state. The server also needs
  * to register the user for future updates about the game's state.
  */
-export const socketWatch: SocketAPI = (socket) => async (body) => {
+export const socketWatch: SocketAPI = (socket, io) => async (body) => {
   try {
     const { auth, payload: gameId } = withAuth(z.string()).parse(body);
     const user = await enforceAuth(auth);
@@ -87,6 +87,30 @@ export const socketWatch: SocketAPI = (socket) => async (body) => {
     const roomsToJoin = isPlayer ? [gameId, userRoom(gameId, user.userId)] : [gameId];
     await socket.join(roomsToJoin);
     socket.emit("gameWatched", { gameId, view, players });
+
+    const viewers = io.sockets.adapter.rooms.get(gameId);
+    if (viewers) {
+      const viewCount = viewers.size;
+      io.to(gameId).emit("gameViewCountUpdated", viewCount);
+    }
+  } catch (err) {
+    logSocketError(socket, err);
+  }
+};
+
+/**
+ * Handles socket request sent by a user when they navigate away from a game page.
+ * Sends the updated viewer count to all other endpoints listening to that game room.
+ */
+export const socketNotWatched: SocketAPI = (socket, io) => async (body) => {
+  try {
+    const { auth, payload: gameId } = withAuth(z.string()).parse(body);
+    const user = await enforceAuth(auth);
+    await socket.leave(gameId);
+    await socket.leave(userRoom(gameId, user.userId));
+    const viewers = io.sockets.adapter.rooms.get(gameId);
+    const viewCount = viewers ? viewers.size : 0;
+    io.to(gameId).emit("gameViewCountUpdated", viewCount);
   } catch (err) {
     logSocketError(socket, err);
   }

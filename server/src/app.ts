@@ -82,6 +82,7 @@ io.on("connection", (socket) => {
   socket.on("gameMakeMove", game.socketMakeMove(socket, io));
   socket.on("gameStart", game.socketStart(socket, io));
   socket.on("gameWatch", game.socketWatch(socket, io));
+  socket.on("gameNotWatched", game.socketNotWatched(socket, io));
 
   socket.onAny((name, payload) => {
     const zPayload = z.object({ auth: z.object({ username: z.string() }), payload: z.any() });
@@ -97,5 +98,17 @@ io.on("connection", (socket) => {
   });
   socket.onAnyOutgoing((name) => {
     console.log(`SEND [${socketId}] gets ${name}`);
+  });
+
+  // handles cleanup when browser page is closed
+  socket.on("disconnecting", () => {
+    const rooms = new Set(socket.rooms);
+    socket.once("disconnect", () => {
+      rooms.forEach((room) => {
+        const viewers = io.sockets.adapter.rooms.get(room);
+        const viewCount = viewers ? viewers.size : 0;
+        io.to(room).emit("gameViewCountUpdated", viewCount);
+      });
+    });
   });
 });
