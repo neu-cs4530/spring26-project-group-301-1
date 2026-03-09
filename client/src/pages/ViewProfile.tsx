@@ -82,6 +82,21 @@ export default function ViewProfile({ username }: ViewProfileProps) {
     }
   }
 
+  function friendStatusLabel() {
+    switch (friendStatus) {
+      case "loading":
+        return null;
+      case "friends":
+        return "Friends";
+      case "not-friends":
+        return "Not Friends";
+      case "request-sent":
+        return "Request Sent";
+      case "error":
+        return null;
+    }
+  }
+
   function renderFriendControls() {
     switch (friendStatus) {
       case "loading":
@@ -117,6 +132,7 @@ export default function ViewProfile({ username }: ViewProfileProps) {
           <ul>
             {!componentState.user.hideUsername && <li>Username: {componentState.user.username}</li>}
             <li>Account created {timeSince(componentState.user.createdAt)}</li>
+            {friendStatusLabel() && <li>Friend Status: {friendStatusLabel()}</li>}
           </ul>
           <div style={{ alignSelf: "flex-start" }}>{renderFriendControls()}</div>
           {friendActionErr && <p className="error-message">{friendActionErr}</p>}
