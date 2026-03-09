@@ -62,6 +62,7 @@ app.use(
         .get("/:username", friends.getByUsername)
         .post("/request", friends.postRequest)
         .post("/request/:requestId/resolve", friends.postResolve)
+        .post("/:username/status", friends.getStatus)
         .post("/remove", friends.postRemove),
     ),
 );

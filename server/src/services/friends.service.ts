@@ -149,3 +149,28 @@ export async function areFriends(a: string, b: string): Promise<boolean> {
   const rec = await FriendRepo.find(friendKey(a, b));
   return rec !== null && rec.usernameA !== "";
 }
+
+/**
+ * Returns the friendship status between two users from the perspective of `from`.
+ *
+ * @param from the username of the user making the request
+ * @param to the username of the user being viewed
+ * @returns "friends" | "request-sent" | "request-received" | "not-friends"
+ */
+export async function getFriendStatus(
+  from: string,
+  to: string,
+): Promise<"friends" | "request-sent" | "request-received" | "not-friends"> {
+  const existing = await areFriends(from, to);
+  if (existing) return "friends";
+
+  const allKeys = await FriendRequestRepo.getAllKeys();
+  for (const key of allKeys) {
+    const req = await FriendRequestRepo.get(key);
+    if (req.status !== "pending") continue;
+    if (req.fromUsername === from && req.toUsername === to) return "request-sent";
+    if (req.fromUsername === to && req.toUsername === from) return "request-received";
+  }
+
+  return "not-friends";
+}
