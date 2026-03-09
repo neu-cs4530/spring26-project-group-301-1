@@ -194,6 +194,28 @@ function chooseAutomatedMove(state: AutomatedTicTacToeState): TicTacToeMove | nu
   return bestMove;
 }
 
+function getWinnerSymbol(board: TicTacToeBoard): TicTacEntry {
+  const winning = getWinningEntry(board);
+  if (!winning) return null;
+  const [a] = winning;
+  return board[a[0]][a[1]];
+}
+
+function findNewMoveForSymbol(
+  before: TicTacToeBoard,
+  after: TicTacToeBoard,
+  symbol: TicTacEntry,
+): [number, number] | null {
+  for (let r = 0; r < 3; r += 1) {
+    for (let c = 0; c < 3; c += 1) {
+      if (before[r][c] !== after[r][c] && after[r][c] === symbol) {
+        return [r, c];
+      }
+    }
+  }
+  return null;
+}
+
 export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, AutomatedTicTacToeView> = {
   minPlayers: 1,
   maxPlayers: 1,
@@ -256,19 +278,41 @@ export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, Automat
     winningEntry: getWinningEntry(state.board as TicTacToeBoard),
   }),
   tagView: (view) => ({ type: "automatedTicTacToe", view }),
-  describeMove: (_prevState, newState, payload) => {
+  describeMove: (prevState, newState, payload) => {
     const move = zTicTacToeMove.parse(payload);
     const [i, j] = move;
-    if (
-      isGameDone(newState.board as TicTacToeBoard) &&
-      getWinningEntry(newState.board as TicTacToeBoard)
-    ) {
-      return ` moved at (${i}, ${j}) and won the game`;
+
+    const aiPlayer = newState.autoPlayer ?? DEFAULT_AUTO_PLAYER_INDEX;
+    const aiSymbol = PLAYER_IDX_TO_ENTRY_MAP[aiPlayer];
+    const aiMove = findNewMoveForSymbol(
+      prevState.board as TicTacToeBoard,
+      newState.board as TicTacToeBoard,
+      aiSymbol,
+    );
+
+    const winner = getWinnerSymbol(newState.board as TicTacToeBoard);
+
+    const humanMsg =
+      winner && winner !== aiSymbol
+        ? ` moved at (${i}, ${j}) and won the game`
+        : ` moved at (${i}, ${j})`;
+
+    if (!aiMove) {
+      if (isBoardFull(newState.board as TicTacToeBoard)) {
+        return ` moved at (${i}, ${j}) and ended the game in a draw`;
+      }
+      return humanMsg;
     }
-    if (isBoardFull(newState.board as TicTacToeBoard)) {
-      return ` moved at (${i}, ${j}) and ended the game in a draw`;
-    }
-    return ` moved at (${i}, ${j})`;
+
+    const [r, c] = aiMove;
+    const aiMsg =
+      winner === aiSymbol
+        ? ` automated opponent moved at (${r}, ${c}) and won the game`
+        : isBoardFull(newState.board as TicTacToeBoard)
+          ? ` automated opponent moved at (${r}, ${c}) and ended the game in a draw`
+          : ` automated opponent moved at (${r}, ${c})`;
+
+    return `${humanMsg}||${aiMsg}`;
   },
 };
 

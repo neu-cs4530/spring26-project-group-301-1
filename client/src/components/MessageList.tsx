@@ -24,10 +24,18 @@ export default function MessageList({ messages }: MessageListProps) {
         {messages.map((message) => {
           if ("meta" in message) {
             if (message.meta === "move") {
+              const moveText = message.moveDescription.trimStart();
+              const isAutomatedMove = moveText.startsWith("automated opponent moved");
+
               return (
                 <div key={message.messageId} className="chatMoveLog">
-                  <UserLink user={message.user} />
-                  {message.moveDescription}
+                  {isAutomatedMove ? (
+                    moveText
+                  ) : (
+                    <>
+                      <UserLink user={message.user} /> {moveText}
+                    </>
+                  )}
                 </div>
               );
             }

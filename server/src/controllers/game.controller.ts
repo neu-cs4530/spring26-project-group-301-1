@@ -162,14 +162,23 @@ export const socketMakeMove: SocketAPI = (socket, io) => async (body) => {
     } = withAuth(zGameMakeMovePayload).parse(body);
     const user = await enforceAuth(auth);
     const { views, moveDescription, chatId } = await updateGame(gameId, user, move);
+
+    // Split "human||automated" into separate chat messages.
+    // For normal games, this is just one entry.
+    const moveMessages = (moveDescription ?? "")
+      .split("||")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    // Broadcast state update
     sendViewUpdates(io, gameId, views);
 
-    // Store the move description suffix and broadcast to the chat room
-    const now = new Date();
-    const moveLogPayload = await addMoveLogToChat(chatId, moveDescription, user, now);
-
-    // Broadcast the move log to the chat room
-    io.to(chatId).emit("chatMoveLog", moveLogPayload);
+    // Store + emit each move log as its own chat message
+    for (const text of moveMessages) {
+      const now = new Date();
+      const moveLogPayload = await addMoveLogToChat(chatId, text, user, now);
+      io.to(chatId).emit("chatMoveLog", moveLogPayload);
+    }
   } catch (err) {
     logSocketError(socket, err);
   }
