@@ -173,9 +173,7 @@ describe("POST /api/friends/:username/status", () => {
       .post(`/api/friends/request/${requestId}/resolve`)
       .send({ auth: auth1, payload: { requestId, action: "accept" } });
 
-    response = await supertest(app)
-      .post("/api/friends/user1/status")  // check user0's status with user1
-.send({ auth: auth0 });
+    response = await supertest(app).post("/api/friends/user1/status").send({ auth: auth0 });
     expect(response.status).toBe(200);
     expect(response.body).toEqual({ status: "friends" });
   });

@@ -65,7 +65,7 @@ export default function ViewProfile({ username }: ViewProfileProps) {
     return () => {
       cancel = true;
     };
-  }, [pass, self.username, username]);
+  }, [self.username, pass, username]);
 
   async function handleSendRequest() {
     setFriendActionErr(null);
@@ -126,11 +126,13 @@ export default function ViewProfile({ username }: ViewProfileProps) {
         );
       case "request-sent":
         return <span className="smallAndGray">Friend request sent</span>;
+      case "request-received":
+        return <span className="smallAndGray">They sent you a friend request</span>;
       case "error":
+      default:
         return null;
     }
   }
-
   switch (componentState.type) {
     case "error":
       return <div style={{ color: "#f00" }}>{componentState.msg}</div>;
