@@ -52,7 +52,13 @@ export default function GameDispatch({
       gameComponent = <GuessGame {...{ ...childProps, view: view.view }} />;
       break;
     case "tictactoe":
-      return <TicTacToeGame {...{ ...childProps, view: view.view }} />;
+      gameComponent = <TicTacToeGame {...{ ...childProps, view: view.view }} />;
+      break;
+    case "automatedTicTacToe":
+      gameComponent = <TicTacToeGame {...{ ...childProps, view: view.view }} />;
+      break;
+    default:
+      gameComponent = null;
   }
   return <div style={{ minHeight: "100vh", ...backgroundStyle }}>{gameComponent}</div>;
 }

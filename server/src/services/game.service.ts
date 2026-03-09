@@ -5,6 +5,7 @@ import { type GameServicer } from "../games/gameServiceManager.ts";
 import { nimGameService } from "../games/nim.ts";
 import { guessGameService } from "../games/guess.ts";
 import { ticTacToeGameService } from "../games/ticTacToe.ts";
+import { automatedTicTacToeGameService } from "../games/automatedTicTacToe.ts";
 import { type GameViewUpdates, type UserWithId } from "../types.ts";
 import { GameRepo } from "../repository.ts";
 
@@ -18,14 +19,7 @@ export const gameServices: Record<GameKey, GameServicer> = {
   nim: nimGameService,
   guess: guessGameService,
   tictactoe: ticTacToeGameService,
-  automatedTicTacToe: {
-    minPlayers: 1,
-    maxPlayers: 1,
-    create: (players) => ticTacToeGameService.create(players),
-    update: (state, move, playerIndex, players) =>
-      ticTacToeGameService.update(state, move, playerIndex, players),
-    view: (state, playerIndex) => ticTacToeGameService.view(state, playerIndex),
-  },
+  automatedTicTacToe: automatedTicTacToeGameService,
 };
 
 function getGameService(type: GameKey): GameServicer {
