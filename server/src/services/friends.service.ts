@@ -87,8 +87,7 @@ export async function removeFriend(callerUsername: string, otherUsername: string
   const existing = await FriendRepo.find(key);
   if (!existing) throw new Error("Not friends");
 
-  throw new Error("Unfriending not implemented");
-  // TODO need to decide whether to delete the record or just set usernames to empty string but keep friendsSince
+  await FriendRepo.delete(key);
 }
 
 /**
