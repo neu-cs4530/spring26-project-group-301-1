@@ -77,3 +77,10 @@ describe(`Nim's tagView() logic`, () => {
     });
   });
 });
+
+describe(`Nim's getWinner() logic`, () => {
+  it("Should return the player who did not take the last token", () => {
+    expect(nimLogic.getWinner({ remaining: 0, nextPlayer: 0 }, ["user1", "user2"])).toBe("user2");
+    expect(nimLogic.getWinner({ remaining: 0, nextPlayer: 1 }, ["user1", "user2"])).toBe("user1");
+  });
+});

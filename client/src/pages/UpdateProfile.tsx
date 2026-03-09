@@ -7,8 +7,23 @@ export default function UpdateProfile() {
   const { user } = useLoginContext();
   const timeSince = useTimeSince();
   const [showPass, setShowPass] = useState(false);
-  const { display, setDisplay, password, setPassword, confirm, setConfirm, err, handleSubmit } =
-    useEditProfileForm();
+  const {
+    backgroundType,
+    setBackgroundType,
+    color,
+    setColor,
+    imageUrl,
+    setImageUrl,
+    presetColors,
+    password,
+    setPassword,
+    confirm,
+    setConfirm,
+    hideUsername,
+    setHideUsername,
+    err,
+    handleSubmit,
+  } = useEditProfileForm();
 
   return (
     <form className="content spacedSection" onSubmit={handleSubmit}>
@@ -22,30 +37,71 @@ export default function UpdateProfile() {
       </div>
       <hr />
       <div className="spacedSection">
-        <h3>Display name</h3>
-        <div style={{ display: "flex", flexDirection: "row", gap: "0.5rem" }}>
-          <input
-            className="widefill notTooWide"
-            value={display}
-            onChange={(e) => setDisplay(e.target.value)}
-          />
+        <h3>Game background</h3>
+        <div style={{ display: "flex", flexDirection: "row", gap: "0.5rem", alignItems: "center" }}>
+          <select value={backgroundType} onChange={(e) => setBackgroundType(e.target.value)}>
+            <option value="color">Color</option>
+            <option value="preset">Image</option>
+          </select>
+          {backgroundType === "color" ? (
+            <>
+              <input
+                type="color"
+                value={color}
+                onChange={(e) => setColor(e.target.value)}
+                style={{ width: "2.5em", height: "2em", border: "none", background: "none" }}
+                title={color}
+              />
+            </>
+          ) : (
+            <>
+              <select
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+                className="widefill notTooWide"
+              >
+                <option value="" disabled>
+                  Select an image
+                </option>
+                <option value="/backgrounds/stripes.jpeg">Stripes</option>
+                <option value="/backgrounds/sky.jpeg">Sky</option>
+                <option value="/backgrounds/pastel.jpeg">Pastels</option>
+                <option value="/backgrounds/lake.jpeg">Lake</option>
+              </select>
+              {imageUrl && (
+                <img
+                  src={imageUrl}
+                  alt="Preset preview"
+                  style={{ width: 60, height: 60, marginLeft: "1em", borderRadius: 8 }}
+                />
+              )}
+            </>
+          )}
           <button
             className="secondary narrow"
             onClick={(e) => {
-              e.preventDefault(); // Don't submit form
-              setDisplay(user.display);
+              e.preventDefault();
+              if (backgroundType === "color") {
+                setColor(
+                  user.customBackground && presetColors.includes(user.customBackground)
+                    ? user.customBackground
+                    : presetColors[0],
+                );
+              } else {
+                setImageUrl("");
+              }
             }}
           >
             Reset
           </button>
         </div>
+        <div className="smallAndGray">Choose a color or image for your game background.</div>
       </div>
-      <hr />
       <div className="spacedSection">
-        <h3>Reset password</h3>
+        <h3>Password</h3>
         <div style={{ display: "flex", flexDirection: "row", gap: "0.5rem" }}>
           <input
-            type={showPass ? "input" : "password"}
+            type={showPass ? "text" : "password"}
             className="widefill notTooWide"
             placeholder="New password"
             value={password}
@@ -53,19 +109,8 @@ export default function UpdateProfile() {
           />
           <button
             className="secondary narrow"
-            onClick={(e) => {
-              e.preventDefault(); // Don't submit form
-              setPassword("");
-              setConfirm("");
-            }}
-          >
-            Reset
-          </button>
-          <button
-            className="secondary narrow"
-            aria-label="Toggle show password"
-            onClick={(e) => {
-              e.preventDefault(); // Don't submit form
+            onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+              e.preventDefault();
               setShowPass((v) => !v);
             }}
           >
@@ -74,7 +119,7 @@ export default function UpdateProfile() {
         </div>
         <div style={{ display: "flex", flexDirection: "row", gap: "0.5rem" }}>
           <input
-            type={showPass ? "input" : "password"}
+            type={showPass ? "text" : "password"}
             className="widefill notTooWide"
             placeholder="Confirm new password"
             value={confirm}
@@ -83,9 +128,27 @@ export default function UpdateProfile() {
         </div>
       </div>
       <hr />
+      <div className="spacedSection">
+        <h3>Privacy</h3>
+        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "0.5rem" }}>
+          <button
+            className="secondary narrow"
+            aria-label="Toggle hide username"
+            onClick={(e) => {
+              e.preventDefault(); // Don't submit form
+              setHideUsername((v) => !v);
+            }}
+          >
+            {hideUsername ? "Unhide username" : "Hide username"}
+          </button>
+        </div>
+      </div>
+      <hr />
       {err && <p className="error-message">{err}</p>}
       <div>
-        <button className="primary narrow">Submit</button>
+        <button aria-label="Submit profile edits" className="primary narrow">
+          Submit
+        </button>
       </div>
       <div className="smallAndGray">After updating your profile, you will be logged out</div>
     </form>

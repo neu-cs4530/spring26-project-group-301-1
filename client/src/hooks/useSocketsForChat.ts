@@ -5,16 +5,15 @@ import type {
   ChatMoveLogPayload,
   ChatNewMessagePayload,
   ChatUserJoinedPayload,
+  ChatSendErrorPayload,
 } from "@gamenite/shared";
+import { MESSAGE_COOLDOWN_MS } from "@gamenite/shared";
 import type { ChatMessage } from "../util/types.ts";
 import useAuth from "./useAuth.ts";
 
 /** Extract the timestamp from any ChatMessage variant */
 function messageTime(msg: ChatMessage): number {
   const date = "createdAt" in msg ? msg.createdAt : msg.dateTime;
-  // TypeScript claims `date` is type `Date`, but this isn't always accurate:
-  // `createdAt` times that are sent via JSON are turned into strings. Here
-  // we use a slightly hacky fix to ensure we'll get a correct date.
   if (typeof date === "string") return new Date(date).getTime();
   return date.getTime();
 }
@@ -51,6 +50,9 @@ export default function useSocketsForChat(chatId: string) {
   const auth = useAuth();
   const { user, socket } = useLoginContext();
   const [messages, setMessages] = useState<ChatMessage[] | null>(null);
+  const [cooldownUntil, setCooldownUntil] = useState<number>(0);
+  const [cooldownMessage, setCooldownMessage] = useState<string | null>(null);
+  const [showCooldownFeedback, setShowCooldownFeedback] = useState<boolean>(false);
 
   useEffect(() => {
     const handleChatJoined = (chat: ChatInfo) => {
@@ -77,6 +79,8 @@ export default function useSocketsForChat(chatId: string) {
       socket.on("chatNewMessage", handleNewMessage);
       socket.on("chatUserJoined", handleUserJoined);
       socket.on("chatMoveLog", handleMoveLog);
+      socket.on("chatSendError", handleSocketError);
+      socket.on("error", handleSocketError);
     };
 
     const handleNewMessage = (payload: ChatNewMessagePayload) => {
@@ -122,20 +126,72 @@ export default function useSocketsForChat(chatId: string) {
       }
     };
 
+    const handleSocketError = (err: ChatSendErrorPayload) => {
+      if (err?.code !== "MESSAGE_COOLDOWN") return;
+      const retryAfterMs = Math.max(0, err.retryAfterMs ?? 0);
+      setCooldownUntil(Date.now() + retryAfterMs);
+      setShowCooldownFeedback(true);
+      setCooldownMessage(
+        retryAfterMs > 0
+          ? `Cooldown active. Try again in ${Math.ceil(retryAfterMs / 1000)}s.`
+          : "Cooldown active. Message not sent.",
+      );
+    };
+
     socket.emit("chatJoin", { auth, payload: chatId });
     socket.on("chatJoined", handleChatJoined);
+
     return () => {
       socket.off("chatNewMessage", handleNewMessage);
       socket.off("chatUserJoined", handleUserJoined);
       socket.off("chatJoined", handleChatJoined);
       socket.off("chatMoveLog", handleMoveLog);
+      socket.off("chatSendError", handleSocketError);
       socket.emit("chatLeave", { auth, payload: chatId });
     };
   }, [socket, auth, chatId, user]);
 
-  function handleMessageCreation(text: string) {
-    socket.emit("chatSendMessage", { auth, payload: { chatId, text } });
+  // Live countdown only while warning is visible
+  useEffect(() => {
+    if (!showCooldownFeedback) return;
+
+    const timer = window.setInterval(() => {
+      const remainingMs = cooldownUntil - Date.now();
+      if (remainingMs <= 0) {
+        setCooldownMessage(null);
+        setShowCooldownFeedback(false);
+        return;
+      }
+      setCooldownMessage(`Cooldown active. Try again in ${Math.ceil(remainingMs / 1000)}s.`);
+    }, 250);
+
+    return () => window.clearInterval(timer);
+  }, [showCooldownFeedback, cooldownUntil]);
+
+  function handleMessageCreation(text: string): boolean {
+    const trimmed = text.trim();
+    if (!trimmed) return false;
+
+    const now = Date.now();
+    if (now < cooldownUntil) {
+      setShowCooldownFeedback(true);
+      setCooldownMessage(
+        `Cooldown active. Try again in ${Math.ceil((cooldownUntil - now) / 1000)}s.`,
+      );
+      return false;
+    }
+
+    socket.emit("chatSendMessage", { auth, payload: { chatId, text: trimmed } });
+
+    // optimistic local cooldown
+    setCooldownUntil(now + MESSAGE_COOLDOWN_MS);
+
+    // hide warning unless user triggers cooldown
+    setShowCooldownFeedback(false);
+    setCooldownMessage(null);
+
+    return true;
   }
 
-  return { messages, handleMessageCreation };
+  return { messages, handleMessageCreation, cooldownUntil, cooldownMessage };
 }

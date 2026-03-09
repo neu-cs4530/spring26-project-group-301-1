@@ -8,6 +8,9 @@ import {
   MessageRepo,
   ThreadRepo,
   UserRepo,
+  UserStatsRepo,
+  FriendRequestRepo,
+  FriendRepo,
 } from "./repository.ts";
 import type { GameRecord, ThreadRecord } from "./models.ts";
 import { createChat } from "./services/chat.service.ts";
@@ -125,6 +128,9 @@ export async function resetEverythingToDefaults() {
   await MessageRepo.clear();
   await ThreadRepo.clear();
   await UserRepo.clear();
+  await UserStatsRepo.clear();
+  await FriendRepo.clear();
+  await FriendRequestRepo.clear();
 
   await resetStoredUsers();
   await resetStoredThreads();

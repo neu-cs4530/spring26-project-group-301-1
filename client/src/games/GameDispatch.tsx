@@ -1,6 +1,7 @@
 import type { SafeUserInfo, TaggedGameView } from "@gamenite/shared";
 import NimGame from "./NimGame.tsx";
 import GuessGame from "./GuessGame.tsx";
+import TicTacToeGame from "./TicTacToeGame.tsx";
 import { type JSX } from "react";
 import useLoginContext from "../hooks/useLoginContext.ts";
 import useAuth from "../hooks/useAuth.ts";
@@ -18,18 +19,40 @@ export default function GameDispatch({
   players,
   view,
 }: GameDispatchProps): JSX.Element {
-  const { socket } = useLoginContext();
+  const { socket, user } = useLoginContext();
   const auth = useAuth();
 
   function makeMove(move: unknown) {
     socket.emit("gameMakeMove", { auth, payload: { gameId, move } });
   }
 
+  // Determine background style
+  const backgroundStyle: React.CSSProperties = {};
+  if (user.customBackground) {
+    if (user.customBackground.startsWith("#") || user.customBackground.startsWith("rgb")) {
+      backgroundStyle.background = user.customBackground;
+    } else if (user.customBackground.startsWith("/")) {
+      // Local preset image path
+      backgroundStyle.backgroundImage = `url('${user.customBackground}')`;
+      backgroundStyle.backgroundSize = "cover";
+      backgroundStyle.backgroundPosition = "center";
+    } else {
+      // Fallback: treat as color
+      backgroundStyle.background = user.customBackground;
+    }
+  }
+
   const childProps = { userPlayerIndex, players, makeMove };
+  let gameComponent: JSX.Element | null = null;
   switch (view.type) {
     case "nim":
-      return <NimGame {...{ ...childProps, view: view.view }} />;
+      gameComponent = <NimGame {...{ ...childProps, view: view.view }} />;
+      break;
     case "guess":
-      return <GuessGame {...{ ...childProps, view: view.view }} />;
+      gameComponent = <GuessGame {...{ ...childProps, view: view.view }} />;
+      break;
+    case "tictactoe":
+      return <TicTacToeGame {...{ ...childProps, view: view.view }} />;
   }
+  return <div style={{ minHeight: "100vh", ...backgroundStyle }}>{gameComponent}</div>;
 }

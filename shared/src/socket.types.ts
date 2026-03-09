@@ -37,4 +37,12 @@ export interface ServerToClientEvents {
   gameStateUpdated: (payload: TaggedGameView & { forPlayer: boolean }) => void;
   gameWatched: (payload: GamePlayInfo) => void;
   gameViewCountUpdated: (payload: number) => void;
+  chatSendError: (payload: ChatSendErrorPayload) => void;
+  error: (payload: ChatSendErrorPayload) => void;
 }
+
+export type ChatSendErrorPayload = {
+  code: string;
+  message: string;
+  retryAfterMs?: number;
+};

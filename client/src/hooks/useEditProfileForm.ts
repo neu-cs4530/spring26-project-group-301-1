@@ -13,9 +13,56 @@ import type { UserUpdateRequest } from "@gamenite/shared";
  *  - Submission handler `handleSubmit`
  */
 export default function useEditProfileForm() {
+  // Helper for image URL validation
+  async function validateImageUrl(url: string): Promise<string | null> {
+    if (url && !url.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+      return "Image URL must end with .jpg, .jpeg, .png, .gif, or .webp";
+    }
+    if (url) {
+      try {
+        const resp = await fetch(url, { method: "HEAD" });
+        const size = resp.headers.get("content-length");
+        if (size && parseInt(size) > 2 * 1024 * 1024) {
+          return "Image file is too large (max 2MB)";
+        }
+      } catch {
+        return "Could not validate image size. Please check the URL.";
+      }
+    }
+    return null;
+  }
   const { user, reset } = useLoginContext();
   const [display, setDisplay] = useState(user.display);
+  // backgroundType: 'color' or 'preset'
+  const initialBg = user.customBackground || "";
+  const presetColors = [
+    "#ffffff",
+    "#f8f9fa",
+    "#e0e0e0",
+    "#a7c7e7",
+    "#ffe4e1",
+    "#d1ffd6",
+    "#f7cac9",
+    "#b5ead7",
+    "#ffb347",
+    "#77dd77",
+  ];
+  function isHexColor(str: string) {
+    return /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(str);
+  }
+  function isPresetImage(str: string) {
+    return str.startsWith("/backgrounds/");
+  }
+  const isPreset = presetColors.includes(initialBg);
+  const isColor = isPreset || isHexColor(initialBg);
+  const isPresetImg = isPresetImage(initialBg);
+  const [backgroundType, setBackgroundType] = useState(
+    isColor ? "color" : isPresetImg ? "preset" : initialBg ? "image" : "color",
+  );
+  const [color, setColor] = useState(isColor ? initialBg : presetColors[0]);
+  const [imageUrl, setImageUrl] = useState(isPresetImg || !isColor ? initialBg : "");
   const [password, setPassword] = useState("");
+  const [hideUsername, setHideUsername] = useState<boolean>(user.hideUsername);
   const [confirm, setConfirm] = useState("");
   const [err, setErr] = useState<null | string>(null);
   const auth = useAuth();
@@ -26,7 +73,14 @@ export default function useEditProfileForm() {
   const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (user.display === display && password === confirm && password === "") {
+    const newBg = backgroundType === "color" ? color : imageUrl;
+    if (
+      user.display === display &&
+      (user.customBackground || "") === newBg &&
+      password === confirm &&
+      password === "" &&
+      user.hideUsername === hideUsername
+    ) {
       setErr("No changes to submit");
       return;
     }
@@ -53,7 +107,9 @@ export default function useEditProfileForm() {
 
     const updates: UserUpdateRequest = {};
     if (display !== user.display) updates.display = display;
+    if (newBg !== (user.customBackground || "")) updates.customBackground = newBg;
     if (password !== "") updates.password = password;
+    if (user.hideUsername !== hideUsername) updates.hideUsername = hideUsername;
     const response = await updateUser(auth, updates);
     if ("error" in response) {
       setErr(response.error);
@@ -67,11 +123,22 @@ export default function useEditProfileForm() {
   return {
     display,
     setDisplay,
+    backgroundType,
+    setBackgroundType,
+    color,
+    setColor,
+    imageUrl,
+    setImageUrl,
+    presetColors,
     password,
     setPassword,
     confirm,
     setConfirm,
+    hideUsername,
+    setHideUsername,
     err,
+    setErr,
     handleSubmit,
+    validateImageUrl,
   };
 }

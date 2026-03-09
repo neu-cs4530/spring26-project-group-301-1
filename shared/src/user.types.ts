@@ -6,11 +6,14 @@ import { z } from "zod";
  * - `username`: unique username of the user
  * - `display`: A display name
  * - `createdAt`: when this when the user registered.
+ * - `hideUsername`: privacy preference of user, will hide username from profile page.
  */
 export interface SafeUserInfo {
   username: string;
   display: string;
   createdAt: Date;
+  customBackground?: string;
+  hideUsername: boolean;
 }
 
 /*** TYPES USED IN THE USER API ***/
@@ -22,4 +25,6 @@ export type UserUpdateRequest = z.infer<typeof zUserUpdateRequest>;
 export const zUserUpdateRequest = z.object({
   password: z.string().optional(),
   display: z.string().optional(),
+  customBackground: z.string().optional(),
+  hideUsername: z.boolean().optional(),
 });

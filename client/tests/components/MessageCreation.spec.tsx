@@ -4,20 +4,25 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import MessageCreation from "../../src/components/MessageCreation.tsx";
 const handleMessageCreation = vi.fn();
 
+const defaultProps = {
+  cooldownUntil: 0,
+  cooldownMessage: null as string | null,
+};
+
 describe("MessageCreation component", () => {
   beforeEach(() => {
     handleMessageCreation.mockReset();
   });
 
   it("triggers the handler when the form is submitted", () => {
-    render(<MessageCreation handleMessageCreation={handleMessageCreation} />);
+    render(<MessageCreation handleMessageCreation={handleMessageCreation} {...defaultProps} />);
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "First?" } });
     fireEvent.submit(screen.getByTestId("message-creation-form"));
     expect(handleMessageCreation).toHaveBeenCalledExactlyOnceWith("First?");
   });
 
   it("triggers the handler when the button is clicked", () => {
-    render(<MessageCreation handleMessageCreation={handleMessageCreation} />);
+    render(<MessageCreation handleMessageCreation={handleMessageCreation} {...defaultProps} />);
 
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "Comment" } });
     fireEvent.click(screen.getByRole("button"));
@@ -25,7 +30,7 @@ describe("MessageCreation component", () => {
   });
 
   it("triggers the handler when Enter is checked", () => {
-    render(<MessageCreation handleMessageCreation={handleMessageCreation} />);
+    render(<MessageCreation handleMessageCreation={handleMessageCreation} {...defaultProps} />);
 
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "Comment" } });
     fireEvent.keyDown(screen.getByRole("textbox"), {
@@ -37,7 +42,7 @@ describe("MessageCreation component", () => {
   });
 
   it("does not triggers the handler when Enter is checked with the shift key active", () => {
-    render(<MessageCreation handleMessageCreation={handleMessageCreation} />);
+    render(<MessageCreation handleMessageCreation={handleMessageCreation} {...defaultProps} />);
 
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "Comment" } });
     fireEvent.keyDown(screen.getByRole("textbox"), {

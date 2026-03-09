@@ -8,6 +8,7 @@ export interface ErrorMsg {
 }
 
 export * from "./auth.types.ts";
+export * from "./chat.constants.ts";
 export * from "./chat.types.ts";
 export * from "./comment.types.ts";
 export * from "./game.types.ts";
@@ -15,3 +16,5 @@ export * from "./message.types.ts";
 export * from "./socket.types.ts";
 export * from "./thread.types.ts";
 export * from "./user.types.ts";
+export * from "./friend.types.ts";
+export * from "./leaderboard.types.ts";
