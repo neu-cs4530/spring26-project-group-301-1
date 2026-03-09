@@ -8,32 +8,66 @@ import { ticTacToeGameService } from "../games/ticTacToe.ts";
 import { type GameViewUpdates, type UserWithId } from "../types.ts";
 import { GameRepo } from "../repository.ts";
 
+// Infer the concrete stored game type from the repository instead of importing DbGame.
+type StoredGame = NonNullable<Awaited<ReturnType<typeof GameRepo.find>>>;
+
 /**
  * The service interface for individual games
  */
-export const gameServices: { [key in GameKey]: GameServicer } = {
+export const gameServices: Record<GameKey, GameServicer> = {
   nim: nimGameService,
   guess: guessGameService,
   tictactoe: ticTacToeGameService,
+  automatedTicTacToe: {
+    minPlayers: 1,
+    maxPlayers: 1,
+    create: (players) => ticTacToeGameService.create(players),
+    update: (state, move, playerIndex, players) =>
+      ticTacToeGameService.update(state, move, playerIndex, players),
+    view: (state, playerIndex) => ticTacToeGameService.view(state, playerIndex),
+  },
 };
+
+function getGameService(type: GameKey): GameServicer {
+  const service = gameServices[type];
+  if (!service) {
+    throw new Error(`No game service registered for game type: ${String(type)}`);
+  }
+  return service;
+}
 
 /**
  * Expand a stored game
  *
- * @param gameId - Valid game id
+ * @param gameOrId - Valid game or game id
  * @returns the expanded game info object
  */
-async function populateGameInfo(gameId: string): Promise<GameInfo> {
-  const game = await GameRepo.get(gameId);
+async function populateGameInfo(gameOrId: StoredGame | string): Promise<GameInfo> {
+  const game = typeof gameOrId === "string" ? await GameRepo.find(gameOrId) : gameOrId;
+  if (!game) throw new Error("Attempted to populate non-existent game");
+
+  const service = getGameService(game.type);
+
+  const gameId =
+    typeof gameOrId === "string"
+      ? gameOrId
+      : "gameId" in gameOrId && typeof gameOrId.gameId === "string"
+        ? gameOrId.gameId
+        : "";
+
+  if (!gameId) {
+    throw new Error("Attempted to populate game info without a valid game id");
+  }
+
   return {
     gameId,
-    createdBy: await populateSafeUserInfo(game.createdBy),
-    chat: game.chat,
-    createdAt: new Date(game.createdAt),
-    players: await Promise.all(game.players.map(populateSafeUserInfo)),
     type: game.type,
-    status: !game.state ? "waiting" : game.done ? "done" : "active",
-    minPlayers: gameServices[game.type].minPlayers,
+    chat: game.chat,
+    players: await Promise.all(game.players.map(populateSafeUserInfo)),
+    createdAt: new Date(game.createdAt),
+    createdBy: await populateSafeUserInfo(game.createdBy),
+    minPlayers: service.minPlayers,
+    status: game.done ? "done" : game.state ? "active" : "waiting",
   };
 }
 
@@ -93,7 +127,9 @@ export async function joinGame(gameId: string, user: UserWithId): Promise<GameIn
   if (game.players.some((userId) => userId === user.userId)) {
     throw new Error(`user ${user.username} joining game they are in already`);
   }
-  if (game.players.length === gameServices[game.type].maxPlayers) {
+
+  const service = getGameService(game.type);
+  if (game.players.length === service.maxPlayers) {
     throw new Error(`user ${user.username} joining full`);
   }
 
@@ -119,15 +155,16 @@ export async function startGame(gameId: string, user: UserWithId): Promise<GameV
     throw new Error(`user ${user.username} starting game that started`);
   }
 
-  const key: GameKey = game.type;
+  const service = getGameService(game.type);
 
-  if (game.players.length < gameServices[key].minPlayers) {
+  if (game.players.length < service.minPlayers) {
     throw new Error(`user ${user.username} starting underpopulated game`);
   }
   if (!game.players.some((userId) => userId === user.userId)) {
     throw new Error(`user ${user.username} starting game they're not in`);
   }
-  const { state, views } = gameServices[key].create(game.players);
+
+  const { state, views } = service.create(game.players);
 
   game.state = state;
   await GameRepo.set(gameId, game);
@@ -180,7 +217,9 @@ export async function updateGame(
   if (playerIndex < 0) {
     throw new Error(`user ${user.username} made a move in a game they weren't playing`);
   }
-  const result = gameServices[game.type].update(game.state, move, playerIndex, game.players);
+
+  const service = getGameService(game.type);
+  const result = service.update(game.state, move, playerIndex, game.players);
   if (!result) throw new Error(`user ${user.username} made an invalid move in ${game.type}`);
 
   game.state = result.state;
@@ -194,19 +233,14 @@ export async function updateGame(
   };
 }
 
-/**
- * View a game as a specific user
- * @param gameId - Ostensible game id
- * @param user - Authenticated user
- * @returns A boolean for whether that user is a player, the player's view, and the list of players
- */
 export async function viewGame(gameId: string, user: UserWithId) {
   const game = await GameRepo.find(gameId);
   if (!game) throw new Error(`user ${user.username} viewed an invalid game id`);
   const playerIndex = game.players.findIndex((userId) => userId === user.userId);
   let view: TaggedGameView | null = null;
   if (game.state) {
-    view = gameServices[game.type].view(game.state, playerIndex);
+    const service = getGameService(game.type);
+    view = service.view(game.state, playerIndex);
   }
   return {
     isPlayer: playerIndex >= 0,

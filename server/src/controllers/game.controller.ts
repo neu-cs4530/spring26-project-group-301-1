@@ -33,6 +33,14 @@ export const postCreate: RestAPI<GameInfo> = async (req, res) => {
   }
 
   const game = await createGame(user, body.data.payload, new Date());
+
+  if (game.type === "automatedTicTacToe") {
+    await startGame(game.gameId, user);
+    const started = await getGameById(game.gameId);
+    res.send(started ?? game);
+    return;
+  }
+
   res.send(game);
 };
 
