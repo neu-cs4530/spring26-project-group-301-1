@@ -26,10 +26,13 @@ export const getByUsername: RestAPI<FriendInfo[], { username: string }> = async 
 };
 
 /**
- * GET /api/friends/:username/requests
+ * POST /api/friends/:username/requests
  * Returns pending inbound friend requests for a user.
  */
-export const getRequests: RestAPI<FriendRequestInfo[], { username: string }> = async (req, res) => {
+export const postRequests: RestAPI<FriendRequestInfo[], { username: string }> = async (
+  req,
+  res,
+) => {
   const body = z.object({ auth: zUserAuth }).safeParse(req.body);
   if (body.error) {
     res.status(400).send({ error: "Poorly-formed request" });
@@ -76,7 +79,7 @@ export const postResolve: RestAPI<{ message: string }, { requestId: string }> = 
   req,
   res,
 ) => {
-  const body = withAuth(zResolveFriendRequestPayload).safeParse(req.body);
+  const body = withAuth(zResolveFriendRequestPayload.pick({ action: true })).safeParse(req.body);
   if (body.error) {
     res.status(400).send({ error: "Poorly-formed request" });
     return;

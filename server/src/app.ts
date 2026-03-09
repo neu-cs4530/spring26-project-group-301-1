@@ -58,7 +58,7 @@ app.use(
       "/friends",
       express
         .Router()
-        .post("/:username/requests", friends.getRequests)
+        .post("/:username/requests", friends.postRequests)
         .get("/:username", friends.getByUsername)
         .post("/request", friends.postRequest)
         .post("/request/:requestId/resolve", friends.postResolve)

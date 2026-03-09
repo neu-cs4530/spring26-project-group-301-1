@@ -8,8 +8,6 @@ const auth0 = { username: "user0", password: "pwd0000" };
 const auth1 = { username: "user1", password: "pwd1111" };
 const authBad = { username: "user0", password: "wrongpassword" };
 
-// ─── POST /api/friends/request ────────────────────────────────────────────────
-
 describe("POST /api/friends/request", () => {
   it("should return 400 on ill-formed payload", async () => {
     response = await supertest(app).post("/api/friends/request").send({
@@ -66,8 +64,6 @@ describe("POST /api/friends/request", () => {
     expect(response.status).toBe(409);
   });
 });
-
-// ─── POST /api/friends/request/:requestId/resolve ────────────────────────────
 
 describe("POST /api/friends/request/:requestId/resolve", () => {
   it("should return 403 with bad auth", async () => {
