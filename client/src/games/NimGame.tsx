@@ -7,7 +7,7 @@ export default function NimGame({
   userPlayerIndex,
   makeMove,
 }: GameProps<NimView, NimMove>) {
-  const disabled = userPlayerIndex !== view.nextPlayer || view.forfeits === true;
+  const disabled = userPlayerIndex !== view.nextPlayer || view.forfeited === true;
 
   /** Player's name */
   function playerDisplay(index: number) {
@@ -36,13 +36,13 @@ export default function NimGame({
       <div>
         There are {view.remaining} object{view.remaining !== 1 && "s"} left in the pile.
       </div>
-      {view.remaining > 0 && view.forfeits === false && (
+      {view.remaining > 0 && view.forfeited === false && (
         <div>Currently it is {playerPoss(view.nextPlayer)} turn</div>
       )}
-      {(view.remaining === 0 || view.forfeits === true) && (
+      {(view.remaining === 0 || view.forfeited === true) && (
         <div>
           The game is over:{" "}
-          {view.forfeits === true
+          {view.forfeited === true
             ? playerDisplay(view.nextPlayer) + " won by forfeit"
             : playerDisplay(view.nextPlayer) +
               " won by forcing " +

@@ -154,7 +154,7 @@ function getWinningEntry(board: TicTacToeBoard) {
  */
 function isGameDone(state: TicTacToeState) {
   return (
-    state.forfeits.some((forfeit) => forfeit) ||
+    state.forfeited === true ||
     checkWinbyEntry(state.board, "X") ||
     checkWinbyEntry(state.board, "O") ||
     isBoardFull(state.board)
@@ -164,14 +164,14 @@ function isGameDone(state: TicTacToeState) {
 export const ticTacToeLogic: GameLogic<TicTacToeState, TicTacToeView> = {
   minPlayers: 2,
   maxPlayers: 2,
-  start: (numPlayers) => ({
+  start: () => ({
     board: [
       [null, null, null],
       [null, null, null],
       [null, null, null],
     ],
     nextPlayer: 1,
-    forfeits: Array.from({ length: numPlayers }).map(() => false),
+    forfeited: false,
   }),
   update: (state, payload, playerIndex) => {
     const move = zTicTacToeMove.safeParse(payload);
@@ -183,13 +183,11 @@ export const ticTacToeLogic: GameLogic<TicTacToeState, TicTacToeView> = {
 
     const newBoard: TicTacToeBoard = [...state.board];
     if (move.data.type === "forfeit") {
-      if (state.forfeits.some((forfeit) => forfeit)) return null;
-      const newForfeits = [...state.forfeits];
-      newForfeits[playerIndex] = true;
+      if (state.forfeited === true) return null;
       return {
         board: newBoard,
         nextPlayer: (state.nextPlayer + 1) % NUM_PLAYERS,
-        forfeits: newForfeits,
+        forfeited: true,
       };
     }
 
@@ -205,7 +203,7 @@ export const ticTacToeLogic: GameLogic<TicTacToeState, TicTacToeView> = {
     const nextState: TicTacToeState = {
       board: newBoard,
       nextPlayer: (state.nextPlayer + 1) % NUM_PLAYERS,
-      forfeits: state.forfeits,
+      forfeited: state.forfeited,
     };
 
     return nextState;
@@ -218,7 +216,7 @@ export const ticTacToeLogic: GameLogic<TicTacToeState, TicTacToeView> = {
       board: state.board,
       nextPlayer: state.nextPlayer,
       winningEntry: getWinningEntry(state.board),
-      forfeits: state.forfeits,
+      forfeited: state.forfeited,
     };
     return stateView;
   },
@@ -251,12 +249,8 @@ export const ticTacToeLogic: GameLogic<TicTacToeState, TicTacToeView> = {
     if (checkWinbyEntry(board, "O")) {
       return players[0];
     }
-    // only one of two players are able to forfeit
-    if (state.forfeits[0] === true) {
-      return players[1];
-    }
-    if (state.forfeits[1] === true) {
-      return players[0];
+    if (state.forfeited === true) {
+      return players[state.nextPlayer];
     }
     return null;
   },

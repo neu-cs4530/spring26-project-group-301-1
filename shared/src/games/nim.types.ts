@@ -8,7 +8,7 @@ import { type GameMove } from "./games.types.ts";
 export interface NimState {
   remaining: number;
   nextPlayer: number;
-  forfeits: boolean;
+  forfeited: boolean;
 }
 
 /**

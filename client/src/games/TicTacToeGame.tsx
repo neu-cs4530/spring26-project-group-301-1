@@ -6,7 +6,7 @@ export default function TicTacToeGame({
   userPlayerIndex,
   makeMove,
 }: GameProps<TicTacToeView, TicTacToeMove>) {
-  const disabled = userPlayerIndex !== view.nextPlayer || view.forfeits.some((forfeit) => forfeit);
+  const disabled = userPlayerIndex !== view.nextPlayer || view.forfeited;
   const me = userPlayerIndex === 0 ? "O" : "X";
 
   const viewEntry = (row: number, col: number, entry: "O" | "X" | null) => {

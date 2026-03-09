@@ -11,7 +11,7 @@ describe(`Tic Tac Toe's start() logic`, () => {
         [null, null, null],
       ],
       nextPlayer: 1,
-      forfeits: [false, false],
+      forfeited: false,
     });
   });
 });
@@ -27,7 +27,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { posn: 5 },
         1,
@@ -43,7 +43,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         null,
         1,
@@ -59,7 +59,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "move", x: 10 },
         1,
@@ -77,7 +77,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "move", coord: [11, 2] },
         1,
@@ -93,7 +93,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 0,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "move", coord: [1, 8] },
         0,
@@ -109,7 +109,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "move", coord: [-4, 2] },
         1,
@@ -125,7 +125,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "move", coord: [0, -5] },
         1,
@@ -141,7 +141,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "move", coord: [-1, -4] },
         1,
@@ -157,7 +157,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "move", coord: [11, 21] },
         1,
@@ -175,7 +175,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "move", coord: [0, 0] },
         1,
@@ -187,7 +187,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
         [null, null, null],
       ],
       nextPlayer: 0,
-      forfeits: [false, false],
+      forfeited: false,
     });
   });
 
@@ -201,7 +201,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 0,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "move", coord: [0, 1] },
         0,
@@ -213,7 +213,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
         [null, null, null],
       ],
       nextPlayer: 1,
-      forfeits: [false, false],
+      forfeited: false,
     });
   });
 
@@ -227,7 +227,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 0,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "move", coord: [0, 1] },
         0,
@@ -243,7 +243,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "move", coord: [1, 0] },
         1,
@@ -261,7 +261,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "move", coord: [1, 1] },
         0,
@@ -277,7 +277,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 0,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "move", coord: [1, 2] },
         1,
@@ -295,7 +295,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
             ["X", "O", "X"],
           ],
           nextPlayer: 0,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "move", coord: [1, 2] },
         0,
@@ -311,7 +311,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
             ["X", "O", "X"],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "move", coord: [0, 0] },
         1,
@@ -329,7 +329,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
             [null, "X", "O"],
           ],
           nextPlayer: 0,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "move", coord: [1, 0] },
         0,
@@ -345,7 +345,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
             [null, "X", "O"],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "move", coord: [2, 0] },
         1,
@@ -361,7 +361,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
             [null, "X", "O"],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "move", coord: [1, 0] },
         1,
@@ -377,7 +377,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
             [null, "X", "O"],
           ],
           nextPlayer: 0,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "move", coord: [2, 0] },
         0,
@@ -395,7 +395,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
             [null, "X", null],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "forfeit" },
         1,
@@ -407,7 +407,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
         [null, "X", null],
       ],
       nextPlayer: 0,
-      forfeits: [false, true],
+      forfeited: true,
     });
   });
 
@@ -422,7 +422,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
             [null, "X", "O"],
           ],
           nextPlayer: 0,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "forfeit" },
         0,
@@ -438,7 +438,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
             [null, "X", null],
           ],
           nextPlayer: 0,
-          forfeits: [true, false],
+          forfeited: true,
         },
         { type: "forfeit" },
         0,
@@ -454,7 +454,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
             ["O", "X", "X"],
           ],
           nextPlayer: 0,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "forfeit" },
         0,
@@ -473,7 +473,7 @@ describe(`Tic Tac Toe's isDone() logic`, () => {
           [null, null, null],
         ],
         nextPlayer: 1,
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toBe(false);
   });
@@ -487,7 +487,7 @@ describe(`Tic Tac Toe's isDone() logic`, () => {
           [null, null, null],
         ],
         nextPlayer: 0,
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toBe(false);
   });
@@ -501,7 +501,7 @@ describe(`Tic Tac Toe's isDone() logic`, () => {
           ["O", "X", "O"],
         ],
         nextPlayer: 0,
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toBe(true);
   });
@@ -519,7 +519,7 @@ describe(`Tic Tac Toe's isDone() logic`, () => {
           ["X", "O", "X"],
         ],
         nextPlayer: 0,
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toBe(true);
 
@@ -532,7 +532,7 @@ describe(`Tic Tac Toe's isDone() logic`, () => {
           ["X", "O", "X"],
         ],
         nextPlayer: 0,
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toBe(true);
 
@@ -545,7 +545,7 @@ describe(`Tic Tac Toe's isDone() logic`, () => {
           [null, null, "O"],
         ],
         nextPlayer: 0,
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toBe(true);
 
@@ -558,7 +558,7 @@ describe(`Tic Tac Toe's isDone() logic`, () => {
           ["X", "X", "X"],
         ],
         nextPlayer: 0,
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toBe(true);
 
@@ -571,7 +571,7 @@ describe(`Tic Tac Toe's isDone() logic`, () => {
           ["X", null, null],
         ],
         nextPlayer: 0,
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toBe(true);
 
@@ -584,7 +584,7 @@ describe(`Tic Tac Toe's isDone() logic`, () => {
           [null, "X", null],
         ],
         nextPlayer: 0,
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toBe(true);
 
@@ -597,7 +597,7 @@ describe(`Tic Tac Toe's isDone() logic`, () => {
           [null, "O", "X"],
         ],
         nextPlayer: 0,
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toBe(true);
   });
@@ -612,7 +612,7 @@ describe(`Tic Tac Toe's isDone() logic`, () => {
           [null, "O", "X"],
         ],
         nextPlayer: 0,
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toBe(true);
 
@@ -625,7 +625,7 @@ describe(`Tic Tac Toe's isDone() logic`, () => {
           [null, "X", "O"],
         ],
         nextPlayer: 1,
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toBe(true);
 
@@ -638,7 +638,7 @@ describe(`Tic Tac Toe's isDone() logic`, () => {
           ["X", "O", "X"],
         ],
         nextPlayer: 0,
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toBe(true);
 
@@ -651,7 +651,7 @@ describe(`Tic Tac Toe's isDone() logic`, () => {
           ["O", null, "X"],
         ],
         nextPlayer: 1,
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toBe(true);
 
@@ -664,7 +664,7 @@ describe(`Tic Tac Toe's isDone() logic`, () => {
           [null, null, null],
         ],
         nextPlayer: 0,
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toBe(true);
 
@@ -677,7 +677,7 @@ describe(`Tic Tac Toe's isDone() logic`, () => {
           [null, "X", "X"],
         ],
         nextPlayer: 1,
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toBe(true);
 
@@ -690,7 +690,7 @@ describe(`Tic Tac Toe's isDone() logic`, () => {
           [null, null, "X"],
         ],
         nextPlayer: 0,
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toBe(true);
 
@@ -703,7 +703,7 @@ describe(`Tic Tac Toe's isDone() logic`, () => {
           [null, null, "O"],
         ],
         nextPlayer: 0,
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toBe(true);
 
@@ -716,7 +716,7 @@ describe(`Tic Tac Toe's isDone() logic`, () => {
           ["X", "X", "X"],
         ],
         nextPlayer: 0,
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toBe(true);
 
@@ -729,7 +729,7 @@ describe(`Tic Tac Toe's isDone() logic`, () => {
           ["O", "O", "O"],
         ],
         nextPlayer: 1,
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toBe(true);
 
@@ -742,7 +742,7 @@ describe(`Tic Tac Toe's isDone() logic`, () => {
           ["X", null, null],
         ],
         nextPlayer: 0,
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toBe(true);
 
@@ -755,7 +755,7 @@ describe(`Tic Tac Toe's isDone() logic`, () => {
           ["O", null, "X"],
         ],
         nextPlayer: 1,
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toBe(true);
 
@@ -768,7 +768,7 @@ describe(`Tic Tac Toe's isDone() logic`, () => {
           [null, "X", null],
         ],
         nextPlayer: 0,
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toBe(true);
 
@@ -781,7 +781,7 @@ describe(`Tic Tac Toe's isDone() logic`, () => {
           [null, "O", "X"],
         ],
         nextPlayer: 1,
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toBe(true);
 
@@ -794,7 +794,7 @@ describe(`Tic Tac Toe's isDone() logic`, () => {
           [null, "O", "X"],
         ],
         nextPlayer: 0,
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toBe(true);
 
@@ -807,7 +807,7 @@ describe(`Tic Tac Toe's isDone() logic`, () => {
           [null, "X", "O"],
         ],
         nextPlayer: 1,
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toBe(true);
   });
@@ -834,7 +834,7 @@ describe(`Tic Tac Toe's viewAs() logic`, () => {
             ["X", "X", null],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         0,
       ),
@@ -846,7 +846,7 @@ describe(`Tic Tac Toe's viewAs() logic`, () => {
       ],
       nextPlayer: 1,
       winningEntry: null,
-      forfeits: [false, false],
+      forfeited: false,
     });
 
     expect(
@@ -858,7 +858,7 @@ describe(`Tic Tac Toe's viewAs() logic`, () => {
             ["X", "X", null],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         1,
       ),
@@ -870,7 +870,7 @@ describe(`Tic Tac Toe's viewAs() logic`, () => {
       ],
       nextPlayer: 1,
       winningEntry: null,
-      forfeits: [false, false],
+      forfeited: false,
     });
   });
 
@@ -884,7 +884,7 @@ describe(`Tic Tac Toe's viewAs() logic`, () => {
             ["X", "X", null],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         0,
       ),
@@ -896,7 +896,7 @@ describe(`Tic Tac Toe's viewAs() logic`, () => {
       ],
       nextPlayer: 1,
       winningEntry: null,
-      forfeits: [false, false],
+      forfeited: false,
     });
   });
 
@@ -909,7 +909,7 @@ describe(`Tic Tac Toe's viewAs() logic`, () => {
           ["X", null, null],
         ],
         nextPlayer: 0,
-        forfeits: [false, false],
+        forfeited: false,
       },
       0,
     );
@@ -939,7 +939,7 @@ describe(`Tic Tac Toe's viewAs() logic`, () => {
           ["O", "X", null],
         ],
         nextPlayer: 1,
-        forfeits: [false, false],
+        forfeited: false,
       },
       1,
     );
@@ -969,7 +969,7 @@ describe(`Tic Tac Toe's viewAs() logic`, () => {
           ["X", "X", null],
         ],
         nextPlayer: 1,
-        forfeits: [false, false],
+        forfeited: false,
       },
       1,
     );
@@ -999,7 +999,7 @@ describe(`Tic Tac Toe's viewAs() logic`, () => {
           [null, null, "O"],
         ],
         nextPlayer: 0,
-        forfeits: [false, false],
+        forfeited: false,
       },
       1,
     );
@@ -1029,7 +1029,7 @@ describe(`Tic Tac Toe's viewAs() logic`, () => {
           ["X", "O", "O"],
         ],
         nextPlayer: 1,
-        forfeits: [false, false],
+        forfeited: false,
       },
       1,
     );
@@ -1067,7 +1067,7 @@ describe(`Tic Tac Toe's describeMove() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         {
           board: [
@@ -1076,7 +1076,7 @@ describe(`Tic Tac Toe's describeMove() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 0,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "move", coord: [0, 0] },
         1,
@@ -1094,7 +1094,7 @@ describe(`Tic Tac Toe's describeMove() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 0,
-          forfeits: [false, false],
+          forfeited: false,
         },
         {
           board: [
@@ -1103,7 +1103,7 @@ describe(`Tic Tac Toe's describeMove() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "move", coord: [0, 1] },
         0,
@@ -1121,7 +1121,7 @@ describe(`Tic Tac Toe's describeMove() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         {
           board: [
@@ -1130,7 +1130,7 @@ describe(`Tic Tac Toe's describeMove() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 0,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "move", coord: [0, 2] },
         1,
@@ -1148,7 +1148,7 @@ describe(`Tic Tac Toe's describeMove() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         {
           board: [
@@ -1157,7 +1157,7 @@ describe(`Tic Tac Toe's describeMove() logic`, () => {
             ["X", null, null],
           ],
           nextPlayer: 0,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "move", coord: [2, 0] },
         1,
@@ -1175,7 +1175,7 @@ describe(`Tic Tac Toe's describeMove() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 0,
-          forfeits: [false, false],
+          forfeited: false,
         },
         {
           board: [
@@ -1184,7 +1184,7 @@ describe(`Tic Tac Toe's describeMove() logic`, () => {
             [null, null, "O"],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "move", coord: [2, 2] },
         0,
@@ -1202,7 +1202,7 @@ describe(`Tic Tac Toe's describeMove() logic`, () => {
             ["O", "X", null],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         {
           board: [
@@ -1211,7 +1211,7 @@ describe(`Tic Tac Toe's describeMove() logic`, () => {
             ["O", "X", "X"],
           ],
           nextPlayer: 0,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "move", coord: [2, 2] },
         1,
@@ -1229,7 +1229,7 @@ describe(`Tic Tac Toe's describeMove() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 0,
-          forfeits: [false, false],
+          forfeited: false,
         },
         {
           board: [
@@ -1238,7 +1238,7 @@ describe(`Tic Tac Toe's describeMove() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "forfeit" },
         0,
@@ -1256,7 +1256,7 @@ describe(`Tic Tac Toe's describeMove() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 0,
-          forfeits: [false, false],
+          forfeited: false,
         },
         {
           board: [
@@ -1265,7 +1265,7 @@ describe(`Tic Tac Toe's describeMove() logic`, () => {
             [null, null, null],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         { type: "move" },
         0,
@@ -1289,7 +1289,7 @@ describe(`Tic Tac Toe's tagView() logic`, () => {
           [1, 0],
           [2, 0],
         ],
-        forfeits: [false, false],
+        forfeited: false,
       }),
     ).toStrictEqual({
       type: "tictactoe",
@@ -1305,7 +1305,7 @@ describe(`Tic Tac Toe's tagView() logic`, () => {
           [1, 0],
           [2, 0],
         ],
-        forfeits: [false, false],
+        forfeited: false,
       },
     });
   });
@@ -1322,7 +1322,7 @@ describe(`Tic Tac Toe's getWinner() logic`, () => {
             ["X", null, null],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         ["player0", "player1"],
       ),
@@ -1339,7 +1339,7 @@ describe(`Tic Tac Toe's getWinner() logic`, () => {
             [null, null, "X"],
           ],
           nextPlayer: 1,
-          forfeits: [false, false],
+          forfeited: false,
         },
         ["player0", "player1"],
       ),
@@ -1356,7 +1356,7 @@ describe(`Tic Tac Toe's getWinner() logic`, () => {
             ["O", "X", "X"],
           ],
           nextPlayer: 0,
-          forfeits: [false, false],
+          forfeited: false,
         },
         ["player0", "player1"],
       ),
@@ -1372,8 +1372,8 @@ describe(`Tic Tac Toe's getWinner() logic`, () => {
             ["X", "O", "O"],
             ["O", "X", "X"],
           ],
-          nextPlayer: 0,
-          forfeits: [true, false],
+          nextPlayer: 1,
+          forfeited: true,
         },
         ["player0", "player1"],
       ),
@@ -1387,7 +1387,7 @@ describe(`Tic Tac Toe's getWinner() logic`, () => {
             ["O", "X", "X"],
           ],
           nextPlayer: 0,
-          forfeits: [false, true],
+          forfeited: true,
         },
         ["player0", "player1"],
       ),
