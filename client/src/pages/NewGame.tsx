@@ -28,6 +28,7 @@ export default function NewGame() {
 
       {gameKey === "tictactoe" && (
         <div>
+          <p>Select opponent type:</p>
           <select
             name="opponentType"
             value={opponentType}
