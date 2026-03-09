@@ -4,6 +4,8 @@ import {
   type ChatNewMessagePayload,
   type ChatUserJoinedPayload,
   type ChatUserLeftPayload,
+  type ChatMessageDeletedPayload,
+  type ChatDeleteMessagePayload,
 } from "./chat.types.ts";
 import { type NewMessagePayload } from "./message.types.ts";
 import { type WithAuth } from "./auth.types.ts";
@@ -22,6 +24,7 @@ export interface ClientToServerEvents {
   gameStart: (payload: WithAuth<string>) => void;
   gameWatch: (payload: WithAuth<string>) => void;
   gameNotWatched: (payload: WithAuth<string>) => void;
+  chatDeleteMessage: (payload: WithAuth<ChatDeleteMessagePayload>) => void;
 }
 
 /**
@@ -39,6 +42,7 @@ export interface ServerToClientEvents {
   gameViewCountUpdated: (payload: number) => void;
   chatSendError: (payload: ChatSendErrorPayload) => void;
   error: (payload: ChatSendErrorPayload) => void;
+  chatMessageDeleted: (payload: ChatMessageDeletedPayload) => void;
 }
 
 export type ChatSendErrorPayload = {
