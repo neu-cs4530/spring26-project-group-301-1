@@ -42,17 +42,36 @@ export default function GameDispatch({
     }
   }
 
-  const childProps = { userPlayerIndex, players, makeMove };
-  let gameComponent: JSX.Element | null = null;
-  switch (view.type) {
-    case "nim":
-      gameComponent = <NimGame {...{ ...childProps, view: view.view }} />;
-      break;
-    case "guess":
-      gameComponent = <GuessGame {...{ ...childProps, view: view.view }} />;
-      break;
-    case "tictactoe":
-      return <TicTacToeGame {...{ ...childProps, view: view.view }} />;
+  /**
+   * Helper function to get the right game component based on the type.
+   * @returns component for the game specified by the view
+   */
+  function getGame() {
+    let gameComponent: JSX.Element | null = null;
+    switch (view.type) {
+      case "nim":
+        gameComponent = <NimGame {...{ ...childProps, view: view.view }} />;
+        break;
+      case "guess":
+        gameComponent = <GuessGame {...{ ...childProps, view: view.view }} />;
+        break;
+      case "tictactoe":
+        gameComponent = <TicTacToeGame {...{ ...childProps, view: view.view }} />;
+    }
+    return gameComponent;
   }
-  return <div style={{ minHeight: "100vh", ...backgroundStyle }}>{gameComponent}</div>;
+
+  const childProps = { userPlayerIndex, players, makeMove };
+  return (
+    <div className="content">
+      {getGame()}
+      {userPlayerIndex === -1 ? (
+        <></>
+      ) : (
+        <button className="primary narrow" onClick={() => makeMove({ type: "forfeit" })}>
+          Forfeit Game
+        </button>
+      )}
+    </div>
+  );
 }

@@ -7,7 +7,7 @@ export default function NimGame({
   userPlayerIndex,
   makeMove,
 }: GameProps<NimView, NimMove>) {
-  const disabled = userPlayerIndex !== view.nextPlayer;
+  const disabled = userPlayerIndex !== view.nextPlayer || view.forfeited === true;
 
   /** Player's name */
   function playerDisplay(index: number) {
@@ -36,36 +36,45 @@ export default function NimGame({
       <div>
         There are {view.remaining} object{view.remaining !== 1 && "s"} left in the pile.
       </div>
-      {view.remaining > 0 && <div>Currently it is {playerPoss(view.nextPlayer)} turn</div>}
-      {view.remaining === 0 && (
+      {view.remaining > 0 && view.forfeited === false && (
+        <div>Currently it is {playerPoss(view.nextPlayer)} turn</div>
+      )}
+      {(view.remaining === 0 || view.forfeited === true) && (
         <div>
-          The game is over: {playerDisplay(view.nextPlayer)} won by forcing{" "}
-          {playerDisplay(1 - view.nextPlayer)} to take the last object.
+          The game is over:{" "}
+          {view.forfeited === true
+            ? playerDisplay(view.nextPlayer) + " won by forfeit"
+            : playerDisplay(view.nextPlayer) +
+              " won by forcing " +
+              playerDisplay(1 - view.nextPlayer) +
+              " to take the last object."}
         </div>
       )}
       {userPlayerIndex >= 0 && (
-        <div style={{ display: "flex", flexDirection: "row", gap: "0.5rem" }}>
-          <button
-            className="secondary narrow"
-            disabled={disabled || view.remaining < 1}
-            onClick={() => makeMove(1)}
-          >
-            Take one
-          </button>
-          <button
-            disabled={disabled || view.remaining < 2}
-            className="secondary narrow"
-            onClick={() => makeMove(2)}
-          >
-            Take two
-          </button>
-          <button
-            disabled={disabled || view.remaining < 3}
-            className="secondary narrow"
-            onClick={() => makeMove(3)}
-          >
-            Take three
-          </button>
+        <div>
+          <div style={{ display: "flex", flexDirection: "row", gap: "0.5rem" }}>
+            <button
+              className="secondary narrow"
+              disabled={disabled || view.remaining < 1}
+              onClick={() => makeMove({ type: "move", count: 1 })}
+            >
+              Take one
+            </button>
+            <button
+              disabled={disabled || view.remaining < 2}
+              className="secondary narrow"
+              onClick={() => makeMove({ type: "move", count: 2 })}
+            >
+              Take two
+            </button>
+            <button
+              disabled={disabled || view.remaining < 3}
+              className="secondary narrow"
+              onClick={() => makeMove({ type: "move", count: 3 })}
+            >
+              Take three
+            </button>
+          </div>
         </div>
       )}
     </div>
