@@ -139,26 +139,24 @@ export default function ViewProfile({ username }: ViewProfileProps) {
 
   function renderTopFriends() {
     return (
-      <div className="spacedSection">
-        <h3>Top Friends</h3>
-        {getTopFriends().length === 0 ? (
-          <p>Error fetching friends...</p>
-        ) : getTopFriends().length > 3 ? (
-          getTopFriends()
-            .slice(0, 3)
-            .map((friend, i) => (
-              <p key={i}>
-                {i + 1}. {friend.user.display} - Games played: {getFriendGameCount(friend)}
-              </p>
-            ))
-        ) : (
-          getTopFriends().map((friend, i) => (
-            <p key={i}>
-              {i + 1}. {friend.user.display} - Games played: {getFriendGameCount(friend)}
-            </p>
-          ))
-        )}
-      </div>
+      getTopFriends().length > 0 && (
+        <div className="spacedSection">
+          <h3>Top Friends</h3>
+          {getTopFriends().length > 3
+            ? getTopFriends()
+                .slice(0, 3)
+                .map((friend, i) => (
+                  <p key={i}>
+                    {i + 1}. {friend.user.display} - Games played: {getFriendGameCount(friend)}
+                  </p>
+                ))
+            : getTopFriends().map((friend, i) => (
+                <p key={i}>
+                  {i + 1}. {friend.user.display} - Games played: {getFriendGameCount(friend)}
+                </p>
+              ))}
+        </div>
+      )
     );
   }
 
