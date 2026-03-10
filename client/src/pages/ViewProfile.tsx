@@ -29,7 +29,7 @@ export default function ViewProfile({ username }: ViewProfileProps) {
   const [friendStatus, setFriendStatus] = useState<FriendStatus>("loading" as FriendStatus);
   const [friendActionErr, setFriendActionErr] = useState<string | null>(null);
 
-  const { gamesErr, friendsErr, topFriends, getFriendGameCount } = useTopFriendsList(username);
+  const { games, friends, getTopFriends, getFriendGameCount } = useTopFriendsList(username);
 
   useEffect(() => {
     let cancel = false;
@@ -141,19 +141,23 @@ export default function ViewProfile({ username }: ViewProfileProps) {
     return (
       <div className="spacedSection">
         <h3>Top Friends</h3>
-        {gamesErr !== "" ? <p>{gamesErr}</p> : <></>}
-        {friendsErr !== "" ? <p>{friendsErr}</p> : <></>}
-        {topFriends.length > 3
-          ? topFriends.slice(0, 3).map((friend, i) => (
+        {getTopFriends().length === 0 ? (
+          <p>Error fetching friends...</p>
+        ) : getTopFriends().length > 3 ? (
+          getTopFriends()
+            .slice(0, 3)
+            .map((friend, i) => (
               <p key={i}>
                 {i + 1}. {friend.user.display} - Games played: {getFriendGameCount(friend)}
               </p>
             ))
-          : topFriends.map((friend, i) => (
-              <p key={i}>
-                {i + 1}. {friend.user.display} - Games played: {getFriendGameCount(friend)}
-              </p>
-            ))}
+        ) : (
+          getTopFriends().map((friend, i) => (
+            <p key={i}>
+              {i + 1}. {friend.user.display} - Games played: {getFriendGameCount(friend)}
+            </p>
+          ))
+        )}
       </div>
     );
   }
@@ -174,7 +178,11 @@ export default function ViewProfile({ username }: ViewProfileProps) {
           </ul>
           <div style={{ alignSelf: "flex-start" }}>{renderFriendControls()}</div>
           {friendActionErr && <p className="error-message">{friendActionErr}</p>}
-          {renderTopFriends()}
+          {games !== null &&
+            !("error" in games) &&
+            friends !== null &&
+            !("error" in friends) &&
+            renderTopFriends()}
         </div>
       );
   }

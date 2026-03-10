@@ -7,16 +7,12 @@ import { gameList } from "../services/gameService";
  * Custom hook to get a list of the most-played with friends for a given user.
  *
  * @param username the username to fetch top friends for
- * @returns an error message for fetching games, an error message for fetching friends, and a sorted list of
- * top friends, as well as a function to get the friend's game count
+ * @returns a list of games the user played in, a list of friends, a function to get the top
+ * friends for the given player (sorted in descending order), and a function to get the game count
  */
 export default function useTopFriendsList(username: string) {
   const [games, setGames] = useState<GameInfo[] | ErrorMsg | null>(null);
   const [friends, setFriends] = useState<FriendInfo[] | ErrorMsg | null>(null);
-  const [topFriends, setTopFriends] = useState<FriendInfo[]>([]);
-  const [playersPerGame, setPlayersPerGame] = useState<SafeUserInfo[][]>([]);
-  const [friendsErr, setFriendsErr] = useState("");
-  const [gamesErr, setGamesErr] = useState("");
 
   /**
    * Helper function to convert a list of games to a list of lists of players
@@ -64,8 +60,28 @@ export default function useTopFriendsList(username: string) {
    */
   function getFriendGameCount(friend: FriendInfo) {
     if (games === null || "error" in games) return -1;
+    const gamesWithPlayer = games.filter((game) =>
+      game.players.some((player) => player.username === username),
+    );
+    return countFriendOccurences(friend, gamesListToFriendUsernames(gamesWithPlayer));
+  }
 
-    return countFriendOccurences(friend, playersPerGame);
+  /**
+   * Gets a list of the top friends for the given user, sorted in descending order.
+   * @returns a list of FriendInfo, corresponding to most played with friends
+   */
+  function getTopFriends() {
+    if (games === null || "error" in games || friends === null || "error" in friends) return [];
+
+    const gamesWithPlayer = games.filter((game) =>
+      game.players.some((player) => player.username === username),
+    );
+    const friendsPerGame = gamesListToFriendUsernames(gamesWithPlayer);
+    const friendsCopy = [...friends];
+    friendsCopy.sort((a, b) => {
+      return countFriendOccurences(b, friendsPerGame) - countFriendOccurences(a, friendsPerGame);
+    });
+    return friendsCopy;
   }
 
   useEffect(() => {
@@ -74,33 +90,12 @@ export default function useTopFriendsList(username: string) {
 
   useEffect(() => {
     getFriends(username).then(setFriends);
-  }, []);
-
-  useEffect(() => {
-    if (games !== null && !("error" in games) && friends !== null && !("error" in friends)) {
-      const gamesWithPlayer = games.filter((game) =>
-        game.players.some((player) => player.username === username)
-      );
-      const friendsPerGame = gamesListToFriendUsernames(gamesWithPlayer);
-      setPlayersPerGame(friendsPerGame);
-      const friendsCopy = [...friends];
-      friendsCopy.sort((a, b) => {
-        return countFriendOccurences(b, friendsPerGame) - countFriendOccurences(a, friendsPerGame);
-      });
-      setTopFriends(friendsCopy);
-    }
-    if (games !== null && "error" in games) {
-      setGamesErr(games.error);
-    }
-    if (friends !== null && "error" in friends) {
-      setFriendsErr(friends.error);
-    }
-  }, [games, friends]);
+  }, [username]);
 
   return {
-    gamesErr,
-    friendsErr,
-    topFriends,
+    games,
+    friends,
+    getTopFriends,
     getFriendGameCount,
   };
 }
