@@ -4,6 +4,7 @@ import useTimeSince from "../hooks/useTimeSince";
 import useLoginContext from "../hooks/useLoginContext";
 import { getUserById } from "../services/userService";
 import { getFriendStatus, sendFriendRequest, removeFriend } from "../services/friendsService";
+import useTopFriendsList from "../hooks/useTopFriendsList";
 
 type FriendStatus =
   | "loading"
@@ -27,6 +28,8 @@ export default function ViewProfile({ username }: ViewProfileProps) {
 
   const [friendStatus, setFriendStatus] = useState<FriendStatus>("loading" as FriendStatus);
   const [friendActionErr, setFriendActionErr] = useState<string | null>(null);
+
+  const { gamesErr, friendsErr, topFriends, getFriendGameCount } = useTopFriendsList(username);
 
   useEffect(() => {
     let cancel = false;
@@ -133,6 +136,28 @@ export default function ViewProfile({ username }: ViewProfileProps) {
         return null;
     }
   }
+
+  function renderTopFriends() {
+    return (
+      <div className="spacedSection">
+        <h3>Top Friends</h3>
+        {gamesErr !== "" ? <p>{gamesErr}</p> : <></>}
+        {friendsErr !== "" ? <p>{friendsErr}</p> : <></>}
+        {topFriends.length > 3
+          ? topFriends.slice(0, 3).map((friend, i) => (
+              <p key={i}>
+                {i + 1}. {friend.user.display} - Games played: {getFriendGameCount(friend)}
+              </p>
+            ))
+          : topFriends.map((friend, i) => (
+              <p key={i}>
+                {i + 1}. {friend.user.display} - Games played: {getFriendGameCount(friend)}
+              </p>
+            ))}
+      </div>
+    );
+  }
+
   switch (componentState.type) {
     case "error":
       return <div style={{ color: "#f00" }}>{componentState.msg}</div>;
@@ -149,6 +174,7 @@ export default function ViewProfile({ username }: ViewProfileProps) {
           </ul>
           <div style={{ alignSelf: "flex-start" }}>{renderFriendControls()}</div>
           {friendActionErr && <p className="error-message">{friendActionErr}</p>}
+          {renderTopFriends()}
         </div>
       );
   }
