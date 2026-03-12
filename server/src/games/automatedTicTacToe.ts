@@ -169,7 +169,6 @@ function chooseAutomatedMove(state: AutomatedTicTacToeState): TicTacToeMove | nu
   if (difficulty === "human") return null;
 
   const moves = getAvailableMoves(state.board as TicTacToeBoard);
-  if (moves.length === 0) return null;
 
   if (difficulty === "random") {
     return moves[Math.floor(Math.random() * moves.length)];
