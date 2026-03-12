@@ -28,8 +28,8 @@ export default function ViewProfile({ username }: ViewProfileProps) {
 
   const [friendStatus, setFriendStatus] = useState<FriendStatus>("loading" as FriendStatus);
   const [friendActionErr, setFriendActionErr] = useState<string | null>(null);
-
   const { games, friends, getTopFriends, getFriendGameCount } = useTopFriendsList(username);
+  const topFriends = getTopFriends();
 
   useEffect(() => {
     let cancel = false;
@@ -139,22 +139,14 @@ export default function ViewProfile({ username }: ViewProfileProps) {
 
   function renderTopFriends() {
     return (
-      getTopFriends().length > 0 && (
+      topFriends.length > 0 && (
         <div className="spacedSection">
           <h3>Top Friends</h3>
-          {getTopFriends().length > 3
-            ? getTopFriends()
-                .slice(0, 3)
-                .map((friend, i) => (
-                  <p key={i}>
-                    {i + 1}. {friend.user.display} - Games played: {getFriendGameCount(friend)}
-                  </p>
-                ))
-            : getTopFriends().map((friend, i) => (
-                <p key={i}>
-                  {i + 1}. {friend.user.display} - Games played: {getFriendGameCount(friend)}
-                </p>
-              ))}
+          {topFriends.slice(0, 3).map((friend, i) => (
+            <p key={i}>
+              {i + 1}. {friend.user.display} - Games played: {getFriendGameCount(friend)}
+            </p>
+          ))}
         </div>
       )
     );
