@@ -37,6 +37,22 @@ export interface ChatRecord {
 }
 
 /**
+ * Represents a direct message document in the database.
+ * - `userA`: the username of the first participant in the direct message
+ * - `userB`: the username of the second participant in the direct message
+ * - `messages`: the ordered list of messages in the direct message
+ * - `lastReadAt`: maps usernames to the timestamp of when they last read the DM
+ * - `createdAt`: when the direct message was created
+ */
+export interface DirectMessageRecord {
+  userA: string;
+  userB: string;
+  messages: RecordId[]; // References Message models
+  lastReadAt: Record<string, DateISO>;
+  createdAt: DateISO;
+}
+
+/**
  * Represents a game move log entry stored in a chat.
  * - `moveDescription`: human-readable description of the move
  * - `userId`: the user who made the move
