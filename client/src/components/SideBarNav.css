@@ -23,3 +23,12 @@
 .menu_selected {
   background: #cccccc;
 }
+
+.dmBadge {
+  background-color: cornflowerblue;
+  color: white;
+  border-radius: 999px;
+  padding: 0 0.4rem;
+  font-size: 0.75rem;
+  margin-left: 0.4rem;
+}

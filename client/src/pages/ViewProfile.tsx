@@ -4,6 +4,8 @@ import useTimeSince from "../hooks/useTimeSince";
 import useLoginContext from "../hooks/useLoginContext";
 import { getUserById } from "../services/userService";
 import { getFriendStatus, sendFriendRequest, removeFriend } from "../services/friendsService";
+import { useNavigate } from "react-router-dom";
+import { openDirectMessage } from "../services/dmService";
 
 type FriendStatus =
   | "loading"
@@ -20,6 +22,8 @@ interface ViewProfileProps {
 export default function ViewProfile({ username }: ViewProfileProps) {
   const { user: self, pass } = useLoginContext();
   const timeSince = useTimeSince();
+  const navigate = useNavigate();
+
 
   const [componentState, setComponentState] = useState<
     { type: "waiting" } | { type: "error"; msg: string } | { type: "profile"; user: SafeUserInfo }
@@ -66,6 +70,12 @@ export default function ViewProfile({ username }: ViewProfileProps) {
       cancel = true;
     };
   }, [self.username, pass, username]);
+
+  async function handleSendMessage() {
+    const result = await openDirectMessage({ username: self.username, password: pass }, username);
+    if ("error" in result) return;
+    void navigate(`/messages/${result.dmId}`);
+  }
 
   async function handleSendRequest() {
     setFriendActionErr(null);
@@ -114,9 +124,14 @@ export default function ViewProfile({ username }: ViewProfileProps) {
         return <span className="smallAndGray">Loading...</span>;
       case "friends":
         return (
-          <button className="secondary narrow" onClick={handleRemoveFriend}>
-            Remove Friend
-          </button>
+          <>
+            <button className="primary narrow" onClick={() => void handleSendMessage()}>
+              Send Message
+            </button>
+            <button className="secondary narrow" onClick={handleRemoveFriend}>
+              Remove Friend
+            </button>
+          </>
         );
       case "not-friends":
         return (
