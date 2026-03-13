@@ -39,7 +39,7 @@ export default function DirectMessageList() {
                   onClick={() => void navigate(`/messages/${dm.dmId}`)}
                 >
                   <strong>{dm.otherUser.display}</strong>
-                  {liveUnread > 0 && <span className="dmBadge">{liveUnread}</span>}
+                  {liveUnread > 0 && <span className="dmBadge">{}</span>}
                   {lastMessage && (
                     <p className="smallAndGray">
                       {lastMessage.deleted ? "[deleted]" : lastMessage.text}

@@ -19,6 +19,7 @@ export default function DirectMessagePanel({ dm }: { dm: DirectMessageInfo }) {
   useEffect(() => {
     void markDirectMessageAsRead(auth, dm.dmId);
     setUnreadCount(dm.dmId, 0);
+    return () => setUnreadCount(dm.dmId, 0);
   }, [auth, dm.dmId, setUnreadCount]);
 
   return (

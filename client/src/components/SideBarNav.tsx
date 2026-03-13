@@ -2,7 +2,6 @@ import "./SideBarNav.css";
 import { useState } from "react";
 import { NavLink, type NavLinkRenderProps } from "react-router-dom";
 import useAuth from "../hooks/useAuth.ts";
-import useDmContext from "../hooks/useDmContext.ts";
 
 /**
  * The SideBarNav component contains the primary naviagation menu. It
@@ -12,7 +11,6 @@ import useDmContext from "../hooks/useDmContext.ts";
 export default function SideBarNav() {
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const { username } = useAuth();
-  const { totalUnread } = useDmContext();
 
   const toggleOptions = () => {
     setShowOptions(!showOptions);
@@ -34,7 +32,6 @@ export default function SideBarNav() {
       </NavLink>
       <NavLink to="/messages" className={navClass}>
         Direct Messages
-        {totalUnread > 0 && <span className="dmBadge">{totalUnread}</span>}
       </NavLink>
 
       <NavLink
