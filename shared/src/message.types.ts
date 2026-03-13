@@ -29,3 +29,12 @@ export const zNewMessageRequest = z.object({
   chatId: z.string(),
   text: z.string(),
 });
+
+/**
+ * Relevant information for creating a new direct message
+ */
+export type NewDirectMessagePayload = z.infer<typeof zNewDirectMessageRequest>;
+export const zNewDirectMessageRequest = z.object({
+  dmId: z.string(),
+  text: z.string(),
+});
