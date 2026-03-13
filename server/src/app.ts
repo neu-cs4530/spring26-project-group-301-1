@@ -71,7 +71,8 @@ app.use(
       express
         .Router()
         .get("/:username", dm.getDirectMessagesByUsername)
-        .post("/:username", dm.postDirectMessage),
+        .post("/:username", dm.postDirectMessage)
+        .post("/:dmId/read", dm.postDmRead),
     ),
 );
 

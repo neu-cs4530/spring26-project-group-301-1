@@ -24,7 +24,6 @@ export default function ViewProfile({ username }: ViewProfileProps) {
   const timeSince = useTimeSince();
   const navigate = useNavigate();
 
-
   const [componentState, setComponentState] = useState<
     { type: "waiting" } | { type: "error"; msg: string } | { type: "profile"; user: SafeUserInfo }
   >({ type: "waiting" });

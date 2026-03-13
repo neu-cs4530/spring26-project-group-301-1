@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useCallback, useEffect, useState, type ReactNode } from "react";
 import useLoginContext from "../hooks/useLoginContext";
 import useAuth from "../hooks/useAuth";
 
@@ -13,6 +13,10 @@ export function DmContextProvider({ children }: { children: ReactNode }) {
   const { socket } = useLoginContext();
   const auth = useAuth();
   const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
+  const totalUnread = Object.values(unreadCounts).reduce((a, b) => a + b, 0);
+  const setUnreadCount = useCallback((dmId: string, count: number) => {
+    setUnreadCounts((prev) => ({ ...prev, [dmId]: count }));
+  }, []);
 
   useEffect(() => {
     // Register inbox on mount
@@ -27,10 +31,6 @@ export function DmContextProvider({ children }: { children: ReactNode }) {
       socket.off("directMessageNotify", handleNotify);
     };
   }, [auth, socket]);
-
-  const totalUnread = Object.values(unreadCounts).reduce((a, b) => a + b, 0);
-  const setUnreadCount = (dmId: string, count: number) =>
-    setUnreadCounts((prev) => ({ ...prev, [dmId]: count }));
 
   return (
     <DmContext.Provider value={{ unreadCounts, totalUnread, setUnreadCount }}>

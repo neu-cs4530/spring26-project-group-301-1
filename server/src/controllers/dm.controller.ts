@@ -10,6 +10,7 @@ import {
   getDirectMessageInfo,
   getDirectMessagesForUser,
   getOtherDirectMessageUser,
+  markDirectMessageRead,
 } from "../services/dm.service.ts";
 import { createMessage, deleteMessage } from "../services/message.service.ts";
 
@@ -50,6 +51,21 @@ export const postDirectMessage: RestAPI<DirectMessageInfo, { username: string }>
   } catch (error) {
     res.status(400).send({ error: "Unable to obtain direct message" });
   }
+};
+
+export const postDmRead: RestAPI<null, { dmId: string }> = async (req, res) => {
+  const body = z.object({ auth: zUserAuth }).safeParse(req.body);
+  if (body.error) {
+    res.status(400).send({ error: "Poorly-formed request" });
+    return;
+  }
+  const caller = await checkAuth(body.data.auth);
+  if (!caller) {
+    res.status(403).send({ error: "Invalid credentials" });
+    return;
+  }
+  await markDirectMessageRead(req.params.dmId, caller.username);
+  res.send(null);
 };
 
 /**

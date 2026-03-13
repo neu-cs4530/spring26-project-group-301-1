@@ -4,11 +4,13 @@ import { useNavigate } from "react-router-dom";
 import type { DirectMessageInfo } from "@gamenite/shared";
 import useLoginContext from "../hooks/useLoginContext.ts";
 import { getDirectMessages } from "../services/dmService.ts";
+import useDmContext from "../hooks/useDmContext.ts";
 
 export default function DirectMessageList() {
   const { user } = useLoginContext();
   const navigate = useNavigate();
   const [dms, setDms] = useState<DirectMessageInfo[] | null>(null);
+  const { unreadCounts } = useDmContext();
 
   useEffect(() => {
     void getDirectMessages(user.username).then((result) => {
@@ -29,6 +31,7 @@ export default function DirectMessageList() {
           <div className="dottedList">
             {dms.map((dm) => {
               const lastMessage = dm.messages.at(-1);
+              const liveUnread = unreadCounts[dm.dmId] ?? dm.unreadCount;
               return (
                 <div
                   key={dm.dmId}
@@ -36,7 +39,7 @@ export default function DirectMessageList() {
                   onClick={() => void navigate(`/messages/${dm.dmId}`)}
                 >
                   <strong>{dm.otherUser.display}</strong>
-                  {dm.unreadCount > 0 && <span className="dmBadge">{dm.unreadCount}</span>}
+                  {liveUnread > 0 && <span className="dmBadge">{liveUnread}</span>}
                   {lastMessage && (
                     <p className="smallAndGray">
                       {lastMessage.deleted ? "[deleted]" : lastMessage.text}
