@@ -53,6 +53,10 @@ export const postDirectMessage: RestAPI<DirectMessageInfo, { username: string }>
   }
 };
 
+/**
+ * POST /api/dms/:dmId/read
+ * Marks a direct message as read for the authenticated user.
+ */
 export const postDmRead: RestAPI<null, { dmId: string }> = async (req, res) => {
   const body = z.object({ auth: zUserAuth }).safeParse(req.body);
   if (body.error) {

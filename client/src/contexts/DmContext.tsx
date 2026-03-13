@@ -2,6 +2,11 @@ import { createContext, useCallback, useEffect, useState, type ReactNode } from 
 import useLoginContext from "../hooks/useLoginContext";
 import useAuth from "../hooks/useAuth";
 
+/**
+ * The context for direct messages, which holds the number of unread messages in each dm,
+ * and provides a function for setting the unread count. It also sets up a socket listener
+ * for receiving notifications about new messages in dms.
+ */
 export interface DmContextValue {
   unreadCounts: Record<string, number>;
   totalUnread: number;

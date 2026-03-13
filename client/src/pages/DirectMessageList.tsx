@@ -6,6 +6,9 @@ import useLoginContext from "../hooks/useLoginContext.ts";
 import { getDirectMessages } from "../services/dmService.ts";
 import useDmContext from "../hooks/useDmContext.ts";
 
+/**
+ * The page for viewing the list of direct messages the user is a part of.
+ */
 export default function DirectMessageList() {
   const { user } = useLoginContext();
   const navigate = useNavigate();

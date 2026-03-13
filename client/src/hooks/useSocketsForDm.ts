@@ -8,6 +8,12 @@ import type {
   MessageInfo,
 } from "@gamenite/shared";
 
+/**
+ * Sets up socket listeners for a direct message thread, and provides handlers for creating and deleting messages.
+ * @param dmId The direct message thread to listen to
+ * @param initialMessages The messages to display in the thread already
+ * @returns the current list of messages, and handlers for creating and deleting messages
+ */
 export default function useSocketsForDirectMessage(dmId: string, initialMessages: MessageInfo[]) {
   const auth = useAuth();
   const { socket } = useLoginContext();
@@ -34,11 +40,21 @@ export default function useSocketsForDirectMessage(dmId: string, initialMessages
     };
   }, [socket, dmId, setUnreadCount]);
 
+  /**
+   * Handles creating a new message in a dm
+   * @param text The message
+   * @returns True if message is sent successfully
+   */
   function handleMessageCreation(text: string): boolean {
     socket.emit("directMessageNew", { auth, payload: { dmId, text } });
     return true;
   }
 
+  /**
+   * Handles deleting a message in a dm
+   * @param text The message to delete
+   * @returns True if message is deleted successfully
+   */
   function handleMessageDeletion(messageId: string) {
     socket.emit("directMessageDeleteMessage", { auth, payload: { dmId, messageId } });
   }

@@ -5,6 +5,10 @@ import useLoginContext from "../hooks/useLoginContext.ts";
 import { getDirectMessages } from "../services/dmService.ts";
 import DirectMessagePanel from "../components/DirectMessagePanel.tsx";
 
+/**
+ * Page for viewing a direct message thread
+ * @returns The HTML for the direct message thread that uses DirectMessagePanel
+ */
 export default function DirectMessage() {
   const { dmId } = useParams<{ dmId: string }>();
   const { user } = useLoginContext();

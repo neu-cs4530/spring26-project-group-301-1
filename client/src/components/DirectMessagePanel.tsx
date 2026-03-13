@@ -8,6 +8,11 @@ import { useEffect } from "react";
 import { markDirectMessageAsRead } from "../services/dmService.ts";
 import "../components/ChatPanel.css";
 
+/**
+ * The panel for viewing and sending messages in a direct message thread
+ * @param dm The direct message thread information
+ * @returns The HTML for the direct message panel
+ */
 export default function DirectMessagePanel({ dm }: { dm: DirectMessageInfo }) {
   const auth = useAuth();
   const { setUnreadCount } = useDmContext();
