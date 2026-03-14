@@ -135,7 +135,7 @@ function getAvailableMoves(board: TicTacToeBoard): TicTacToeMove[] {
   const out: TicTacToeMove[] = [];
   for (let r = 0; r < 3; r += 1) {
     for (let c = 0; c < 3; c += 1) {
-      if (board[r][c] === null) out.push([r, c]);
+      if (board[r][c] === null) out.push({ type: "move", coord: [r, c] });
     }
   }
   return out;
@@ -154,7 +154,8 @@ function minimax(board: TicTacToeBoard, current: Mark, ai: Mark, depth: number):
   const isMax = current === ai;
   let best = isMax ? -Infinity : Infinity;
 
-  for (const [r, c] of moves) {
+  for (const move of moves) {
+    const [r, c] = move.coord ?? [-1, -1];
     const next = cloneBoard(board);
     next[r][c] = current;
     const score = minimax(next, oppositeMark(current), ai, depth + 1);
@@ -180,13 +181,14 @@ function chooseAutomatedMove(state: AutomatedTicTacToeState): TicTacToeMove | nu
   let bestScore = -Infinity;
   let bestMove: TicTacToeMove = moves[0];
 
-  for (const [r, c] of moves) {
+  for (const move of moves) {
+    const [r, c] = move.coord ?? [-1, -1];
     const next = cloneBoard(state.board as TicTacToeBoard);
     next[r][c] = autoSymbol;
     const score = minimax(next, oppositeMark(autoSymbol), autoSymbol, 0);
     if (score > bestScore) {
       bestScore = score;
-      bestMove = [r, c];
+      bestMove = move;
     }
   }
 
@@ -216,6 +218,7 @@ function findNewMoveForSymbol(
 }
 
 export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, AutomatedTicTacToeView> = {
+  getWinner: (state) => getWinnerSymbol(state.board as TicTacToeBoard),
   minPlayers: 1,
   maxPlayers: 1,
   start: () => ({
@@ -228,6 +231,7 @@ export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, Automat
     nextPlayer: HUMAN_PLAYER_INDEX,
     opponentType: "minimax",
     autoPlayer: DEFAULT_AUTO_PLAYER_INDEX,
+    forfeited: false,
   }),
   update: (state, payload, playerIndex) => {
     // Only the human client sends moves.
@@ -237,11 +241,15 @@ export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, Automat
 
     const move = zTicTacToeMove.safeParse(payload);
     if (move.error) return null;
-
-    const [i, j] = move.data;
+    const { coord } = move.data;
+    if (!coord) return null;
+    const [i, j] = coord;
     if (state.board[i][j] !== null) return null;
 
-    const afterHumanBoard = cloneBoard(state.board as TicTacToeBoard);
+    // Deep copy board
+    const afterHumanBoard = (state.board as TicTacToeBoard).map((row) => [
+      ...row,
+    ]) as TicTacToeBoard;
     afterHumanBoard[i][j] = PLAYER_IDX_TO_ENTRY_MAP[HUMAN_PLAYER_INDEX];
 
     let nextState: AutomatedTicTacToeState = {
@@ -255,10 +263,12 @@ export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, Automat
     const aiMove = chooseAutomatedMove(nextState);
     if (!aiMove) return nextState;
 
-    const [r, c] = aiMove;
+    const [r, c] = aiMove.coord ?? [-1, -1];
     if (nextState.board[r][c] !== null) return nextState;
 
-    const afterAiBoard = cloneBoard(nextState.board as TicTacToeBoard);
+    const afterAiBoard = (nextState.board as TicTacToeBoard).map((row) => [
+      ...row,
+    ]) as TicTacToeBoard;
     const aiPlayer = nextState.autoPlayer ?? DEFAULT_AUTO_PLAYER_INDEX;
     afterAiBoard[r][c] = PLAYER_IDX_TO_ENTRY_MAP[aiPlayer];
 
@@ -275,11 +285,12 @@ export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, Automat
     board: state.board,
     nextPlayer: state.nextPlayer,
     winningEntry: getWinningEntry(state.board as TicTacToeBoard),
+    forfeited: state.forfeited ?? false,
   }),
   tagView: (view) => ({ type: "automatedTicTacToe", view }),
   describeMove: (prevState, newState, payload) => {
     const move = zTicTacToeMove.parse(payload);
-    const [i, j] = move;
+    const [i, j] = move.coord ?? [-1, -1];
 
     const aiPlayer = newState.autoPlayer ?? DEFAULT_AUTO_PLAYER_INDEX;
     const aiSymbol = PLAYER_IDX_TO_ENTRY_MAP[aiPlayer];

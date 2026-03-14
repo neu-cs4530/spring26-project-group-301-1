@@ -43,25 +43,22 @@ export default function GameDispatch({
   }
 
   const childProps = { userPlayerIndex, players, makeMove };
-  let gameComponent: JSX.Element | null = null;
-  switch (view.type) {
-    case "nim":
-      gameComponent = <NimGame {...{ ...childProps, view: view.view }} />;
-      break;
-    case "guess":
-      gameComponent = <GuessGame {...{ ...childProps, view: view.view }} />;
-      break;
-    case "tictactoe":
-      gameComponent = <TicTacToeGame {...{ ...childProps, view: view.view }} />;
-      break;
-    case "automatedTicTacToe":
-      gameComponent = <TicTacToeGame {...{ ...childProps, view: view.view }} />;
-      break;
-    default:
-      gameComponent = null;
+
+  function getGame() {
+    switch (view.type) {
+      case "nim":
+        return <NimGame {...{ ...childProps, view: view.view }} />;
+      case "guess":
+        return <GuessGame {...{ ...childProps, view: view.view }} />;
+      case "tictactoe":
+        return <TicTacToeGame {...{ ...childProps, view: view.view }} />;
+      case "automatedTicTacToe":
+        return <TicTacToeGame {...{ ...childProps, view: view.view }} />;
+      default:
+        return null;
+    }
   }
 
-  const childProps = { userPlayerIndex, players, makeMove };
   return (
     <div className="content">
       {getGame()}

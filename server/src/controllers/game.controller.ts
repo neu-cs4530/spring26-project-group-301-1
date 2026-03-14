@@ -11,11 +11,9 @@ import {
   viewGame,
 } from "../services/game.service.ts";
 import { addMoveLogToChat } from "../services/chat.service.ts";
-import { recordGameResult } from "../services/stats.service.ts";
 import { z } from "zod";
 import { logSocketError } from "./socket.controller.ts";
 import { checkAuth, enforceAuth } from "../services/auth.service.ts";
-import { populateSafeUserInfo } from "../services/user.service.ts";
 
 /**
  * Handle POST requests to `/api/game/create` by creating a game. The game

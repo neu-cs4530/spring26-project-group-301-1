@@ -181,7 +181,8 @@ export const ticTacToeLogic: GameLogic<TicTacToeState, TicTacToeView> = {
     // reject moves if game is already done
     if (isGameDone(state)) return null;
 
-    const newBoard: TicTacToeBoard = [...state.board];
+    // Deep copy the board to avoid 'object is not iterable' error
+    const newBoard: TicTacToeBoard = state.board.map((row) => [...row]) as TicTacToeBoard;
     if (move.data.type === "forfeit") {
       if (state.forfeited === true) return null;
       return {

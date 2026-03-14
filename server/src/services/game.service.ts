@@ -223,7 +223,6 @@ export async function updateGame(
   game.state = result.state;
   game.done = game.done || result.done;
   await GameRepo.set(gameId, game);
-  const service = gameServices[game.type];
 
   return {
     views: result.views,
