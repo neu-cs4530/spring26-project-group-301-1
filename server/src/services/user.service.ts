@@ -73,6 +73,16 @@ export async function getUsersByUsername(usernames: string[]): Promise<SafeUserI
 }
 
 /**
+ * Returns the SafeUserInfo object corresponding to a given username
+ * @param username a username
+ * @returns user information for that username, if valid
+ */
+export async function safeUserFromUsername(username: string): Promise<SafeUserInfo> {
+  const [user] = await getUsersByUsername([username]);
+  return user;
+}
+
+/**
  * Updates user information in the database
  *
  * @param username - A valid username for the user to update

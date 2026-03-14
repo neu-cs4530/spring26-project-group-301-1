@@ -1,4 +1,5 @@
 import { z, ZodNumber } from "zod";
+import { type GameMove } from "./games.types.ts";
 
 /**
  * The internal state of a Nim game needs to keep track of two facts: who is
@@ -7,6 +8,7 @@ import { z, ZodNumber } from "zod";
 export interface NimState {
   remaining: number;
   nextPlayer: number;
+  forfeited: boolean;
 }
 
 /**
@@ -17,10 +19,15 @@ export interface NimState {
  * https://en.wikipedia.org/wiki/Perfect_information
  */
 export type NimView = NimState;
-
 /**
- * A move in Nim is an integer between 1 and 3, representing how many tokens
- * you take. The move is only valid if it is your turn.
+ * A move in Nim is either a forfeit or a normal move. A normal move is an
+ * integer between 1 and 3, representing how many tokens you take. The move
+ * is only valid if it is your turn.
  */
-export type NimMove = z.infer<typeof zNimMove>;
-export const zNimMove: ZodNumber = z.int().gte(1).lte(3);
+export interface NimMove extends GameMove {
+  count?: number;
+}
+export const zNimMove = z.object({
+  type: z.enum(["move", "forfeit"]),
+  count: (z.int().gte(1).lte(3) as ZodNumber).optional(),
+});

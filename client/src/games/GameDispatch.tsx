@@ -60,5 +60,18 @@ export default function GameDispatch({
     default:
       gameComponent = null;
   }
-  return <div style={{ minHeight: "100vh", ...backgroundStyle }}>{gameComponent}</div>;
+
+  const childProps = { userPlayerIndex, players, makeMove };
+  return (
+    <div className="content">
+      {getGame()}
+      {userPlayerIndex === -1 ? (
+        <></>
+      ) : (
+        <button className="primary narrow" onClick={() => makeMove({ type: "forfeit" })}>
+          Forfeit Game
+        </button>
+      )}
+    </div>
+  );
 }

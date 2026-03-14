@@ -3,7 +3,7 @@ import { type SocketAPI } from "../types.ts";
 import { z } from "zod";
 import { addMessageToChat, forceChatById } from "../services/chat.service.ts";
 import { populateSafeUserInfo } from "../services/user.service.ts";
-import { createMessage, MessageCooldownError } from "../services/message.service.ts";
+import { createMessage, deleteMessage, MessageCooldownError } from "../services/message.service.ts";
 import { logSocketError } from "./socket.controller.ts";
 import { enforceAuth } from "../services/auth.service.ts";
 
@@ -78,6 +78,26 @@ export const socketSendMessage: SocketAPI = (socket, io) => async (body) => {
       });
       return;
     }
+    logSocketError(socket, err);
+  }
+};
+
+export const socketDeleteMessage: SocketAPI = (socket, io) => async (body) => {
+  try {
+    const {
+      auth,
+      payload: { chatId, messageId },
+    } = withAuth(z.object({ chatId: z.string(), messageId: z.string() })).parse(body);
+
+    const user = await enforceAuth(auth);
+    const deletedAt = await deleteMessage(messageId, user);
+
+    io.to(chatId).emit("chatMessageDeleted", {
+      chatId,
+      messageId,
+      deletedAt: deletedAt.toISOString(),
+    });
+  } catch (err) {
     logSocketError(socket, err);
   }
 };

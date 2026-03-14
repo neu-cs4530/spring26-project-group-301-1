@@ -79,3 +79,24 @@ export interface ChatMoveLogPayload {
   user: SafeUserInfo;
   createdAt: Date;
 }
+
+/**
+ * Relevant information from the client that a message was deleted from a chat
+ */
+export type ChatDeleteMessagePayload = {
+  chatId: string;
+  messageId: string;
+};
+
+/**
+ * Relevant information for informing the client that a message was deleted from a
+ * chat
+ * - `chatId`: the chat where the message was deleted
+ * - `messageId`: the id of the deleted message
+ * - `deletedAt`: when the message was deleted
+ */
+export type ChatMessageDeletedPayload = {
+  chatId: string;
+  messageId: string;
+  deletedAt: string;
+};

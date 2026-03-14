@@ -186,6 +186,10 @@ export interface GameUpdateResult {
   views: GameViewUpdates;
   moveDescription: string;
   chatId: string;
+  done: boolean;
+  winnerUserId: string | null;
+  playerUserIds: string[];
+  gameType: GameKey;
 }
 
 /**
@@ -219,11 +223,16 @@ export async function updateGame(
   game.state = result.state;
   game.done = game.done || result.done;
   await GameRepo.set(gameId, game);
+  const service = gameServices[game.type];
 
   return {
     views: result.views,
     moveDescription: result.moveDescription,
     chatId: game.chat,
+    done: result.done,
+    winnerUserId: result.done ? service.getWinner(result.state, game.players) : null,
+    playerUserIds: game.players,
+    gameType: game.type,
   };
 }
 

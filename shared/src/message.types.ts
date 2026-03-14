@@ -7,12 +7,16 @@ import { type SafeUserInfo } from "./user.types.ts";
  * - `text`: message contents
  * - `createdBy`: message sender
  * - `createdAt`: when the message was sent
+ * - `deleted`: whether the message has been deleted
+ * - `deletedAt`: when the message was deleted (if, indeed, it was)
  */
 export interface MessageInfo {
   messageId: string;
   text: string;
   createdBy: SafeUserInfo;
   createdAt: Date;
+  deleted: boolean;
+  deletedAt?: Date | string;
 }
 
 /*** TYPES USED IN THE MESSAGE API ***/

@@ -3,12 +3,14 @@ import {
   type GuessView,
   type GuessState,
   type UnfinishedGuesView,
+  type GuessMove,
 } from "@gamenite/shared";
 import { GameService } from "./gameServiceManager.ts";
 import { type GameLogic } from "./gameLogic.ts";
 
-function allGuessed(guesses: (number | null)[]): guesses is number[] {
-  return guesses.every((guess) => guess !== null);
+function allMoved(guesses: (number | null)[], forfeits: boolean[]): guesses is number[] {
+  const zipped = Array.from({ length: guesses.length }, (_, i) => [guesses[i], forfeits[i]]);
+  return zipped.every(([guess, forfeit]) => guess || forfeit);
 }
 
 export const guessLogic: GameLogic<GuessState, GuessView> = {
@@ -17,28 +19,54 @@ export const guessLogic: GameLogic<GuessState, GuessView> = {
   start: (numPlayers) => ({
     secret: Math.round(Math.random() * 100) + 1,
     guesses: Array.from({ length: numPlayers }).map(() => null),
+    forfeits: Array.from({ length: numPlayers }).map(() => false),
   }),
-  update: ({ secret, guesses: oldGuesses }, payload, playerIndex) => {
+  update: ({ secret, guesses: oldGuesses, forfeits: oldForfeits }, payload, playerIndex) => {
     const move = zGuessMove.safeParse(payload);
     if (oldGuesses[playerIndex] !== null) return null;
     if (move.error) return null;
+
+    const moveData: GuessMove = move.data;
+    if (moveData.type === "forfeit") {
+      const newForfeits = [...oldForfeits];
+      newForfeits[playerIndex] = true;
+      const newGuesses = [...oldGuesses];
+      return {
+        secret,
+        guesses: newGuesses,
+        forfeits: newForfeits,
+      };
+    }
+    if (moveData.guess === undefined) {
+      return null;
+    }
+
+    // do not allow a guess after a forfeit
+    if (oldForfeits[playerIndex] === true) return null;
+
     const newGuesses = [...oldGuesses];
-    newGuesses[playerIndex] = move.data;
+    const newForfeits = [...oldForfeits];
+    newGuesses[playerIndex] = moveData.guess;
     return {
       secret,
       guesses: newGuesses,
+      forfeits: newForfeits,
     };
   },
-  isDone: ({ guesses }) => guesses.every((guess) => guess !== null),
-  viewAs: ({ secret, guesses }, playerIndex) => {
-    if (allGuessed(guesses)) {
-      return { finished: true, secret, guesses };
+  isDone: ({ guesses, forfeits }) => {
+    const zipped = Array.from({ length: guesses.length }, (_, i) => [guesses[i], forfeits[i]]);
+    return zipped.every(([guess, forfeit]) => guess || forfeit);
+  },
+  viewAs: ({ secret, guesses, forfeits: oldForfeits }, playerIndex) => {
+    if (allMoved(guesses, oldForfeits)) {
+      return { finished: true, secret, guesses, forfeits: [...oldForfeits] };
     }
     // If the game is not done, we only show the player their own guess
     // everyone can see *who* has guessed
     const view: UnfinishedGuesView = {
       finished: false,
       guesses: guesses.map((value) => value !== null),
+      forfeits: [...oldForfeits],
     };
     if (playerIndex !== -1 && guesses[playerIndex] !== null) {
       view.myGuess = guesses[playerIndex];
@@ -48,10 +76,24 @@ export const guessLogic: GameLogic<GuessState, GuessView> = {
   tagView: (view) => ({ type: "guess", view }),
   describeMove: (_prevState, newState, payload) => {
     const move = zGuessMove.parse(payload);
-    if (allGuessed(newState.guesses)) {
-      return ` guessed ${move} — the secret was ${newState.secret}!`;
+    // guards against case of forfeit being last move
+    let moveValue: string = `guessed ${move.guess}`;
+    if (move.type === "forfeit") {
+      moveValue = `forfeited`;
+    }
+    if (allMoved(newState.guesses, newState.forfeits)) {
+      return ` ${moveValue} — the secret was ${newState.secret}!`;
+    }
+    if (move.type === "forfeit") {
+      return ` forfeited`;
     }
     return ` made a guess`;
+  },
+  getWinner: ({ secret, guesses }, players) => {
+    const distances = (guesses as number[]).map((g) => Math.abs(g - secret));
+    const min = Math.min(...distances);
+    const winners = players.filter((_, i) => distances[i] === min);
+    return winners.length === 1 ? winners[0] : null;
   },
 };
 

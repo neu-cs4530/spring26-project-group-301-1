@@ -6,7 +6,7 @@ export default function TicTacToeGame({
   userPlayerIndex,
   makeMove,
 }: GameProps<TicTacToeView, TicTacToeMove>) {
-  const disabled = userPlayerIndex !== view.nextPlayer;
+  const disabled = userPlayerIndex !== view.nextPlayer || view.forfeited;
   const me = userPlayerIndex === 0 ? "O" : "X";
 
   const viewEntry = (row: number, col: number, entry: "O" | "X" | null) => {
@@ -19,7 +19,7 @@ export default function TicTacToeGame({
     if (userPlayerIndex === -1) return "";
     if (view.winningEntry) return "";
     return (
-      <button disabled={disabled} onClick={() => makeMove([row, col])}>
+      <button disabled={disabled} onClick={() => makeMove({ type: "move", coord: [row, col] })}>
         {me}?
       </button>
     );

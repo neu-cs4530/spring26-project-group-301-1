@@ -8,6 +8,8 @@ import * as chat from "./controllers/chat.controller.ts";
 import * as game from "./controllers/game.controller.ts";
 import * as user from "./controllers/user.controller.ts";
 import * as thread from "./controllers/thread.controller.ts";
+import * as stats from "./controllers/stats.controller.ts";
+import * as friends from "./controllers/friends.controller.ts";
 import { type GameServer } from "./types.ts";
 
 export const app = express();
@@ -44,6 +46,24 @@ app.use(
         .post("/signup", user.postSignup)
         .post("/:username", user.postByUsername)
         .get("/:username", user.getByUsername),
+    )
+    .use(
+      "/stats",
+      Router()
+        .get("/leaderboard", stats.getLeaderboardRoute)
+        .get("/:username", stats.getStatsByUsername),
+    )
+
+    .use(
+      "/friends",
+      express
+        .Router()
+        .post("/:username/requests", friends.postRequests)
+        .get("/:username", friends.getByUsername)
+        .post("/request", friends.postRequest)
+        .post("/request/:requestId/resolve", friends.postResolve)
+        .post("/:username/status", friends.getStatus)
+        .post("/remove", friends.postRemove),
     ),
 );
 
@@ -58,11 +78,13 @@ io.on("connection", (socket) => {
   socket.on("chatJoin", chat.socketJoin(socket, io));
   socket.on("chatLeave", chat.socketLeave(socket, io));
   socket.on("chatSendMessage", chat.socketSendMessage(socket, io));
+  socket.on("chatDeleteMessage", chat.socketDeleteMessage(socket, io));
 
   socket.on("gameJoinAsPlayer", game.socketJoinAsPlayer(socket, io));
   socket.on("gameMakeMove", game.socketMakeMove(socket, io));
   socket.on("gameStart", game.socketStart(socket, io));
   socket.on("gameWatch", game.socketWatch(socket, io));
+  socket.on("gameNotWatched", game.socketNotWatched(socket, io));
 
   socket.onAny((name, payload) => {
     const zPayload = z.object({ auth: z.object({ username: z.string() }), payload: z.any() });
@@ -78,5 +100,17 @@ io.on("connection", (socket) => {
   });
   socket.onAnyOutgoing((name) => {
     console.log(`SEND [${socketId}] gets ${name}`);
+  });
+
+  // handles cleanup when browser page is closed
+  socket.on("disconnecting", () => {
+    const rooms = new Set(socket.rooms);
+    socket.once("disconnect", () => {
+      rooms.forEach((room) => {
+        const viewers = io.sockets.adapter.rooms.get(room);
+        const viewCount = viewers ? viewers.size : 0;
+        io.to(room).emit("gameViewCountUpdated", viewCount);
+      });
+    });
   });
 });

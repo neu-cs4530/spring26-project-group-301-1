@@ -6,6 +6,7 @@ import type {
   ChatNewMessagePayload,
   ChatUserJoinedPayload,
   ChatSendErrorPayload,
+  ChatMessageDeletedPayload,
 } from "@gamenite/shared";
 import { MESSAGE_COOLDOWN_MS } from "@gamenite/shared";
 import type { ChatMessage } from "../util/types.ts";
@@ -44,6 +45,7 @@ function mergeByTime(a: ChatMessage[], b: ChatMessage[]): ChatMessage[] {
  * - `messages`: The current list of messages in the chat, including
  *   move log entries interleaved chronologically.
  * - `handleMessageCreation`: Sends a new message to the chat
+ * - `handleMessageDeletion`: Deletes a sent message by id
  */
 
 export default function useSocketsForChat(chatId: string) {
@@ -80,6 +82,7 @@ export default function useSocketsForChat(chatId: string) {
       socket.on("chatUserJoined", handleUserJoined);
       socket.on("chatMoveLog", handleMoveLog);
       socket.on("chatSendError", handleSocketError);
+      socket.on("chatMessageDeleted", handleMessageDeleted);
       socket.on("error", handleSocketError);
     };
 
@@ -126,6 +129,18 @@ export default function useSocketsForChat(chatId: string) {
       }
     };
 
+    const handleMessageDeleted = (payload: ChatMessageDeletedPayload) => {
+      if (payload.chatId !== chatId) return;
+      setMessages((oldMessages) => {
+        if (!oldMessages) return null;
+        return oldMessages.map((msg) =>
+          "createdBy" in msg && msg.messageId === payload.messageId
+            ? { ...msg, deleted: true, deletedAt: new Date(payload.deletedAt) }
+            : msg,
+        );
+      });
+    };
+
     const handleSocketError = (err: ChatSendErrorPayload) => {
       if (err?.code !== "MESSAGE_COOLDOWN") return;
       const retryAfterMs = Math.max(0, err.retryAfterMs ?? 0);
@@ -147,6 +162,7 @@ export default function useSocketsForChat(chatId: string) {
       socket.off("chatJoined", handleChatJoined);
       socket.off("chatMoveLog", handleMoveLog);
       socket.off("chatSendError", handleSocketError);
+      socket.off("chatMessageDeleted", handleMessageDeleted);
       socket.emit("chatLeave", { auth, payload: chatId });
     };
   }, [socket, auth, chatId, user]);
@@ -193,5 +209,9 @@ export default function useSocketsForChat(chatId: string) {
     return true;
   }
 
-  return { messages, handleMessageCreation, cooldownUntil, cooldownMessage };
+  function handleMessageDeletion(messageId: string): void {
+    socket.emit("chatDeleteMessage", { auth, payload: { chatId, messageId } });
+  }
+
+  return { messages, handleMessageCreation, handleMessageDeletion, cooldownUntil, cooldownMessage };
 }

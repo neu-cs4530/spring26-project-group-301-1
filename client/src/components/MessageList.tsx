@@ -7,9 +7,10 @@ import UserLink from "./UserLink.tsx";
 
 interface MessageListProps {
   messages: ChatMessage[];
+  onDeleteMessage: (messageId: string) => void;
 }
 
-export default function MessageList({ messages }: MessageListProps) {
+export default function MessageList({ messages, onDeleteMessage }: MessageListProps) {
   const { user } = useLoginContext();
   const chatWindowRef = useRef<HTMLDivElement | null>(null);
   const timeSince = useTimeSince();
@@ -47,9 +48,39 @@ export default function MessageList({ messages }: MessageListProps) {
               </div>
             );
           }
-          if (user.username === message.createdBy.username) {
+
+          const isMessageSender = user.username === message.createdBy.username;
+
+          if (message.deleted) {
             return (
-              <div key={message.messageId} className="chatMe">
+              <div key={message.messageId} className={isMessageSender ? "chatMe" : "chatOther"}>
+                <div className="chatSender">
+                  {!isMessageSender && (
+                    <>
+                      <UserLink user={message.createdBy} />{" "}
+                    </>
+                  )}
+                  {timeSince(message.createdAt)}
+                </div>
+                <div className="chatContent chatDeleted">
+                  {isMessageSender
+                    ? "You deleted this message"
+                    : `${message.createdBy.display} deleted a message`}
+                </div>
+              </div>
+            );
+          }
+
+          if (isMessageSender) {
+            return (
+              <div key={message.messageId} className="chatMe chatDeletable">
+                <button
+                  className="chatDeleteBtn"
+                  aria-label="Delete message"
+                  onClick={() => onDeleteMessage(message.messageId)}
+                >
+                  ✕
+                </button>
                 <div className="chatSender">{timeSince(message.createdAt)}</div>
                 <div className="chatContent">{message.text}</div>
               </div>

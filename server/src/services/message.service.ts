@@ -40,6 +40,8 @@ async function populateMessageInfo(messageId: string): Promise<MessageInfo> {
     text: message.text,
     createdAt: new Date(message.createdAt),
     createdBy: await populateSafeUserInfo(message.createdBy),
+    deleted: message.deleted ?? false,
+    deletedAt: message.deletedAt ? new Date(message.deletedAt) : undefined,
   };
 }
 
@@ -75,4 +77,29 @@ export async function createMessage(
  */
 export async function getMessagesById(ids: string[]): Promise<MessageInfo[]> {
   return Promise.all(ids.map(populateMessageInfo));
+}
+
+/**
+ * Marks a message as deleted
+ *
+ * @param messageId - Valid message id
+ * @param user - Authenticated user
+ * @returns the time of deletion
+ * @throws if the message doesn't exist or the user doesn't own it
+ */
+export async function deleteMessage(messageId: string, user: UserWithId): Promise<Date> {
+  const message = await MessageRepo.get(messageId);
+
+  if (message.createdBy !== user.userId) {
+    throw new Error(`user ${user.username} cannot delete another user's message`);
+  }
+
+  const deletedAt = new Date();
+  await MessageRepo.set(messageId, {
+    ...message,
+    deleted: true,
+    deletedAt: deletedAt.toISOString(),
+  });
+
+  return deletedAt;
 }

@@ -15,27 +15,56 @@ function tokenWord(n: number): string {
 export const nimLogic: GameLogic<NimState, NimView> = {
   minPlayers: 2,
   maxPlayers: 2,
-  start: () => ({ remaining: START_NIM_OBJECTS, nextPlayer: 0 }),
-  update: ({ remaining, nextPlayer }, payload, playerIndex) => {
+  start: () => ({ remaining: START_NIM_OBJECTS, nextPlayer: 0, forfeited: false }),
+  update: ({ remaining, nextPlayer, forfeited }, payload, playerIndex) => {
     const move = zNimMove.safeParse(payload);
     if (playerIndex !== nextPlayer) return null;
     if (move.error) return null;
-    if (move.data > remaining) return null;
+
+    if (move.data.type === "forfeit") {
+      // do not allow multiple forfeited
+      if (forfeited === true) return null;
+      // do not allow a forfeit after the game has ended
+      if (remaining === 0) return null;
+      return {
+        remaining: remaining,
+        nextPlayer: nextPlayer === 0 ? 1 : 0,
+        forfeited: true,
+      };
+    }
+    // game is already over
+    if (forfeited === true) {
+      return null;
+    }
+    if (move.data.count === undefined) {
+      return null;
+    }
+    if (move.data.count > remaining) return null;
     return {
-      remaining: remaining - move.data,
+      remaining: remaining - move.data.count,
       nextPlayer: nextPlayer === 0 ? 1 : 0,
+      forfeited: false,
     };
   },
-  isDone: ({ remaining }) => remaining === 0,
+  isDone: ({ remaining, forfeited }) => remaining === 0 || forfeited === true,
   viewAs: (state) => state,
   tagView: (view) => ({ type: "nim", view }),
   describeMove: (_prevState, newState, payload) => {
     const move = zNimMove.parse(payload);
-    const took = tokenWord(move);
+    if (move.type === "forfeit") {
+      return ` forfeited the game`;
+    }
+    if (move.count === undefined) {
+      return ` invalid move`;
+    }
+    const took = tokenWord(move.count);
     if (newState.remaining === 0) {
       return ` took ${took} and lost the game`;
     }
     return ` took ${took}, leaving ${newState.remaining}`;
+  },
+  getWinner: ({ nextPlayer }, players) => {
+    return players[nextPlayer];
   },
 };
 
