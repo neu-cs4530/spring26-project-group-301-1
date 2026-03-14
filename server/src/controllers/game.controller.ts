@@ -35,14 +35,6 @@ export const postCreate: RestAPI<GameInfo> = async (req, res) => {
   }
 
   const game = await createGame(user, body.data.payload, new Date());
-
-  if (game.type === "automatedTicTacToe") {
-    await startGame(game.gameId, user);
-    const started = await getGameById(game.gameId);
-    res.send(started ?? game);
-    return;
-  }
-
   res.send(game);
 };
 
@@ -187,24 +179,27 @@ export const socketMakeMove: SocketAPI = (socket, io) => async (body) => {
       payload: { gameId, move },
     } = withAuth(zGameMakeMovePayload).parse(body);
     const user = await enforceAuth(auth);
-    const { views, moveDescription, chatId } = await updateGame(gameId, user, move);
-
-    // Split "human||automated" into separate chat messages.
-    // For normal games, this is just one entry.
-    const moveMessages = (moveDescription ?? "")
-      .split("||")
-      .map((s) => s.trim())
-      .filter(Boolean);
-
-    // Broadcast state update
+    const { views, moveDescription, chatId, done, winnerUserId, playerUserIds, gameType } =
+      await updateGame(gameId, user, move);
     sendViewUpdates(io, gameId, views);
 
-    // Store + emit each move log as its own chat message
-    for (const text of moveMessages) {
-      const now = new Date();
-      const moveLogPayload = await addMoveLogToChat(chatId, text, user, now);
-      io.to(chatId).emit("chatMoveLog", moveLogPayload);
+    // Store the game result if the game is done in leadersboards and update all players' stats.
+    if (done) {
+      const playerInfos = await Promise.all(playerUserIds.map(populateSafeUserInfo));
+      await Promise.all(
+        playerUserIds.map((userId, i) => {
+          const outcome = winnerUserId === null ? "draw" : userId === winnerUserId ? "win" : "loss";
+          return recordGameResult(playerInfos[i].username, gameType, outcome);
+        }),
+      );
     }
+
+    // Store the move description suffix and broadcast to the chat room
+    const now = new Date();
+    const moveLogPayload = await addMoveLogToChat(chatId, moveDescription, user, now);
+
+    // Broadcast the move log to the chat room
+    io.to(chatId).emit("chatMoveLog", moveLogPayload);
   } catch (err) {
     logSocketError(socket, err);
   }

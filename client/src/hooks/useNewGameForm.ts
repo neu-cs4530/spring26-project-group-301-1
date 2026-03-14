@@ -1,58 +1,51 @@
-import { useState, type ChangeEvent, type SyntheticEvent } from "react";
 import type { GameKey } from "@gamenite/shared";
+import { type ChangeEvent, useState, type SubmitEvent } from "react";
 import useAuth from "./useAuth.ts";
 import { useNavigate } from "react-router-dom";
 import { createGame } from "../services/gameService.ts";
 
-type OpponentType = "player" | "automated";
-
-function resolveGameKey(gameKey: GameKey, opponentType: OpponentType): GameKey {
-  if (gameKey === "tictactoe" && opponentType === "automated") {
-    return "automatedTicTacToe" as GameKey;
-  }
-  return gameKey;
-}
-
+/**
+ * Custom hook to manage game creation form logic
+ * @throws if outside a LoginContext
+ * @returns an object containing
+ *  - Form value `gameKey`
+ *  - Possibly-null error message `err`
+ *  - Form handlers `handleInputChange` and `handleSubmit`
+ */
 export default function useNewGameForm() {
   const [gameKey, setGameKey] = useState<GameKey | "">("");
-  const [opponentType, setOpponentType] = useState<OpponentType>("player");
   const [err, setErr] = useState<string | null>(null);
   const auth = useAuth();
   const navigate = useNavigate();
 
-  const handleInputChange = (e: ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
-    const { name, value } = e.target;
+  const handleInputChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    setErr(null);
 
-    if (name === "gameKey") {
-      const nextGame = value as GameKey | "";
-      setGameKey(nextGame);
-      if (nextGame !== "tictactoe") setOpponentType("player");
-      return;
-    }
-
-    if (name === "opponentType") {
-      setOpponentType(value as OpponentType);
-    }
+    // type assertion is safe because NewGame.tsx only allows selection of
+    // valid game keys
+    setGameKey(e.target.value as GameKey | "");
   };
 
-  const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-    if (!gameKey) {
+    if (gameKey === "") {
       setErr("Please select a game");
       return;
     }
-
-    const finalGameKey = resolveGameKey(gameKey, opponentType);
-    const game = await createGame(auth, finalGameKey);
-
+    setErr(null);
+    const game = await createGame(auth, gameKey);
     if ("error" in game) {
       setErr(game.error);
       return;
     }
-
     navigate(`/game/${game.gameId}`);
   };
 
-  return { gameKey, opponentType, handleInputChange, err, handleSubmit };
+  return {
+    gameKey,
+    err,
+    handleInputChange,
+    handleSubmit,
+  };
 }
