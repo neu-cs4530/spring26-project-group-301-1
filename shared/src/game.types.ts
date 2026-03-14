@@ -61,7 +61,12 @@ export * from "./games/ticTacToe.ts";
  * add a new game.
  */
 export type GameKey = z.infer<typeof zGameKey>;
-export const zGameKey = z.union([z.literal("nim"), z.literal("guess"), z.literal("tictactoe")]);
+export const zGameKey = z.union([
+  z.literal("nim"),
+  z.literal("guess"),
+  z.literal("tictactoe"),
+  z.literal("automatedTicTacToe"),
+]);
 
 /**
  * The TaggedGameView type allows the views for different game to be
@@ -73,4 +78,5 @@ export const zGameKey = z.union([z.literal("nim"), z.literal("guess"), z.literal
 export type TaggedGameView =
   | { type: "nim"; view: NimView }
   | { type: "guess"; view: GuessView }
-  | { type: "tictactoe"; view: TicTacToeView };
+  | { type: "tictactoe"; view: TicTacToeView }
+  | { type: "automatedTicTacToe"; view: TicTacToeView };
