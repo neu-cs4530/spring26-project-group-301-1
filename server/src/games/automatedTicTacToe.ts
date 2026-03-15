@@ -247,6 +247,8 @@ export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, Automat
     forfeited: false,
   }),
   update: (state, payload, playerIndex) => {
+    // Prevent moves after forfeiting
+    if (state.forfeited === true) return null;
     // Only the human client sends moves.
     if (playerIndex !== HUMAN_PLAYER_INDEX) return null;
     if (state.nextPlayer !== HUMAN_PLAYER_INDEX) return null;
@@ -254,6 +256,16 @@ export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, Automat
 
     const move = zTicTacToeMove.safeParse(payload);
     if (move.error) return null;
+
+    // Handle forfeit move
+    if (move.data.type === "forfeit") {
+      // Mark game as forfeited
+      return {
+        ...state,
+        forfeited: true,
+      };
+    }
+
     const { coord } = move.data;
     if (!coord) return null;
     const [i, j] = coord;
@@ -297,6 +309,11 @@ export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, Automat
   tagView: (view) => ({ type: "automatedTicTacToe", view }),
   describeMove: (prevState, newState, payload) => {
     const move = zTicTacToeMove.parse(payload);
+    // Forfeit message
+    if (move.type === "forfeit") {
+      return " forfeited the game";
+    }
+
     const [i, j] = move.coord ?? [-1, -1];
 
     const aiPlayer = newState.autoPlayer ?? DEFAULT_AUTO_PLAYER_INDEX;
