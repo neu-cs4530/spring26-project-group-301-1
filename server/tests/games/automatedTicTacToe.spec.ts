@@ -45,6 +45,7 @@ describe(`Automated Tic Tac Toe's start() logic`, () => {
       nextPlayer: 0,
       opponentType: "minimax",
       autoPlayer: 1,
+      forfeited: false,
     });
   });
 });
@@ -64,6 +65,9 @@ describe(`Automated Tic Tac Toe's update() logic`, () => {
 
   it("Should reject a move from the automated player", () => {
     expect(automatedTicTacToeLogic.update(makeState(), [0, 0], 1)).toStrictEqual(null);
+    expect(
+      automatedTicTacToeLogic.update(makeState(), { type: "move", coord: [0, 0] }, 1),
+    ).toStrictEqual(null);
   });
 
   it("Should reject a move from the human when it is not their turn", () => {
@@ -73,6 +77,15 @@ describe(`Automated Tic Tac Toe's update() logic`, () => {
           nextPlayer: 1,
         }),
         [0, 0],
+        0,
+      ),
+    ).toStrictEqual(null);
+    expect(
+      automatedTicTacToeLogic.update(
+        makeState({
+          nextPlayer: 1,
+        }),
+        { type: "move", coord: [0, 0] },
         0,
       ),
     ).toStrictEqual(null);
@@ -92,6 +105,19 @@ describe(`Automated Tic Tac Toe's update() logic`, () => {
         0,
       ),
     ).toStrictEqual(null);
+    expect(
+      automatedTicTacToeLogic.update(
+        makeState({
+          board: [
+            ["O", null, null],
+            [null, null, null],
+            [null, null, null],
+          ],
+        }),
+        { type: "move", coord: [0, 0] },
+        0,
+      ),
+    ).toStrictEqual(null);
   });
 
   it("Should reject a move if the game is already over", () => {
@@ -108,10 +134,23 @@ describe(`Automated Tic Tac Toe's update() logic`, () => {
         0,
       ),
     ).toStrictEqual(null);
+    expect(
+      automatedTicTacToeLogic.update(
+        makeState({
+          board: [
+            ["O", "O", "O"],
+            [null, "X", null],
+            [null, null, "X"],
+          ],
+        }),
+        { type: "move", coord: [1, 0] },
+        0,
+      ),
+    ).toStrictEqual(null);
   });
 
   it("Should accept a valid human move and then apply one automated move", () => {
-    const result = automatedTicTacToeLogic.update(makeState(), [0, 0], 0);
+    const result = automatedTicTacToeLogic.update(makeState(), { type: "move", coord: [0, 0] }, 0);
 
     expect(result).not.toBeNull();
     if (result === null) {
@@ -129,7 +168,7 @@ describe(`Automated Tic Tac Toe's update() logic`, () => {
       makeState({
         opponentType: "human",
       }),
-      [1, 1],
+      { type: "move", coord: [1, 1] },
       0,
     );
 
@@ -147,6 +186,7 @@ describe(`Automated Tic Tac Toe's update() logic`, () => {
       nextPlayer: 1,
       opponentType: "human",
       autoPlayer: 1,
+      forfeited: false,
     });
   });
 
@@ -157,7 +197,7 @@ describe(`Automated Tic Tac Toe's update() logic`, () => {
       makeState({
         opponentType: "random",
       }),
-      [0, 0],
+      { type: "move", coord: [0, 0] },
       0,
     );
 
@@ -179,7 +219,7 @@ describe(`Automated Tic Tac Toe's update() logic`, () => {
           [null, "O", null],
         ],
       }),
-      [0, 1],
+      { type: "move", coord: [0, 1] },
       0,
     );
 
@@ -192,6 +232,7 @@ describe(`Automated Tic Tac Toe's update() logic`, () => {
       nextPlayer: 0,
       opponentType: "minimax",
       autoPlayer: 1,
+      forfeited: false,
     });
   });
 
@@ -206,7 +247,7 @@ describe(`Automated Tic Tac Toe's update() logic`, () => {
           [null, "O", null],
         ],
       }),
-      [0, 1],
+      { type: "move", coord: [0, 1] },
       0,
     );
 
@@ -306,6 +347,7 @@ describe(`Automated Tic Tac Toe's viewAs() logic`, () => {
       ],
       nextPlayer: 0,
       winningEntry: null,
+      forfeited: false,
     });
 
     expect(
@@ -328,6 +370,7 @@ describe(`Automated Tic Tac Toe's viewAs() logic`, () => {
       ],
       nextPlayer: 0,
       winningEntry: null,
+      forfeited: false,
     });
   });
 
@@ -352,6 +395,7 @@ describe(`Automated Tic Tac Toe's viewAs() logic`, () => {
       ],
       nextPlayer: 0,
       winningEntry: null,
+      forfeited: false,
     });
   });
 
@@ -373,7 +417,9 @@ describe(`Automated Tic Tac Toe's viewAs() logic`, () => {
       ["X", null, "O"],
       ["X", null, null],
     ]);
+    expect(testView.forfeited).toStrictEqual(false);
     expect(testView.nextPlayer).toStrictEqual(0);
+    expect(testView.forfeited).toStrictEqual(false);
 
     const winEntryCorrect: boolean =
       testView.winningEntry !== null &&
@@ -403,6 +449,7 @@ describe(`Automated Tic Tac Toe's viewAs() logic`, () => {
       ["O", "X", null],
     ]);
     expect(testView.nextPlayer).toStrictEqual(1);
+    expect(testView.forfeited).toStrictEqual(false);
 
     const winEntryCorrect: boolean =
       testView.winningEntry !== null &&
@@ -436,7 +483,7 @@ describe(`Automated Tic Tac Toe's describeMove() logic`, () => {
           ],
           nextPlayer: 1,
         }),
-        [1, 1],
+        { type: "move", coord: [1, 1] },
         0,
       ),
     ).toBe(" moved at (1, 1)");
@@ -463,7 +510,7 @@ describe(`Automated Tic Tac Toe's describeMove() logic`, () => {
           ],
           nextPlayer: 1,
         }),
-        [0, 2],
+        { type: "move", coord: [0, 2] },
         0,
       ),
     ).toBe(" moved at (0, 2) and won the game");
@@ -490,21 +537,23 @@ describe(`Automated Tic Tac Toe's describeMove() logic`, () => {
           ],
           nextPlayer: 1,
         }),
-        [2, 2],
+        { type: "move", coord: [2, 2] },
         0,
       ),
     ).toBe(" moved at (2, 2) and ended the game in a draw");
   });
 
   it("Should describe separate human and AI move messages during a normal automated turn", () => {
-    const result = automatedTicTacToeLogic.update(makeState(), [0, 0], 0);
+    const result = automatedTicTacToeLogic.update(makeState(), { type: "move", coord: [0, 0] }, 0);
 
     expect(result).not.toBeNull();
     if (result === null) {
       throw new Error("expected update to return a state");
     }
 
-    expect(automatedTicTacToeLogic.describeMove(makeState(), result, [0, 0], 0)).toContain("||");
+    expect(
+      automatedTicTacToeLogic.describeMove(makeState(), result, { type: "move", coord: [0, 0] }, 0),
+    ).toContain("||");
   });
 
   it("Should describe an automated winning move", () => {
@@ -526,7 +575,7 @@ describe(`Automated Tic Tac Toe's describeMove() logic`, () => {
           ],
           nextPlayer: 0,
         }),
-        [1, 1],
+        { type: "move", coord: [1, 1] },
         0,
       ),
     ).toBe(" moved at (1, 1)|| automated opponent moved at (0, 2) and won the game");
@@ -551,7 +600,7 @@ describe(`Automated Tic Tac Toe's describeMove() logic`, () => {
           ],
           nextPlayer: 0,
         }),
-        [2, 1],
+        { type: "move", coord: [2, 1] },
         0,
       ),
     ).toBe(" moved at (2, 1)|| automated opponent moved at (2, 2) and ended the game in a draw");
@@ -578,7 +627,7 @@ describe(`Automated Tic Tac Toe's describeMove() logic`, () => {
           nextPlayer: 0,
           autoPlayer: undefined,
         }),
-        [0, 0],
+        { type: "move", coord: [0, 0] },
         0,
       ),
     ).toBe(" moved at (0, 0)|| automated opponent moved at (1, 1)");
