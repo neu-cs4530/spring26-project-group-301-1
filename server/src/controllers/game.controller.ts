@@ -14,6 +14,8 @@ import { addMoveLogToChat } from "../services/chat.service.ts";
 import { z } from "zod";
 import { logSocketError } from "./socket.controller.ts";
 import { checkAuth, enforceAuth } from "../services/auth.service.ts";
+import { populateSafeUserInfo } from "../services/user.service.ts";
+import { recordGameResult } from "../../src/services/stats.service.ts";
 
 /**
  * Handle POST requests to `/api/game/create` by creating a game. The game
@@ -185,8 +187,19 @@ export const socketMakeMove: SocketAPI = (socket, io) => async (body) => {
       payload: { gameId, move },
     } = withAuth(zGameMakeMovePayload).parse(body);
     const user = await enforceAuth(auth);
-    const { views, moveDescription, chatId } = await updateGame(gameId, user, move);
+    const { views, moveDescription, chatId, done, winnerUserId, playerUserIds, gameType } =
+      await updateGame(gameId, user, move);
 
+    // Store the game result if the game is done in leadersboards and update all players' stats.
+    if (done) {
+      const playerInfos = await Promise.all(playerUserIds.map(populateSafeUserInfo));
+      await Promise.all(
+        playerUserIds.map((userId, i) => {
+          const outcome = winnerUserId === null ? "draw" : userId === winnerUserId ? "win" : "loss";
+          return recordGameResult(playerInfos[i].username, gameType, outcome);
+        }),
+      );
+    }
     // Split "human||automated" into separate chat messages.
     // For normal games, this is just one entry.
     const moveMessages = (moveDescription ?? "")
@@ -194,7 +207,6 @@ export const socketMakeMove: SocketAPI = (socket, io) => async (body) => {
       .map((s) => s.trim())
       .filter(Boolean);
 
-    // Broadcast state update
     sendViewUpdates(io, gameId, views);
 
     // Store + emit each move log as its own chat message

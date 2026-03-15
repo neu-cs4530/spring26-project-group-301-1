@@ -50,15 +50,15 @@ const LINES: [Coord, Coord, Coord][] = [
 
 // Deterministic tie-break order: center, corners, edges
 const PREFERRED_MOVES: TicTacToeMove[] = [
-  [1, 1],
-  [0, 0],
-  [0, 2],
-  [2, 0],
-  [2, 2],
-  [0, 1],
-  [1, 0],
-  [1, 2],
-  [2, 1],
+  { type: "move", coord: [1, 1] },
+  { type: "move", coord: [0, 0] },
+  { type: "move", coord: [0, 2] },
+  { type: "move", coord: [2, 0] },
+  { type: "move", coord: [2, 2] },
+  { type: "move", coord: [0, 1] },
+  { type: "move", coord: [1, 0] },
+  { type: "move", coord: [1, 2] },
+  { type: "move", coord: [2, 1] },
 ];
 
 function markForPlayer(player: number): TicTacEntry {
@@ -94,19 +94,23 @@ function isFull(board: TicTacToeState["board"]): boolean {
 
 function legalMoves(board: TicTacToeState["board"]): TicTacToeMove[] {
   const all: TicTacToeMove[] = [];
-  for (const [r, c] of PREFERRED_MOVES) {
-    if (board[r][c] === null) all.push([r, c]);
+  for (const move of PREFERRED_MOVES) {
+    if (!move.coord) continue;
+    const [r, c] = move.coord;
+    if (board[r][c] === null) all.push(move);
   }
   return all;
 }
 
 function applyMove(state: TicTacToeState, move: TicTacToeMove): TicTacToeState {
-  const [r, c] = move;
+  if (!move.coord) throw new Error("Invalid move: missing coord");
+  const [r, c] = move.coord;
   const next = cloneBoard(state.board);
   next[r][c] = markForPlayer(state.nextPlayer);
   return {
     board: next,
     nextPlayer: state.nextPlayer === 1 ? 0 : 1,
+    forfeited: false,
   };
 }
 

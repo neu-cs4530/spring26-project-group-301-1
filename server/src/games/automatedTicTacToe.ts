@@ -170,6 +170,7 @@ function chooseAutomatedMove(state: AutomatedTicTacToeState): TicTacToeMove | nu
   if (difficulty === "human") return null;
 
   const moves = getAvailableMoves(state.board as TicTacToeBoard);
+  if (moves.length === 0) return null;
 
   if (difficulty === "random") {
     return moves[Math.floor(Math.random() * moves.length)];
@@ -218,7 +219,19 @@ function findNewMoveForSymbol(
 }
 
 export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, AutomatedTicTacToeView> = {
-  getWinner: (state) => getWinnerSymbol(state.board as TicTacToeBoard),
+  getWinner: (state, players) => {
+    const board = state.board as TicTacToeBoard;
+    if (checkWinByEntry(board, "X")) {
+      return players[1];
+    }
+    if (checkWinByEntry(board, "O")) {
+      return players[0];
+    }
+    if (state.forfeited === true) {
+      return players[state.nextPlayer];
+    }
+    return null;
+  },
   minPlayers: 1,
   maxPlayers: 1,
   start: () => ({
@@ -246,10 +259,7 @@ export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, Automat
     const [i, j] = coord;
     if (state.board[i][j] !== null) return null;
 
-    // Deep copy board
-    const afterHumanBoard = (state.board as TicTacToeBoard).map((row) => [
-      ...row,
-    ]) as TicTacToeBoard;
+    const afterHumanBoard = cloneBoard(state.board as TicTacToeBoard);
     afterHumanBoard[i][j] = PLAYER_IDX_TO_ENTRY_MAP[HUMAN_PLAYER_INDEX];
 
     let nextState: AutomatedTicTacToeState = {
@@ -262,13 +272,10 @@ export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, Automat
 
     const aiMove = chooseAutomatedMove(nextState);
     if (!aiMove) return nextState;
-
     const [r, c] = aiMove.coord ?? [-1, -1];
     if (nextState.board[r][c] !== null) return nextState;
 
-    const afterAiBoard = (nextState.board as TicTacToeBoard).map((row) => [
-      ...row,
-    ]) as TicTacToeBoard;
+    const afterAiBoard = cloneBoard(nextState.board as TicTacToeBoard);
     const aiPlayer = nextState.autoPlayer ?? DEFAULT_AUTO_PLAYER_INDEX;
     afterAiBoard[r][c] = PLAYER_IDX_TO_ENTRY_MAP[aiPlayer];
 

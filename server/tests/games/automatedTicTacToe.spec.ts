@@ -15,6 +15,7 @@ function makeState(overrides: Partial<AutomatedTicTacToeState> = {}): AutomatedT
     nextPlayer: 0,
     opponentType: "minimax",
     autoPlayer: 1,
+    forfeited: overrides.forfeited ?? false,
     ...overrides,
   };
 }
@@ -599,6 +600,7 @@ describe(`Automated Tic Tac Toe's tagView() logic`, () => {
           [1, 0],
           [2, 0],
         ],
+        forfeited: false,
       }),
     ).toStrictEqual({
       type: "automatedTicTacToe",
@@ -614,6 +616,7 @@ describe(`Automated Tic Tac Toe's tagView() logic`, () => {
           [1, 0],
           [2, 0],
         ],
+        forfeited: false,
       },
     });
   });
