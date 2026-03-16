@@ -3,6 +3,7 @@ import ThreadSummaryView from "../components/ThreadSummaryView.tsx";
 import { useNavigate } from "react-router-dom";
 import useGameList from "../hooks/useGameList.ts";
 import GameSummaryView from "../components/GameSummaryView.tsx";
+import LeaderboardSummaryView from "../components/LeaderboardSummaryView.tsx";
 
 export default function Home() {
   const threadList = useThreadList(4);
@@ -44,6 +45,9 @@ export default function Home() {
             Create New Post
           </button>
         </div>
+      </div>
+      <div className="spacedSection">
+        <LeaderboardSummaryView></LeaderboardSummaryView>
       </div>
     </div>
   );
