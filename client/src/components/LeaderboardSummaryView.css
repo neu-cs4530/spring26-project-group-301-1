@@ -1,0 +1,135 @@
+.leaderboard-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.leaderboard-summary-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+.leaderboard-summary-title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.leaderboard-summary-updated {
+    font-size: 0.75rem;
+    color: var(--gray-foreground);
+}
+
+/* Toggle */
+.leaderboard-summary-toggle {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.leaderboard-summary-toggle button {
+    padding: 0.25rem 0.75rem;
+    border: 1px solid var(--gray-foreground);
+    border-radius: 999px;
+    background: none;
+    font-size: 0.8rem;
+    color: var(--gray-foreground);
+    cursor: pointer;
+    text-transform: capitalize;
+    transition: background 0.15s, color 0.15s;
+}
+
+.leaderboard-summary-toggle button.active,
+.leaderboard-summary-toggle button:hover {
+    background: oklch(0.55 0.1 260);
+    border-color: oklch(0.55 0.1 260);
+    color: white;
+}
+
+.leaderboard-summary-toggle button.active:hover {
+    background: oklch(0.45 0.1 260);
+    border-color: oklch(0.45 0.1 260);
+}
+
+/* Table */
+.leaderboard-summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.leaderboard-summary-table thead th {
+    text-align: left;
+    font-weight: 600;
+    color: var(--gray-foreground);
+    padding: 0.25rem 0.5rem;
+    border-bottom: 1px dashed black;
+}
+
+.leaderboard-summary-table thead th:not(:nth-child(2)) {
+    text-align: center;
+}
+
+.leaderboard-summary-row {
+    border-top: 1px dashed black;
+    cursor: pointer;
+    transition: background 0.1s;
+}
+
+.leaderboard-summary-row:hover {
+    background: color-mix(in oklch, oklch(0.55 0.1 260) 10%, transparent);
+}
+
+.leaderboard-summary-row td {
+    padding: 0.4rem 0.5rem;
+    white-space: nowrap;
+}
+
+.leaderboard-summary-rank {
+    text-align: center;
+    width: 2rem;
+    font-weight: 700;
+    color: var(--gray-foreground);
+}
+
+.leaderboard-summary-rank--gold {
+    color: gold;
+}
+
+.leaderboard-summary-rank--silver {
+    color: silver;
+}
+
+.leaderboard-summary-rank--bronze {
+    color: #cd7f32;
+}
+
+.leaderboard-summary-wins {
+    text-align: center;
+    color: #4caf50;
+    font-weight: 600;
+}
+
+.leaderboard-summary-losses {
+    text-align: center;
+    color: #e57373;
+}
+
+.leaderboard-summary-draws {
+    text-align: center;
+    color: var(--gray-foreground);
+}
+
+.leaderboard-summary-unknown {
+    color: var(--gray-foreground);
+    font-style: italic;
+}
+
+.leaderboard-summary-state {
+    font-size: 0.875rem;
+    color: var(--gray-foreground);
+}
+
+.leaderboard-summary-state--error {
+    color: #e57373;
+}
