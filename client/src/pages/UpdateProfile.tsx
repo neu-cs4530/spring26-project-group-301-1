@@ -229,9 +229,7 @@ export default function UpdateProfile() {
           <div className="privacyRow">
             <div className="privacyRowText">
               <span className="privacyRowLabel">Private profile</span>
-              <span className="privacyRowDescription">
-                Only approved followers can see your profile
-              </span>
+              <span className="privacyRowDescription">Only friends can see your profile</span>
             </div>
             <label className="toggleSwitch" aria-label="Toggle private profile">
               <input
