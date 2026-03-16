@@ -65,7 +65,6 @@ export default function LeaderboardSummaryView({ entryLimit = 10 }: LeaderboardS
   return (
     <div className="leaderboard-summary">
       <div className="leaderboard-summary-header">
-        <h2 className="leaderboard-summary-title">Leaderboard</h2>
         {generatedAt && (
           <span className="leaderboard-summary-updated">Updated {timeSince(generatedAt)}</span>
         )}
