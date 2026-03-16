@@ -47,6 +47,7 @@ export default function Home() {
         </div>
       </div>
       <div className="spacedSection">
+        <h2>Leaderboard</h2>
         <LeaderboardSummaryView></LeaderboardSummaryView>
       </div>
     </div>
