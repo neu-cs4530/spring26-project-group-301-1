@@ -203,10 +203,9 @@ export default function UpdateProfile() {
           />
         </div>
       </div>
-      <hr />\{" "}
+      <hr />
       <div className="spacedSection">
         <h3>Privacy</h3>
-
         <div className="privacyCard">
           <div className="privacyRow">
             <div className="privacyRowText">
