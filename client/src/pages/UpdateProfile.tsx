@@ -1,3 +1,4 @@
+import "./Profile.css";
 import { useState, useEffect } from "react";
 import type { FriendRequestInfo } from "@gamenite/shared";
 import useLoginContext from "../hooks/useLoginContext";
@@ -28,6 +29,8 @@ export default function UpdateProfile() {
     setConfirm,
     hideUsername,
     setHideUsername,
+    privateProfile,
+    setPrivateProfile,
     err,
     handleSubmit,
   } = useEditProfileForm();
@@ -67,7 +70,6 @@ export default function UpdateProfile() {
         </ul>
       </div>
       <hr />
-
       <div className="spacedSection">
         <h3>Friend Requests</h3>
         {requestsErr && <p className="error-message">{requestsErr}</p>}
@@ -112,7 +114,6 @@ export default function UpdateProfile() {
         ))}
       </div>
       <hr />
-
       <div className="spacedSection">
         <h3>Game background</h3>
         <div style={{ display: "flex", flexDirection: "row", gap: "0.5rem", alignItems: "center" }}>
@@ -172,7 +173,6 @@ export default function UpdateProfile() {
         </div>
         <div className="smallAndGray">Choose a color or image for your game background.</div>
       </div>
-
       <div className="spacedSection">
         <h3>Password</h3>
         <div style={{ display: "flex", flexDirection: "row", gap: "0.5rem" }}>
@@ -203,25 +203,48 @@ export default function UpdateProfile() {
           />
         </div>
       </div>
-      <hr />
-
+      <hr />\{" "}
       <div className="spacedSection">
         <h3>Privacy</h3>
-        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "0.5rem" }}>
-          <button
-            className="secondary narrow"
-            aria-label="Toggle hide username"
-            onClick={(e) => {
-              e.preventDefault();
-              setHideUsername((v) => !v);
-            }}
-          >
-            {hideUsername ? "Unhide username" : "Hide username"}
-          </button>
+
+        <div className="privacyCard">
+          <div className="privacyRow">
+            <div className="privacyRowText">
+              <span className="privacyRowLabel">Hide username</span>
+              <span className="privacyRowDescription">
+                Your username won't be visible to other users
+              </span>
+            </div>
+            <label className="toggleSwitch" aria-label="Toggle hide username">
+              <input
+                type="checkbox"
+                checked={hideUsername}
+                onChange={() => setHideUsername((v) => !v)}
+              />
+              <span className="toggleSlider" />
+            </label>
+          </div>
+
+          <div className="privacyDivider" />
+
+          <div className="privacyRow">
+            <div className="privacyRowText">
+              <span className="privacyRowLabel">Private profile</span>
+              <span className="privacyRowDescription">
+                Only approved followers can see your profile
+              </span>
+            </div>
+            <label className="toggleSwitch" aria-label="Toggle private profile">
+              <input
+                type="checkbox"
+                checked={privateProfile}
+                onChange={() => setPrivateProfile((p) => !p)}
+              />
+              <span className="toggleSlider" />
+            </label>
+          </div>
         </div>
       </div>
-      <hr />
-
       {err && <p className="error-message">{err}</p>}
       <div>
         <button aria-label="Submit profile edits" className="primary narrow">

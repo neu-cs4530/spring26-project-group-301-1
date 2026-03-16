@@ -18,6 +18,7 @@ export async function populateSafeUserInfo(userId: string): Promise<SafeUserInfo
     createdAt: new Date(record.createdAt),
     customBackground: record.customBackground,
     hideUsername: record.hideUsername,
+    privateProfile: record.privateProfile,
   });
 }
 
@@ -43,6 +44,7 @@ export async function createUser(
     createdAt: createdAt.toISOString(),
     display: username,
     hideUsername: false,
+    privateProfile: false,
   });
   await updateAuth(username, password, id);
   return Promise.resolve({
@@ -50,6 +52,7 @@ export async function createUser(
     createdAt,
     display: username,
     hideUsername: false,
+    privateProfile: false,
   });
 }
 
@@ -92,7 +95,7 @@ export async function safeUserFromUsername(username: string): Promise<SafeUserIn
  */
 export async function updateUser(
   username: string,
-  { display, password, customBackground, hideUsername }: UserUpdateRequest,
+  { display, password, customBackground, hideUsername, privateProfile }: UserUpdateRequest,
 ): Promise<SafeUserInfo> {
   const user = await getUserByUsername(username);
   if (!user) throw new Error(`No user ${username}`);
@@ -101,6 +104,7 @@ export async function updateUser(
   if (display !== undefined) newUser.display = display;
   if (customBackground !== undefined) newUser.customBackground = customBackground;
   if (hideUsername !== undefined) newUser.hideUsername = hideUsername;
+  if (privateProfile !== undefined) newUser.privateProfile = privateProfile;
   await UserRepo.set(user.userId, newUser);
   return populateSafeUserInfo(user.userId);
 }

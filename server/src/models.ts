@@ -119,6 +119,7 @@ export interface ThreadRecord {
  * - `display`: A display name
  * - `createdAt`: when this user registered.
  * - `hideUsername`: privacy preference for user, will hide username if true
+ * - `privateProfile`: privacy preference for user, will hide profile from non-friends if true
  */
 export interface UserRecord {
   username: string; // References Auth records
@@ -126,6 +127,7 @@ export interface UserRecord {
   createdAt: DateISO;
   customBackground?: string;
   hideUsername: boolean;
+  privateProfile: boolean;
 }
 
 /**

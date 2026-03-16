@@ -160,19 +160,32 @@ export default function ViewProfile({ username }: ViewProfileProps) {
     case "profile":
       return (
         <div className="content spacedSection">
-          <h2>Profile for {componentState.user.display}</h2>
-          <ul>
-            {!componentState.user.hideUsername && <li>Username: {componentState.user.username}</li>}
-            <li>Account created {timeSince(componentState.user.createdAt)}</li>
-            {friendStatusLabel() && <li>Friend Status: {friendStatusLabel()}</li>}
-          </ul>
-          <div style={{ alignSelf: "flex-start" }}>{renderFriendControls()}</div>
-          {friendActionErr && <p className="error-message">{friendActionErr}</p>}
-          {games !== null &&
-            !("error" in games) &&
-            friends !== null &&
-            !("error" in friends) &&
-            renderTopFriends()}
+          {(componentState.user.privateProfile && friendStatus === "friends") ||
+          !componentState.user.privateProfile ? (
+            <>
+              <h2>Profile for {componentState.user.display}</h2>
+              <ul>
+                {!componentState.user.hideUsername && (
+                  <li>Username: {componentState.user.username}</li>
+                )}
+                <li>Account created {timeSince(componentState.user.createdAt)}</li>
+                {friendStatusLabel() && <li>Friend Status: {friendStatusLabel()}</li>}
+              </ul>
+              <div style={{ alignSelf: "flex-start" }}>{renderFriendControls()}</div>
+              {friendActionErr && <p className="error-message">{friendActionErr}</p>}
+              {games !== null &&
+                !("error" in games) &&
+                friends !== null &&
+                !("error" in friends) &&
+                renderTopFriends()}
+            </>
+          ) : (
+            <>
+              <p>User profile is private</p>
+              <div style={{ alignSelf: "flex-start" }}>{renderFriendControls()}</div>
+              {friendActionErr && <p className="error-message">{friendActionErr}</p>}
+            </>
+          )}
         </div>
       );
   }

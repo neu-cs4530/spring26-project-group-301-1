@@ -45,6 +45,7 @@ describe("POST /api/game/create", () => {
         display: "Frau Drei",
         createdAt: expect.anything(),
         hideUsername: false,
+        privateProfile: false,
       },
       createdAt: expect.anything(),
       minPlayers: 2,
@@ -54,6 +55,7 @@ describe("POST /api/game/create", () => {
           display: "Frau Drei",
           createdAt: expect.anything(),
           hideUsername: false,
+          privateProfile: false,
         },
       ],
     });
