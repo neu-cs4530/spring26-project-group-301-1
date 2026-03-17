@@ -4,6 +4,14 @@ import useAuth from "./useAuth.ts";
 import { useNavigate } from "react-router-dom";
 import { createGame } from "../services/gameService.ts";
 
+/**
+ * Custom hook to manage game creation form logic
+ * @throws if outside a LoginContext
+ * @returns an object containing
+ *  - Form value `gameKey`
+ *  - Possibly-null error message `err`
+ *  - Form handlers `handleInputChange` and `handleSubmit`
+ */
 type OpponentType = "player" | "automated";
 
 function resolveGameKey(gameKey: GameKey, opponentType: OpponentType): GameKey {
