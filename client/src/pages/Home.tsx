@@ -1,3 +1,4 @@
+import "./Home.css";
 import useThreadList from "../hooks/useThreadList.ts";
 import ThreadSummaryView from "../components/ThreadSummaryView.tsx";
 import { useNavigate } from "react-router-dom";
@@ -14,91 +15,151 @@ export default function Home() {
   const { user } = useLoginContext();
 
   return (
-    <Box p={6} maxW="1200px" mx="auto">
-      <Stack gap={8}>
-        <Box textAlign="center" mb={4}>
-          <Heading size="lg" color="teal.600" fontWeight="bold">
-            Welcome, {user?.username || "user"}!
+    <Box p={6} maxW="1400px" mx="auto" className="home-page">
+      <Stack gap={8} className="home-page__content">
+        <Box textAlign="left" mb={4} marginBottom={0} className="home-page__welcome">
+          <Heading size="4xl" color="black" fontWeight="bold" className="home-page__welcome-title">
+            Welcome, {user?.display || user?.username || "user"}!
           </Heading>
-          <Box fontSize="xl" color="gray.700" mt={2}></Box>
-        </Box>
-        {/* Active Games Card */}
-        <Box borderRadius="2xl" border="1px solid #E5E7EB" bg="white" p={6} boxShadow="sm">
-          <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
-            <Heading size="lg" fontWeight="bold">
-              Active Games
-            </Heading>
-            <Box display="flex" alignItems="center" gap={2}>
-              <Box color="gray.500" fontWeight="medium" fontSize="md"></Box>
-            </Box>
-          </Box>
-          <Box height="1px" bg="gray.200" my={2} />
-          <Box my={4}>
-            {"message" in gameList ? (
-              <Box>{gameList.message}</Box>
-            ) : (
-              <SimpleGrid columns={{ base: 1, md: 2 }} gap={6} id="gameList">
-                {gameList.map((game) => (
-                  <Box
-                    key={game.gameId.toString()}
-                    borderRadius="xl"
-                    border="1px solid #E5E7EB"
-                    bg="white"
-                    p={5}
-                    boxShadow="xs"
-                    transition="box-shadow 0.2s"
-                    _hover={{ boxShadow: "md" }}
-                  >
-                    <GameSummaryView {...game} />
-                  </Box>
-                ))}
-              </SimpleGrid>
-            )}
-          </Box>
-          <Box>
-            <Button
-              background="green"
-              size="sm"
-              borderRadius="md"
-              onClick={() => navigate("/game/new")}
-            >
-              Create New Game
-            </Button>
-          </Box>
         </Box>
 
-        {/* Recent Posts Card */}
-        <Box boxShadow="md" borderRadius="lg" bg="white" p={4}>
-          <Box mb={2}>
-            <Heading size="md">Recent Posts</Heading>
+        {/* Recent Games & Leaderboard Row */}
+        <SimpleGrid columns={{ base: 1, lg: 2 }} gap={8} className="home-page__top-row">
+          {/* Active Games Card */}
+          <Box
+            borderRadius="xl"
+            border="1px solid #E5E7EB"
+            bg="white"
+            p={6}
+            boxShadow="sm"
+            className="home-card home-card--active-games"
+          >
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+              mb={2}
+              className="home-card__header"
+            >
+              <Heading size="2xl" fontWeight="bold" className="home-card__title">
+                Recent Games
+              </Heading>
+              <Box display="flex" alignItems="center" gap={2} className="home-card__actions">
+                <Button
+                  background="green"
+                  size="sm"
+                  borderRadius="md"
+                  fontWeight="600"
+                  onClick={() => navigate("/game/new")}
+                  className="home-card__button home-card__button--create-game"
+                >
+                  Create New Game
+                </Button>
+              </Box>
+            </Box>
+
+            <Box height="1px" bg="gray.200" my={2} className="home-card__divider" />
+
+            <Box my={4} className="home-card__body">
+              {"message" in gameList ? (
+                <Box className="home-card__empty-state">{gameList.message}</Box>
+              ) : (
+                <Stack gap={3} id="gameList" className="home-game-list">
+                  {gameList.map((game) => (
+                    <Box
+                      key={game.gameId.toString()}
+                      borderRadius="xl"
+                      border="1px solid #E5E7EB"
+                      bg="white"
+                      p={5}
+                      boxShadow="xs"
+                      transition="box-shadow 0.2s"
+                      _hover={{ boxShadow: "md" }}
+                      className="home-game-list__item"
+                    >
+                      <GameSummaryView {...game} />
+                    </Box>
+                  ))}
+                </Stack>
+              )}
+            </Box>
           </Box>
-          <Box height="1px" bg="gray.200" my={2} />
-          <Box my={4}>
+
+          {/* Leaderboard Card */}
+          <Box
+            borderRadius="xl"
+            border="1px solid #E5E7EB"
+            bg="white"
+            p={6}
+            boxShadow="sm"
+            className="home-card home-card--leaderboard"
+          >
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+              mb={2}
+              className="home-card__header"
+            >
+              <Heading size="2xl" fontWeight="bold" className="home-card__title">
+                Leaderboard
+              </Heading>
+            </Box>
+
+            <Box height="1px" bg="gray.200" my={2} className="home-card__divider" />
+
+            <Box my={4} className="home-card__body home-leaderboard">
+              <LeaderboardSummaryView />
+            </Box>
+          </Box>
+        </SimpleGrid>
+
+        {/* Recent Posts Card */}
+        <Box
+          borderRadius="xl"
+          border="1px solid #E5E7EB"
+          bg="white"
+          p={6}
+          boxShadow="sm"
+          className="home-card home-card--recent-posts"
+        >
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            mb={2}
+            className="home-card__header"
+          >
+            <Heading size="2xl" fontWeight="bold" className="home-card__title">
+              Recent Forum Posts
+            </Heading>
+
+            <Box display="flex" alignItems="center" gap={2} className="home-card__actions">
+              <Button
+                background="green"
+                size="sm"
+                borderRadius="md"
+                fontWeight="600"
+                onClick={() => navigate("/forum/post/new")}
+                className="home-card__button home-card__button--create-post"
+              >
+                Create New Post
+              </Button>
+            </Box>
+          </Box>
+
+          <Box height="1px" bg="gray.200" my={2} className="home-card__divider" />
+
+          <Box my={4} className="home-card__body">
             {"message" in threadList ? (
-              <Box>{threadList.message}</Box>
+              <Box className="home-card__empty-state">{threadList.message}</Box>
             ) : (
-              <Stack gap={3} id="threadList" role="list">
+              <Stack gap={3} id="threadList" role="list" className="home-thread-list">
                 {threadList.map((thread) => (
                   <ThreadSummaryView {...thread} key={thread.threadId.toString()} />
                 ))}
               </Stack>
             )}
-          </Box>
-          <Box>
-            <Button colorScheme="teal" size="sm" onClick={() => navigate("/forum/post/new")}>
-              Create New Post
-            </Button>
-          </Box>
-        </Box>
-
-        {/* Leaderboard Card */}
-        <Box boxShadow="md" borderRadius="lg" bg="white" p={4}>
-          <Box mb={2}>
-            <Heading size="md">Leaderboard</Heading>
-          </Box>
-          <Box height="1px" bg="gray.200" my={2} />
-          <Box my={4}>
-            <LeaderboardSummaryView />
           </Box>
         </Box>
       </Stack>

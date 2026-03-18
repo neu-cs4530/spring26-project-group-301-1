@@ -64,12 +64,6 @@ export default function LeaderboardSummaryView({ entryLimit = 10 }: LeaderboardS
 
   return (
     <div className="leaderboard-summary">
-      <div className="leaderboard-summary-header">
-        {generatedAt && (
-          <span className="leaderboard-summary-updated">Updated {timeSince(generatedAt)}</span>
-        )}
-      </div>
-
       <div className="leaderboard-summary-toggle" role="tablist">
         <button
           role="tab"
@@ -132,6 +126,12 @@ export default function LeaderboardSummaryView({ entryLimit = 10 }: LeaderboardS
           </tbody>
         </table>
       )}
+
+      <div className="leaderboard-summary-header">
+        {generatedAt && (
+          <span className="leaderboard-summary-updated">Updated {timeSince(generatedAt)}</span>
+        )}
+      </div>
     </div>
   );
 }
