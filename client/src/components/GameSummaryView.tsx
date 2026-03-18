@@ -20,6 +20,13 @@ export default function GameSummaryView({
   const navigate = useNavigate();
   const numPlayers = players.length;
 
+  const statusClass =
+    status === "waiting"
+      ? "gameSummary__status--waiting"
+      : status === "active"
+        ? "gameSummary__status--active"
+        : "gameSummary__status--done";
+
   return (
     <div className="gameSummary" role="listitem">
       <div className="gameSummary__header">
@@ -32,7 +39,10 @@ export default function GameSummaryView({
         </div>
       </div>
 
-      <div className="gameSummary__status" onClick={() => navigate(`/game/${gameId}`)}>
+      <div
+        className={`gameSummary__status ${statusClass}`}
+        onClick={() => navigate(`/game/${gameId}`)}
+      >
         {status}
         {status !== "done" && `, ${numPlayers} player${numPlayers === 1 ? "" : "s"}`}
       </div>

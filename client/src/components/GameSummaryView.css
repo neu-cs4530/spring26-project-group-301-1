@@ -36,6 +36,14 @@
   font-size: 1.1rem;
 }
 
+.gameSummary__status--waiting {
+  color: #ca8a04;
+}
+
+.gameSummary__status--active {
+  color: #16a34a;
+}
+
 .gameSummary__lastActivity {
   white-space: nowrap;
   text-align: right;

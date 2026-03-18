@@ -62,6 +62,10 @@ export default function LeaderboardSummaryView({ entryLimit = 10 }: LeaderboardS
     };
   }, [viewMode, entryLimit]);
 
+  const first = entries.find((e) => e.rank === 1);
+  const second = entries.find((e) => e.rank === 2);
+  const third = entries.find((e) => e.rank === 3);
+
   return (
     <div className="leaderboard-summary">
       <div className="leaderboard-summary-toggle" role="tablist">
@@ -93,38 +97,84 @@ export default function LeaderboardSummaryView({ entryLimit = 10 }: LeaderboardS
       ) : entries.length === 0 ? (
         <p className="leaderboard-summary-state">No results yet.</p>
       ) : (
-        <table className="leaderboard-summary-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Player</th>
-              <th>Won</th>
-              <th>Lost</th>
-              <th>Draw</th>
-            </tr>
-          </thead>
-          <tbody>
-            {entries.map((entry) => (
-              <tr
-                key={entry.user?.username ?? entry.rank}
-                className="leaderboard-summary-row"
-                onClick={() => entry.user && navigate(`/profile/${entry.user.username}`)}
-              >
-                <td className={rankClassName(entry.rank)}>{entry.rank}</td>
-                <td>
-                  {entry.user ? (
-                    <UserLink user={entry.user} capitalize />
-                  ) : (
-                    <span className="leaderboard-summary-unknown">Unknown</span>
-                  )}
-                </td>
-                <td className="leaderboard-summary-wins">{entry.wins}</td>
-                <td className="leaderboard-summary-losses">{entry.losses}</td>
-                <td className="leaderboard-summary-draws">{entry.draws}</td>
+        <>
+          <table className="leaderboard-summary-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Player</th>
+                <th>Won</th>
+                <th>Lost</th>
+                <th>Draw</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {entries.map((entry) => (
+                <tr
+                  key={entry.user?.username ?? entry.rank}
+                  className="leaderboard-summary-row"
+                  onClick={() => entry.user && navigate(`/profile/${entry.user.username}`)}
+                >
+                  <td className={rankClassName(entry.rank)}>{entry.rank}</td>
+                  <td>
+                    {entry.user ? (
+                      <UserLink user={entry.user} capitalize />
+                    ) : (
+                      <span className="leaderboard-summary-unknown">Unknown</span>
+                    )}
+                  </td>
+                  <td className="leaderboard-summary-wins">{entry.wins}</td>
+                  <td className="leaderboard-summary-losses">{entry.losses}</td>
+                  <td className="leaderboard-summary-draws">{entry.draws}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <div className="leaderboard-summary-podium" aria-label="Top three players">
+            <div
+              className={`leaderboard-summary-podium__slot leaderboard-summary-podium__slot--second ${second?.user ? "clickable" : "is-empty"}`}
+              onClick={() => second?.user && navigate(`/profile/${second.user.username}`)}
+            >
+              <div className="leaderboard-summary-podium__medal">🥈 2nd</div>
+              <div className="leaderboard-summary-podium__name">
+                {second?.user ? (
+                  <UserLink user={second.user} capitalize />
+                ) : (
+                  <span className="leaderboard-summary-unknown">—</span>
+                )}
+              </div>
+            </div>
+
+            <div
+              className={`leaderboard-summary-podium__slot leaderboard-summary-podium__slot--first ${first?.user ? "clickable" : "is-empty"}`}
+              onClick={() => first?.user && navigate(`/profile/${first.user.username}`)}
+            >
+              <div className="leaderboard-summary-podium__medal">🥇 1st</div>
+              <div className="leaderboard-summary-podium__name">
+                {first?.user ? (
+                  <UserLink user={first.user} capitalize />
+                ) : (
+                  <span className="leaderboard-summary-unknown">—</span>
+                )}
+              </div>
+            </div>
+
+            <div
+              className={`leaderboard-summary-podium__slot leaderboard-summary-podium__slot--third ${third?.user ? "clickable" : "is-empty"}`}
+              onClick={() => third?.user && navigate(`/profile/${third.user.username}`)}
+            >
+              <div className="leaderboard-summary-podium__medal">🥉 3rd</div>
+              <div className="leaderboard-summary-podium__name">
+                {third?.user ? (
+                  <UserLink user={third.user} capitalize />
+                ) : (
+                  <span className="leaderboard-summary-unknown">—</span>
+                )}
+              </div>
+            </div>
+          </div>
+        </>
       )}
 
       <div className="leaderboard-summary-header">
