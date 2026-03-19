@@ -18,7 +18,7 @@ export default function Home() {
     <Box p={6} maxW="1400px" mx="auto" className="home-page">
       <Stack gap={8} className="home-page__content">
         <Box textAlign="left" mb={4} marginBottom={0} className="home-page__welcome">
-          <Heading size="4xl" color="black" fontWeight="bold" className="home-page__welcome-title">
+          <Heading size="3xl" color="black" fontWeight="bold" className="home-page__welcome-title">
             Welcome, {user?.display || user?.username || "user"}!
           </Heading>
         </Box>

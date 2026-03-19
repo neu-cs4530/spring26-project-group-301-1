@@ -1,0 +1,67 @@
+.profileSidebar {
+  top: 80px;
+  width: 240px;
+  min-width: 240px;
+  max-width: 240px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  padding: 0.95rem;
+  font-size: 1.08rem;
+  height: fit-content;
+  align-self: flex-start;
+  margin-right: 4px;
+  box-sizing: border-box;
+}
+.profileSidebar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.profileSidebar li {
+  margin-bottom: 10px;
+}
+.sidebarLink {
+  width: 100%;
+  min-width: 208px;
+  max-width: 208px;
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  color: #334155;
+  font-weight: 500;
+  font-size: 1.08rem;
+  cursor: pointer;
+  padding: 0.85rem 1.1rem;
+  border-radius: 10px;
+  transition:
+    background 0.15s,
+    color 0.15s;
+  text-align: left;
+  gap: 0.9em;
+  box-sizing: border-box;
+  justify-content: flex-start;
+}
+.sidebarLink:hover {
+  background: #f1f5fd;
+  color: #2563eb;
+}
+.sidebarLink.is-active {
+  background: #e6efff;
+  color: #2563eb;
+  /* No box-shadow, no font-weight change, no padding change */
+}
+.sidebarIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* margin-right removed to prevent width shift */
+  color: #64748b;
+  font-size: 1.25em;
+  flex-shrink: 0;
+}
+.sidebarLink.is-active .sidebarIcon {
+  color: #2563eb;
+}
