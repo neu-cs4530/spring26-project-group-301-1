@@ -1,11 +1,5 @@
-const PRESET_BACKGROUNDS: { label: string; url: string }[] = [
-  { label: "Stripes", url: "/backgrounds/stripes.jpeg" },
-  { label: "Sky", url: "/backgrounds/sky.jpeg" },
-  { label: "Pastels", url: "/backgrounds/pastel.jpeg" },
-  { label: "Lake", url: "/backgrounds/lake.jpeg" },
-];
 import "./Profile.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import type { FriendRequestInfo } from "@gamenite/shared";
 import useLoginContext from "../hooks/useLoginContext";
 import useTimeSince from "../hooks/useTimeSince";
@@ -13,6 +7,13 @@ import useTimeSince from "../hooks/useTimeSince";
 import useEditProfileForm from "../hooks/useEditProfileForm";
 import { getPendingRequests, resolveRequest } from "../services/friendsService";
 import ProfileSidebar from "../components/ProfileSidebar";
+
+const PRESET_BACKGROUNDS: { label: string; url: string }[] = [
+  { label: "Stripes", url: "/backgrounds/stripes.jpeg" },
+  { label: "Sky", url: "/backgrounds/sky.jpeg" },
+  { label: "Pastels", url: "/backgrounds/pastel.jpeg" },
+  { label: "Lake", url: "/backgrounds/lake.jpeg" },
+];
 
 export default function UpdateProfile() {
   const [activeSection, setActiveSection] = useState<string>("friend-requests");
@@ -29,6 +30,7 @@ export default function UpdateProfile() {
   const {
     backgroundType,
     setBackgroundType,
+    color,
     setColor,
     imageUrl,
     setImageUrl,
@@ -37,6 +39,7 @@ export default function UpdateProfile() {
     setPassword,
     confirm,
     setConfirm,
+    display,
     hideUsername,
     setHideUsername,
     privateProfile,
@@ -44,6 +47,28 @@ export default function UpdateProfile() {
     err,
     handleSubmit,
   } = useEditProfileForm();
+
+  // Determine if any fields are dirty
+  const isDirty = useMemo(() => {
+    return (
+      password !== "" ||
+      confirm !== "" ||
+      user.display !== display ||
+      (user.customBackground || "") !== (backgroundType === "color" ? color : imageUrl) ||
+      user.hideUsername !== hideUsername ||
+      user.privateProfile !== privateProfile
+    );
+  }, [
+    password,
+    confirm,
+    display,
+    backgroundType,
+    color,
+    imageUrl,
+    hideUsername,
+    privateProfile,
+    user,
+  ]);
 
   useEffect(() => {
     getPendingRequests({ username: user.username, password: pass }).then(
@@ -123,7 +148,12 @@ export default function UpdateProfile() {
         </div>
 
         <div className="profileLayout">
-          <ProfileSidebar activeSection={activeSection} onSelect={setActiveSection} />
+          <ProfileSidebar
+            activeSection={activeSection}
+            onSelect={setActiveSection}
+            isDirty={isDirty}
+            onSubmit={(e) => handleSubmit(e as React.SubmitEvent<HTMLFormElement>)}
+          />
           <div className="profileCol profileCol--left">
             {activeSection === "friend-requests" && (
               <section className="profileSectionCard" id="friend-requests">
@@ -318,11 +348,6 @@ export default function UpdateProfile() {
                   </div>
                 </div>
                 {err && <p className="error-message">{err}</p>}
-                <div className="profileSubmitRow">
-                  <button aria-label="Submit profile edits" className="primary narrow">
-                    Save Changes
-                  </button>
-                </div>
                 <div className="smallAndGray">
                   After updating your profile, you will be logged out
                 </div>

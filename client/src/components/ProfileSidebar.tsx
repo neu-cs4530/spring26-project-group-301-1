@@ -61,12 +61,22 @@ const SECTIONS = [
 interface ProfileSidebarProps {
   activeSection: string;
   onSelect: (sectionId: string) => void;
+  isDirty?: boolean;
+  onSubmit?: (e?: React.FormEvent) => void;
 }
 
-export default function ProfileSidebar({ activeSection, onSelect }: ProfileSidebarProps) {
+export default function ProfileSidebar({
+  activeSection,
+  onSelect,
+  isDirty,
+  onSubmit,
+}: ProfileSidebarProps) {
   return (
-    <nav className="profileSidebar">
-      <ul>
+    <nav
+      className="profileSidebar"
+      style={{ display: "flex", flexDirection: "column", height: "100%" }}
+    >
+      <ul style={{ flex: 1 }}>
         {SECTIONS.map((section) => (
           <li key={section.id}>
             <button
@@ -80,6 +90,19 @@ export default function ProfileSidebar({ activeSection, onSelect }: ProfileSideb
           </li>
         ))}
       </ul>
+      {typeof isDirty === "boolean" && isDirty && (
+        <div style={{ marginTop: "auto" }}>
+          <button
+            className="primary narrow"
+            style={{ width: "100%", marginTop: "1.2rem" }}
+            aria-label="Submit profile edits"
+            type="submit"
+            onClick={onSubmit}
+          >
+            Save Changes
+          </button>
+        </div>
+      )}
     </nav>
   );
 }
