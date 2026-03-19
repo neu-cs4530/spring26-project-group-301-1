@@ -65,6 +65,7 @@ export default function ProfileSidebar({
           >
             Save Changes
           </button>
+          <div className="smallAndGray">After updating your profile, you will be logged out</div>
         </div>
       )}
     </nav>

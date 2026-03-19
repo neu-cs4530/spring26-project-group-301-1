@@ -348,9 +348,6 @@ export default function UpdateProfile() {
                   </div>
                 </div>
                 {err && <p className="error-message">{err}</p>}
-                <div className="smallAndGray">
-                  After updating your profile, you will be logged out
-                </div>
               </section>
             )}
           </div>
