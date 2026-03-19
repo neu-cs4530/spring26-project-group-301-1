@@ -20,13 +20,14 @@
 }
 
 .privacyRowLabel {
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 17px; /* was 14px */
+  font-weight: 600;
 }
 
 .privacyRowDescription {
-  font-size: 13px;
+  font-size: 15px; /* was 13px */
   color: var(--color-text-secondary);
+  line-height: 1.35;
 }
 
 .privacyDivider {
@@ -84,4 +85,376 @@
 
 .toggleSwitch input:focus-visible + .toggleSlider {
   box-shadow: 0 0 0 3px rgba(83, 74, 183, 0.3);
+}
+
+.profile-page {
+  max-width: 1600px; /* was 1400px */
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.profile-card {
+  width: 100%;
+  max-width: none;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+  padding: 1.5rem;
+}
+
+/* Scoped typography/spacing to feel like other cards */
+.profile-card h1,
+.profile-card h2,
+.profile-card h3 {
+  margin-top: 0;
+  color: #111827;
+}
+
+.profile-card h1 {
+  font-size: 2.25rem; /* matches large page header scale */
+  line-height: 1.15;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #111827;
+}
+
+/* if your profile title is rendered as h2 instead of h1 */
+.profile-card h2:first-of-type {
+  font-size: 2.25rem;
+  line-height: 1.15;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #111827;
+}
+
+.profile-card p,
+.profile-card label,
+.profile-card span {
+  color: #374151;
+}
+
+/* Form controls in update profile */
+.profile-card input,
+.profile-card textarea,
+.profile-card select {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 0.55rem 0.7rem;
+  background: #fff;
+}
+
+.profile-card input:focus,
+.profile-card textarea:focus,
+.profile-card select:focus {
+  outline: none;
+  border-color: #14b8a6;
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15);
+}
+
+.profile-card select.profile-bg-select {
+  width: auto; /* override full-width profile select */
+  min-width: 160px;
+  max-width: 220px;
+}
+
+/* Buttons consistent with site accents */
+.profile-card button {
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.profile-bg-color-picker {
+  width: 3.25rem; /* larger square */
+  height: 2.5rem;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.profile-card .spacedSection h3 {
+  font-size: 1.4rem; /* bigger */
+  font-weight: 800; /* bolder */
+  line-height: 1.2;
+  color: #111827;
+  margin: 0 0 0.55rem 0;
+}
+
+.profileForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.profileTitle {
+  margin: 0;
+  font-size: 2.25rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: #111827;
+}
+
+.profileIdentityCard {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.profileAvatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #60a5fa, #2563eb);
+}
+
+.profileIdentityCard .smallAndGray {
+  font-size: 1.08rem; /* bigger for Username / Account created */
+  line-height: 1.4;
+}
+
+.profileIdentityName {
+  font-size: 1.25rem; /* optional bump for name line too */
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.profileLayout {
+  display: grid;
+  grid-template-columns: 1fr; /* was 300px minmax(0, 1fr) */
+  gap: 0.85rem;
+}
+
+.profileCol {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.profileSectionCard {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  background: #fff;
+  padding: 0.95rem;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.profileSectionCard h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #1f2937;
+}
+
+.profileControlRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.profileBgPreview {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.friendRequestRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.4rem 0;
+}
+
+.friendRequestActions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.profileSubmitRow {
+  margin-top: 0.75rem;
+}
+
+.friendRequestsEmpty {
+  font-size: 1.08rem;
+  line-height: 1.4;
+}
+
+@media (max-width: 980px) {
+  .profileLayout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.gameBgCard__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.35rem;
+}
+
+.gameBgCard__help {
+  font-size: 1.08rem; /* match other helper/meta text */
+  line-height: 1.4;
+  color: #667085;
+  margin: 0 0 0.65rem 0;
+}
+
+.gameBgCard__divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 0.35rem 0 0.9rem 0;
+}
+
+.gameBgCard__reset {
+  border: 1px solid #d9dee7;
+  background: #f8fafc;
+  color: #667085;
+  border-radius: 14px;
+  padding: 0.35rem 0.85rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.gameBgCard__images {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr)); /* was 4 */
+  gap: 0.6rem;
+}
+
+.gameBgTile {
+  position: relative;
+  border: 1px solid #dbe3ef;
+  border-radius: 12px;
+  overflow: hidden;
+  padding: 0;
+  background: #fff;
+  aspect-ratio: 2 / 3;
+}
+
+.gameBgTile img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.gameBgTile.is-selected {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.45);
+}
+
+.gameBgTile__check {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.35);
+  color: #fff;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+}
+
+.gameBgTile__check.is-selected {
+  background: rgba(96, 165, 250, 0.95);
+  border-color: #fff;
+}
+
+.gameBgCustomColor {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 0.25rem;
+  padding: 0.3rem 0.55rem;
+  border: 1px solid #d0d5dd;
+  border-radius: 10px;
+  background: #f8fafc;
+  font-size: 1rem; /* bigger label text */
+  font-weight: 700;
+  color: #475467;
+}
+
+.gameBgCustomColor input[type="color"] {
+  width: 56px; /* bigger color square */
+  height: 44px;
+  padding: 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.gameBgTile--color {
+  position: relative;
+  cursor: pointer;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Invisible click layer over the full tile */
+.gameBgTile__colorInput {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 3;
+  border: 0;
+  padding: 0;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+/* Remove native color swatch chrome (Safari/Chrome) */
+.gameBgTile__colorInput::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+.gameBgTile__colorInput::-webkit-color-swatch {
+  border: 0;
+  border-radius: 0;
+}
+
+/* Tile fill preview */
+.gameBgTile__colorPreview {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+/* Label chip at bottom-left */
+.gameBgTile__label {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  z-index: 2;
+  padding: 0.22rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #111827;
+  background: rgba(255, 255, 255, 0.88);
+}
+
+/* Check icon stays above preview */
+.gameBgTile__check {
+  z-index: 2;
 }
