@@ -22,10 +22,7 @@ export default function TicTacToeGame({
     }
 
     if (boardFull) return "Draw game.";
-    if (view.nextPlayer === userPlayerIndex) return "Your turn.";
-
-    const nextName = players[view.nextPlayer]?.display ?? "Opponent";
-    return `${nextName}'s turn.`;
+    return "";
   })();
 
   const renderEntry = (row: number, col: number, entry: "O" | "X" | null) => {
@@ -56,8 +53,12 @@ export default function TicTacToeGame({
 
   return (
     <div className="ticTacToeGame content spacedSection">
-      <div className="ticTacToeStatus">{statusMessage}</div>
-      <div className="ticTacToeBoard" role="grid" aria-label="Tic-Tac-Toe board">
+      {statusMessage && <div className="ticTacToeStatus">{statusMessage}</div>}
+      <div
+        className={statusMessage ? "ticTacToeBoard ticTacToeBoard--withStatus" : "ticTacToeBoard"}
+        role="grid"
+        aria-label="Tic-Tac-Toe board"
+      >
         {view.board.map((entries, row) =>
           entries.map((entry, col) => (
             <div className="ticTacToeCell" role="gridcell" key={`${row}-${col}`}>

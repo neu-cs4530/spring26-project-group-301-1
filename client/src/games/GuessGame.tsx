@@ -206,7 +206,7 @@ export default function GuessGame({
               <span className="guessGame__rangeCurrent">{guess}</span>
               <span>100</span>
             </div>
-            <button className="primary narrow guessGame__submit">Submit Guess</button>
+            <button className="narrow guessGame__button guessGame__submit">Submit Guess</button>
           </form>
         ))}
     </div>

@@ -10,11 +10,6 @@ export default function NimGame({
 }: GameProps<NimView, NimMove>) {
   const disabled = userPlayerIndex !== view.nextPlayer || view.forfeited === true;
 
-  /** Possessive form of player's name */
-  function playerPoss(index: number) {
-    return index === userPlayerIndex ? "your" : `${players[index].display}'s`;
-  }
-
   function winnerDisplay(index: number) {
     return index === userPlayerIndex ? "You" : players[index].display;
   }
@@ -27,10 +22,6 @@ export default function NimGame({
     view.forfeited === true
       ? `${winnerDisplay(view.nextPlayer)} won by forfeit`
       : `${winnerDisplay(view.nextPlayer)} won`;
-
-  const statusText = (() => {
-    return `It is ${playerPoss(view.nextPlayer)} turn`;
-  })();
 
   return (
     <div className="nimGame content spacedSection">
@@ -65,14 +56,12 @@ export default function NimGame({
         >
           {winnerBannerText}
         </div>
-      ) : (
-        <div className="nimGame__status">{statusText}</div>
-      )}
+      ) : null}
 
       {userPlayerIndex >= 0 && (
         <div className="nimGame__actions">
           <button
-            className="secondary narrow nimGame__action"
+            className="narrow nimGame__button"
             disabled={disabled || view.remaining < 1}
             onClick={() => makeMove({ type: "move", count: 1 })}
           >
@@ -80,14 +69,14 @@ export default function NimGame({
           </button>
           <button
             disabled={disabled || view.remaining < 2}
-            className="secondary narrow nimGame__action"
+            className="narrow nimGame__button"
             onClick={() => makeMove({ type: "move", count: 2 })}
           >
             Take two
           </button>
           <button
             disabled={disabled || view.remaining < 3}
-            className="secondary narrow nimGame__action"
+            className="narrow nimGame__button"
             onClick={() => makeMove({ type: "move", count: 3 })}
           >
             Take three

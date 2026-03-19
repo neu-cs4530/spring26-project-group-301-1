@@ -34,8 +34,35 @@ export default function GamePanel({
     socket.emit("gameMakeMove", { auth, payload: { gameId, move: { type: "forfeit" } } });
   };
 
-  const renderPlayerCard = (player: (typeof players)[number], index: number) => (
-    <div className="gameRoster__playerCard" role="listitem" key={player.username}>
+  const currentTurnPlayerIndex = (() => {
+    if (!view) return null;
+
+    if (view.type === "tictactoe") {
+      const tttView = view.view;
+      const boardFull = tttView.board.every((row) => row.every((entry) => entry !== null));
+      if (tttView.winningEntry || tttView.forfeited || boardFull) return null;
+      return tttView.nextPlayer;
+    }
+
+    if (view.type === "nim") {
+      const nimView = view.view;
+      if (nimView.forfeited || nimView.remaining <= 0) return null;
+      return nimView.nextPlayer;
+    }
+
+    return null;
+  })();
+
+  const renderPlayerCard = (player: (typeof players)[number], index: number, isTurn = false) => (
+    <div
+      className={
+        isTurn
+          ? "gameRoster__playerCard gameRoster__playerCard--activeTurn"
+          : "gameRoster__playerCard"
+      }
+      role="listitem"
+      key={player.username}
+    >
       <div className="gameRoster__itemName">
         {player.username === user.username ? "You" : <UserLink user={player} />}
       </div>
@@ -90,13 +117,15 @@ export default function GamePanel({
         </div>
         {players.length === 2 ? (
           <div className="gameRoster__duel" role="list">
-            {renderPlayerCard(players[0], 0)}
+            {renderPlayerCard(players[0], 0, currentTurnPlayerIndex === 0)}
             <div className="gameRoster__versus">vs</div>
-            {renderPlayerCard(players[1], 1)}
+            {renderPlayerCard(players[1], 1, currentTurnPlayerIndex === 1)}
           </div>
         ) : (
           <div className="gameRoster__list" role="list">
-            {players.map((player, index) => renderPlayerCard(player, index))}
+            {players.map((player, index) =>
+              renderPlayerCard(player, index, currentTurnPlayerIndex === index),
+            )}
           </div>
         )}
       </div>
