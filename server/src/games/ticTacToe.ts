@@ -17,8 +17,8 @@ type TicTacToeBoard = [
 
 const NUM_PLAYERS: number = 2;
 
-// Player 0 (Player #1 in the front-end) starts the game, and goes second (O).
-// Player 1 (Player #2 in the front-end) joins the game after it is started, and goes first (X).
+// Player 0 (Player 1 in the front-end) starts the game, and goes second (O).
+// Player 1 (Player 2 in the front-end) joins the game after it is started, and goes first (X).
 const PLAYER_IDX_TO_ENTRY_MAP: [TicTacEntry, TicTacEntry] = ["O", "X"];
 
 // List of all possible winning indexes (rows, columns, diagonals) for ease of testing

@@ -1,0 +1,86 @@
+.ticTacToeGame {
+  align-items: center;
+}
+
+.ticTacToeStatus {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1d4ed8;
+  text-align: center;
+}
+
+.ticTacToeBoard {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  width: min(320px, 100%);
+  padding: 0.65rem;
+  border-radius: 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.18);
+  margin-top: 0.75rem;
+}
+
+.ticTacToeCell {
+  aspect-ratio: 1 / 1;
+}
+
+.tttCell,
+.tttMoveButton {
+  width: 100%;
+  height: 100%;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.tttCell {
+  border: 1px solid #d9deea;
+  background: #ffffff;
+  color: #1d4ed8;
+}
+
+.tttCell--filled {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+  color: #1d4ed8;
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.12);
+}
+
+.tttCell--winner {
+  background: #dbeafe;
+  border-color: #60a5fa;
+  color: #1d4ed8;
+}
+
+.tttCell--empty {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #cbd5e1;
+}
+
+.tttMoveButton {
+  border: 1px solid #93c5fd;
+  background: #f8fbff;
+  color: #2563eb;
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    transform 120ms ease;
+}
+
+.tttMoveButton:hover:not(:disabled) {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  transform: translateY(-1px);
+}
+
+.tttMoveButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
