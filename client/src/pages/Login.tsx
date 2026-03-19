@@ -18,9 +18,9 @@ export default function Login({ setAuth }: LoginProps) {
 
   return (
     <div className="container">
-      <h1>GameNite</h1>
+      <h1 style={{ fontSize: "2rem", fontWeight: "bold" }}>GameNite Connect</h1>
       <form className="login" onSubmit={(e) => handleSubmit(e)}>
-        <h2>Log into GameNite</h2>
+        <h2>Log into GameNite Connect</h2>
         <input
           type="text"
           value={username}
