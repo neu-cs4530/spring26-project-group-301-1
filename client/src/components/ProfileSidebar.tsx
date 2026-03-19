@@ -1,60 +1,22 @@
 import React from "react";
 import "./ProfileSidebar.css";
+import { Image, Lock, Shield } from "lucide-react";
 
 const SECTIONS = [
   {
     id: "game-background",
     label: "Game Background",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <rect
-          x="3"
-          y="5"
-          width="18"
-          height="14"
-          rx="3"
-          strokeWidth="2"
-          stroke="currentColor"
-          fill="none"
-        />
-        <path d="M3 17l4-4a3 3 0 014 0l4 4" strokeWidth="2" stroke="currentColor" fill="none" />
-        <circle cx="9" cy="9" r="2" fill="currentColor" />
-      </svg>
-    ),
+    icon: Image,
   },
   {
     id: "password",
     label: "Password",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <rect
-          x="5"
-          y="11"
-          width="14"
-          height="8"
-          rx="2"
-          strokeWidth="2"
-          stroke="currentColor"
-          fill="none"
-        />
-        <path d="M7 11V7a5 5 0 0110 0v4" strokeWidth="2" stroke="currentColor" fill="none" />
-      </svg>
-    ),
+    icon: Lock,
   },
   {
     id: "privacy",
     label: "Privacy",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path
-          d="M12 3l7 4v5c0 5.25-3.5 10-7 10s-7-4.75-7-10V7l7-4z"
-          strokeWidth="2"
-          stroke="currentColor"
-          fill="none"
-        />
-        <circle cx="12" cy="13" r="2.5" fill="currentColor" />
-      </svg>
-    ),
+    icon: Shield,
   },
 ];
 
@@ -84,7 +46,9 @@ export default function ProfileSidebar({
               type="button"
               onClick={() => onSelect(section.id)}
             >
-              <span className="sidebarIcon">{section.icon}</span>
+              <span className="sidebarIcon">
+                <section.icon className="profileSidebarMenuIcon" aria-hidden="true" />
+              </span>
               {section.label}
             </button>
           </li>
