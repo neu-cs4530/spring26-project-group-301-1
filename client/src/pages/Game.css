@@ -4,3 +4,12 @@ div.gameContainer {
   overflow-y: clip;
   grid-template-columns: 1fr 1fr;
 }
+
+.gameContainer__panelBg {
+  min-width: 0;
+  min-height: 0;
+  background-color: #ffffff;
+
+  display: flex;
+  justify-content: center;
+}
