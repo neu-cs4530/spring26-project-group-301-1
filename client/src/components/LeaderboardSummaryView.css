@@ -21,6 +21,7 @@
 
 .leaderboard-summary-toggle {
   display: flex;
+  align-items: center;
   gap: 0.5rem;
   position: absolute; /* add */
   top: -4rem; /* adjust if needed */
@@ -28,36 +29,27 @@
   z-index: 1;
 }
 
-/* optional: keep buttons from wrapping awkwardly */
-.leaderboard-summary-toggle button {
+.leaderboard-summary-toggle-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--gray-foreground);
+}
+
+.leaderboard-summary-toggle select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--gray-foreground);
+  border-radius: 0.375rem;
+  background: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--gray-foreground);
+  cursor: pointer;
   white-space: nowrap;
 }
 
-.leaderboard-summary-toggle button {
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--gray-foreground);
-  border-radius: 0.375rem; /* was 999px */
-  background: none;
-  font-size: 0.9rem;
-  font-weight: 600; /* closer to create button weight */
-  color: var(--gray-foreground);
-  cursor: pointer;
-  text-transform: capitalize;
-  transition:
-    background 0.15s,
-    color 0.15s;
-}
-
-.leaderboard-summary-toggle button.active,
-.leaderboard-summary-toggle button:hover {
-  background: oklch(0.55 0.1 260);
-  border-color: oklch(0.55 0.1 260);
-  color: white;
-}
-
-.leaderboard-summary-toggle button.active:hover {
-  background: oklch(0.45 0.1 260);
-  border-color: oklch(0.45 0.1 260);
+.leaderboard-summary-toggle select:focus {
+  outline: 2px solid oklch(0.55 0.1 260);
+  outline-offset: 1px;
 }
 
 .leaderboard-summary-table {

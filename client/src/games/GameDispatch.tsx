@@ -26,22 +26,6 @@ export default function GameDispatch({
     socket.emit("gameMakeMove", { auth, payload: { gameId, move } });
   }
 
-  // Determine background style
-  const backgroundStyle: React.CSSProperties = { minHeight: "100vh" };
-  if (user.customBackground) {
-    if (user.customBackground.startsWith("#") || user.customBackground.startsWith("rgb")) {
-      backgroundStyle.background = user.customBackground;
-    } else if (user.customBackground.startsWith("/")) {
-      // Local preset image path
-      backgroundStyle.backgroundImage = `url('${user.customBackground}')`;
-      backgroundStyle.backgroundSize = "cover";
-      backgroundStyle.backgroundPosition = "center";
-    } else {
-      // Fallback: treat as color
-      backgroundStyle.background = user.customBackground;
-    }
-  }
-
   /**
    * Helper function to get the right game component based on the type.
    * @returns component for the game specified by the view
@@ -66,16 +50,5 @@ export default function GameDispatch({
   }
 
   const childProps = { userPlayerIndex, players, makeMove };
-  return (
-    <div className="content" style={backgroundStyle}>
-      {getGame()}
-      {userPlayerIndex === -1 ? (
-        <></>
-      ) : (
-        <button className="primary narrow" onClick={() => makeMove({ type: "forfeit" })}>
-          Forfeit Game
-        </button>
-      )}
-    </div>
-  );
+  return <div className="content">{getGame()}</div>;
 }

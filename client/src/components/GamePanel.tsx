@@ -1,4 +1,5 @@
 import "./GamePanel.css";
+import { useEffect, useState } from "react";
 import type { GameInfo } from "@gamenite/shared";
 import { gameNames } from "../util/consts.ts";
 import useLoginContext from "../hooks/useLoginContext.ts";
@@ -18,15 +19,35 @@ export default function GamePanel({
   createdAt,
   minPlayers,
 }: GameInfo) {
+  // Display title without the "vs Automated Opponent" suffix for the game page
+  const displayTitle = gameNames[type].replace(" vs Automated Opponent", "");
+  const isAutomatedTicTacToe = type === "automatedTicTacToe";
   const { user, socket } = useLoginContext();
   const auth = useAuth();
   const timeSince = useTimeSince();
 
   const { view, players, viewers, userPlayerIndex, hasWatched, joinGame, startGame } =
     useSocketsForGame(gameId, initialPlayers);
+  const [aiThinking, setAiThinking] = useState(false);
+
+  const displayedPlayerCount = isAutomatedTicTacToe ? Math.max(players.length, 2) : players.length;
+
+  useEffect(() => {
+    const handleThinkingEvent = (event: Event) => {
+      const customEvent = event as CustomEvent<{ gameId?: string; thinking?: boolean }>;
+      const isTargetGame = !customEvent.detail?.gameId || customEvent.detail.gameId === gameId;
+      if (!isTargetGame) return;
+      setAiThinking(Boolean(customEvent.detail?.thinking));
+    };
+
+    window.addEventListener("automated-opponent-thinking", handleThinkingEvent);
+    return () => {
+      window.removeEventListener("automated-opponent-thinking", handleThinkingEvent);
+    };
+  }, [gameId]);
 
   const playerMarker = (index: number) => {
-    if (type !== "tictactoe") return "";
+    if (type !== "tictactoe" && type !== "automatedTicTacToe") return "";
     return index === 0 ? " (O)" : " (X)";
   };
 
@@ -37,7 +58,7 @@ export default function GamePanel({
   const currentTurnPlayerIndex = (() => {
     if (!view) return null;
 
-    if (view.type === "tictactoe") {
+    if (view.type === "tictactoe" || view.type === "automatedTicTacToe") {
       const tttView = view.view;
       const boardFull = tttView.board.every((row) => row.every((entry) => entry !== null));
       if (tttView.winningEntry || tttView.forfeited || boardFull) return null;
@@ -73,17 +94,32 @@ export default function GamePanel({
     </div>
   );
 
+  const renderAutomatedOpponentCard = (isTurn = false) => (
+    <div
+      className={
+        isTurn
+          ? "gameRoster__playerCard gameRoster__playerCard--activeTurn"
+          : "gameRoster__playerCard"
+      }
+      role="listitem"
+      key="automated-opponent"
+    >
+      <div className="gameRoster__itemName">Automated Opponent</div>
+      <div className="gameRoster__itemRole">Player 2{playerMarker(1)}</div>
+    </div>
+  );
+
   return hasWatched ? (
     <div className="gamePanel">
       <div className="gameRoster">
         <div className="gameRoster__header">
           <div>
             <div className="gameRoster__titleRow">
-              <h2 className="gameRoster__title">{gameNames[type]}</h2>
+              <h2 className="gameRoster__title">{displayTitle}</h2>
               <span className="gameRoster__titleTime">{timeSince(createdAt)}</span>
             </div>
             <div className="gameRoster__meta">
-              <span>Players: {players.length}</span>
+              <span>Players: {displayedPlayerCount}</span>
               <span>Viewers: {viewers}</span>
             </div>
           </div>
@@ -115,7 +151,13 @@ export default function GamePanel({
             )
           }
         </div>
-        {players.length === 2 ? (
+        {isAutomatedTicTacToe && players.length === 1 ? (
+          <div className="gameRoster__duel" role="list">
+            {renderPlayerCard(players[0], 0, aiThinking ? false : currentTurnPlayerIndex === 0)}
+            <div className="gameRoster__versus">vs</div>
+            {renderAutomatedOpponentCard(currentTurnPlayerIndex === 1 || aiThinking)}
+          </div>
+        ) : players.length === 2 ? (
           <div className="gameRoster__duel" role="list">
             {renderPlayerCard(players[0], 0, currentTurnPlayerIndex === 0)}
             <div className="gameRoster__versus">vs</div>

@@ -1,6 +1,6 @@
 import useNewGameForm from "../hooks/useNewGameForm.ts";
 import { gameNames } from "../util/consts.ts";
-import { Gamepad2, Plus } from "lucide-react";
+import { Gamepad2, Users, Plus } from "lucide-react";
 
 export default function NewGame() {
   const { gameKey, opponentType, handleInputChange, err, handleSubmit } = useNewGameForm();
@@ -36,10 +36,12 @@ export default function NewGame() {
           </label>
 
           {gameKey === "tictactoe" && (
-            <div>
-              <p>Select opponent type:</p>
+            <label className="newGameCard__selectRow" htmlFor="opponent-type-select">
+              <Users className="newGameCard__icon" aria-hidden="true" />
               <select
+                id="opponent-type-select"
                 name="opponentType"
+                className="newGameCard__select"
                 value={opponentType as "player" | "automated"}
                 aria-label="Opponent type selection"
                 onChange={handleInputChange}
@@ -47,7 +49,7 @@ export default function NewGame() {
                 <option value="player">Player</option>
                 <option value="automated">Automated</option>
               </select>
-            </div>
+            </label>
           )}
 
           <button className="newGameCard__submit" type="submit">

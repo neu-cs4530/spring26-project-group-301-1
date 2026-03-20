@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import useTimeSince from "../hooks/useTimeSince.ts";
 import UserLink from "./UserLink.tsx";
 import { getLeaderboard } from "../services/statsService.ts";
+import { gameNames } from "../util/consts.ts";
 import { zGameKey, type GameKey, type LeaderboardEntry } from "@gamenite/shared";
 
 const GAME_TYPES: GameKey[] = zGameKey.options.map((o) => o.value);
@@ -68,26 +69,23 @@ export default function LeaderboardSummaryView({ entryLimit = 10 }: LeaderboardS
 
   return (
     <div className="leaderboard-summary">
-      <div className="leaderboard-summary-toggle" role="tablist">
-        <button
-          role="tab"
-          aria-selected={viewMode === "all"}
-          className={viewMode === "all" ? "active" : ""}
-          onClick={() => setViewMode("all")}
+      <div className="leaderboard-summary-toggle">
+        <label htmlFor="leaderboard-game-filter" className="leaderboard-summary-toggle-label">
+          Game:
+        </label>
+        <select
+          id="leaderboard-game-filter"
+          value={viewMode}
+          onChange={(e) => setViewMode(e.target.value as ViewMode)}
+          aria-label="Leaderboard game selection"
         >
-          All Games
-        </button>
-        {GAME_TYPES.map((g) => (
-          <button
-            key={g}
-            role="tab"
-            aria-selected={viewMode === g}
-            className={viewMode === g ? "active" : ""}
-            onClick={() => setViewMode(g)}
-          >
-            {g}
-          </button>
-        ))}
+          <option value="all">All Games</option>
+          {GAME_TYPES.map((g) => (
+            <option key={g} value={g}>
+              {gameNames[g]}
+            </option>
+          ))}
+        </select>
       </div>
 
       {loading ? (

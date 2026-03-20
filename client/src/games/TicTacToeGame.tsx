@@ -1,6 +1,9 @@
+import { useState, useEffect, useRef } from "react";
 import type { TicTacToeMove, TicTacToeView } from "@gamenite/shared";
 import type { GameProps } from "../util/types.ts";
 import "./TicTacToeGame.css";
+
+const AUTOMATED_OPPONENT_THINKING_EVENT = "automated-opponent-thinking";
 
 export default function TicTacToeGame({
   view,
@@ -8,17 +11,114 @@ export default function TicTacToeGame({
   userPlayerIndex,
   makeMove,
 }: GameProps<TicTacToeView, TicTacToeMove>) {
-  const disabled = userPlayerIndex !== view.nextPlayer || view.forfeited;
+  // Delay board display to simulate AI thinking time
+  const [displayView, setDisplayView] = useState<TicTacToeView>(view);
+  const prevViewRef = useRef<TicTacToeView>(view);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const delayedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const emitThinking = (thinking: boolean) => {
+    window.dispatchEvent(
+      new CustomEvent(AUTOMATED_OPPONENT_THINKING_EVENT, {
+        detail: { thinking },
+      }),
+    );
+  };
+
+  useEffect(() => {
+    const prevView = prevViewRef.current;
+    const changedCells: { row: number; col: number; value: "O" | "X" }[] = [];
+
+    for (let row = 0; row < 3; row += 1) {
+      for (let col = 0; col < 3; col += 1) {
+        const prevValue = prevView.board[row][col];
+        const nextValue = view.board[row][col];
+        if (prevValue !== nextValue && nextValue !== null) {
+          changedCells.push({ row, col, value: nextValue });
+        }
+      }
+    }
+
+    // Clean up any pending timeout
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    if (delayedTimeoutRef.current) clearTimeout(delayedTimeoutRef.current);
+
+    prevViewRef.current = view;
+
+    const shouldDelayAutomatedResponse =
+      userPlayerIndex === 0 &&
+      changedCells.length === 2 &&
+      changedCells.some((cell) => cell.value === "O") &&
+      changedCells.some((cell) => cell.value === "X");
+
+    if (shouldDelayAutomatedResponse) {
+      const humanMove = changedCells.find((cell) => cell.value === "O");
+      if (!humanMove) {
+        timeoutRef.current = setTimeout(() => {
+          emitThinking(false);
+          setDisplayView(view);
+        }, 0);
+      } else {
+        const interimBoard = prevView.board.map((boardRow) => [
+          ...boardRow,
+        ]) as TicTacToeView["board"];
+        interimBoard[humanMove.row][humanMove.col] = "O";
+
+        const interimView: TicTacToeView = {
+          ...view,
+          board: interimBoard,
+          nextPlayer: 1,
+          winningEntry: null,
+        };
+
+        timeoutRef.current = setTimeout(() => {
+          emitThinking(true);
+          setDisplayView(interimView);
+          delayedTimeoutRef.current = setTimeout(() => {
+            emitThinking(false);
+            setDisplayView(view);
+          }, 1500);
+        }, 0);
+      }
+    } else {
+      // Immediate updates (including human game-ending moves) are not delayed
+      timeoutRef.current = setTimeout(() => {
+        emitThinking(false);
+        setDisplayView(view);
+      }, 0);
+    }
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+      if (delayedTimeoutRef.current) {
+        clearTimeout(delayedTimeoutRef.current);
+        delayedTimeoutRef.current = null;
+      }
+      emitThinking(false);
+    };
+  }, [view, userPlayerIndex]);
+
+  const disabled = userPlayerIndex !== displayView.nextPlayer || displayView.forfeited;
   const me = userPlayerIndex === 0 ? "O" : "X";
 
-  const boardFull = view.board.every((row) => row.every((entry) => entry !== null));
+  const boardFull = displayView.board.every((row) => row.every((entry) => entry !== null));
 
   const statusMessage = (() => {
-    if (view.winningEntry) {
-      const winnerIndex = view.nextPlayer;
-      const winnerName =
-        winnerIndex === userPlayerIndex ? "You" : (players[winnerIndex]?.display ?? "A player");
-      return view.forfeited ? `${winnerName} won by forfeit.` : `${winnerName} won!`;
+    if (displayView.winningEntry) {
+      const winnerIndex = (displayView.nextPlayer + 1) % 2;
+      if (userPlayerIndex >= 0) {
+        const didUserWin = winnerIndex === userPlayerIndex;
+        if (displayView.forfeited) {
+          return "You lost by forfeit.";
+        }
+        return didUserWin ? "You won!" : "You lost.";
+      }
+
+      const winnerName = players[winnerIndex]?.display ?? "A player";
+      return displayView.forfeited ? `${winnerName} won by forfeit.` : `${winnerName} won!`;
     }
 
     if (boardFull) return "Draw game.";
@@ -27,7 +127,7 @@ export default function TicTacToeGame({
 
   const renderEntry = (row: number, col: number, entry: "O" | "X" | null) => {
     if (entry !== null) {
-      const isWinningCell = view.winningEntry?.some(
+      const isWinningCell = displayView.winningEntry?.some(
         ([winRow, winCol]) => winRow === row && winCol === col,
       );
       const cellClass = isWinningCell
@@ -36,7 +136,7 @@ export default function TicTacToeGame({
       return <span className={cellClass}>{entry}</span>;
     }
 
-    if (userPlayerIndex === -1 || view.winningEntry || boardFull) {
+    if (userPlayerIndex === -1 || displayView.winningEntry || boardFull) {
       return <span className="tttCell tttCell--empty" aria-hidden="true" />;
     }
 
@@ -59,7 +159,7 @@ export default function TicTacToeGame({
         role="grid"
         aria-label="Tic-Tac-Toe board"
       >
-        {view.board.map((entries, row) =>
+        {displayView.board.map((entries, row) =>
           entries.map((entry, col) => (
             <div className="ticTacToeCell" role="gridcell" key={`${row}-${col}`}>
               {renderEntry(row, col, entry)}

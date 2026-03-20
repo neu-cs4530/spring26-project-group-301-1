@@ -17,6 +17,8 @@ import { checkAuth, enforceAuth } from "../services/auth.service.ts";
 import { populateSafeUserInfo } from "../services/user.service.ts";
 import { recordGameResult } from "../../src/services/stats.service.ts";
 
+const AUTOMATED_MOVE_LOG_DELAY_MS = 1500;
+
 /**
  * Handle POST requests to `/api/game/create` by creating a game. The game
  * starts with one player, the user who made the POST request.
@@ -211,6 +213,12 @@ export const socketMakeMove: SocketAPI = (socket, io) => async (body) => {
 
     // Store + emit each move log as its own chat message
     for (const text of moveMessages) {
+      if (gameType === "automatedTicTacToe" && text.startsWith("automated opponent moved")) {
+        await new Promise((resolve) => {
+          setTimeout(resolve, AUTOMATED_MOVE_LOG_DELAY_MS);
+        });
+      }
+
       const now = new Date();
       const moveLogPayload = await addMoveLogToChat(chatId, text, user, now);
       io.to(chatId).emit("chatMoveLog", moveLogPayload);
