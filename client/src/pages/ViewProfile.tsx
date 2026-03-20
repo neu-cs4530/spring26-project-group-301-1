@@ -5,6 +5,8 @@ import useLoginContext from "../hooks/useLoginContext";
 import { getUserById } from "../services/userService";
 import { getFriendStatus, sendFriendRequest, removeFriend } from "../services/friendsService";
 import useTopFriendsList from "../hooks/useTopFriendsList";
+import usePlayersStatsInfo from "../hooks/usePlayerStatsInfo";
+import GameSummaryView from "../components/GameSummaryView";
 
 type FriendStatus =
   | "loading"
@@ -30,6 +32,11 @@ export default function ViewProfile({ username }: ViewProfileProps) {
   const [friendActionErr, setFriendActionErr] = useState<string | null>(null);
   const { games, friends, getTopFriends, getFriendGameCount } = useTopFriendsList(username);
   const topFriends = getTopFriends();
+  const { getWins, getLosses, getCompletedGames, getWaitingGames, getActiveGames } =
+    usePlayersStatsInfo(username);
+  const recentGames = getCompletedGames();
+  const activeGames = getActiveGames();
+  const waitingGames = getWaitingGames();
 
   useEffect(() => {
     let cancel = false;
@@ -152,6 +159,59 @@ export default function ViewProfile({ username }: ViewProfileProps) {
     );
   }
 
+  function renderStats() {
+    return (
+      <div className="spacedSection">
+        <h3>Player Stats</h3>
+        <p>Wins: {getWins()}</p>
+        <p>Losses: {getLosses()}</p>
+      </div>
+    );
+  }
+
+  function renderGames() {
+    return (
+      <div>
+        <h3>Pending Games</h3>
+        {waitingGames.length > 0 ? (
+          <div className="spacesSection">
+            {waitingGames.slice(0, 3).map((game, i) => (
+              <div key={i}>
+                <GameSummaryView {...game} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="smallAndGray">This player has no pending games to join</p>
+        )}
+        <h3>Active Games</h3>
+        {activeGames.length > 0 ? (
+          <div className="spacesSection">
+            {activeGames.slice(0, 3).map((game, i) => (
+              <div key={i}>
+                <GameSummaryView {...game} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="smallAndGray">This player has no active games</p>
+        )}
+        <h3>Completed Games</h3>
+        {recentGames.length > 0 ? (
+          <div className="spacesSection">
+            {recentGames.slice(0, 3).map((game, i) => (
+              <div key={i}>
+                <GameSummaryView {...game} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="smallAndGray">This player has not completed any games</p>
+        )}
+      </div>
+    );
+  }
+
   switch (componentState.type) {
     case "error":
       return <div style={{ color: "#f00" }}>{componentState.msg}</div>;
@@ -178,6 +238,8 @@ export default function ViewProfile({ username }: ViewProfileProps) {
                 friends !== null &&
                 !("error" in friends) &&
                 renderTopFriends()}
+              {renderStats()}
+              {renderGames()}
             </>
           ) : (
             <>
