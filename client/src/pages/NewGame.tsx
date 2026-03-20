@@ -3,7 +3,7 @@ import { gameNames } from "../util/consts.ts";
 import { Gamepad2, Plus } from "lucide-react";
 
 export default function NewGame() {
-  const { gameKey, handleInputChange, err, handleSubmit } = useNewGameForm();
+  const { gameKey, opponentType, handleInputChange, err, handleSubmit } = useNewGameForm();
 
   return (
     <div className="newGamePage">
@@ -18,19 +18,37 @@ export default function NewGame() {
             <Gamepad2 className="newGameCard__icon" aria-hidden="true" />
             <select
               id="new-game-select"
+              name="gameKey"
               className="newGameCard__select"
               value={gameKey}
               aria-label="Game selection"
               onChange={(e) => handleInputChange(e)}
             >
               <option value="">Choose a game</option>
-              {Object.entries(gameNames).map(([key, name]) => (
-                <option key={key} value={key}>
-                  {name}
-                </option>
-              ))}
+              {Object.entries(gameNames)
+                .filter(([key]) => key !== "automatedTicTacToe")
+                .map(([key, name]) => (
+                  <option key={key} value={key}>
+                    {name}
+                  </option>
+                ))}
             </select>
           </label>
+
+          {gameKey === "tictactoe" && (
+            <div>
+              <p>Select opponent type:</p>
+              <select
+                name="opponentType"
+                value={opponentType as "player" | "automated"}
+                aria-label="Opponent type selection"
+                onChange={handleInputChange}
+              >
+                <option value="player">Player</option>
+                <option value="automated">Automated</option>
+              </select>
+            </div>
+          )}
 
           <button className="newGameCard__submit" type="submit">
             <Plus className="newGameCard__submitIcon" aria-hidden="true" />

@@ -27,7 +27,7 @@ export default function GameDispatch({
   }
 
   // Determine background style
-  const backgroundStyle: React.CSSProperties = {};
+  const backgroundStyle: React.CSSProperties = { minHeight: "100vh" };
   if (user.customBackground) {
     if (user.customBackground.startsWith("#") || user.customBackground.startsWith("rgb")) {
       backgroundStyle.background = user.customBackground;
@@ -57,10 +57,25 @@ export default function GameDispatch({
         break;
       case "tictactoe":
         gameComponent = <TicTacToeGame {...{ ...childProps, view: view.view }} />;
+        break;
+      case "automatedTicTacToe":
+        gameComponent = <TicTacToeGame {...{ ...childProps, view: view.view }} />;
+        break;
     }
     return gameComponent;
   }
 
   const childProps = { userPlayerIndex, players, makeMove };
-  return <div className="content">{getGame()}</div>;
+  return (
+    <div className="content" style={backgroundStyle}>
+      {getGame()}
+      {userPlayerIndex === -1 ? (
+        <></>
+      ) : (
+        <button className="primary narrow" onClick={() => makeMove({ type: "forfeit" })}>
+          Forfeit Game
+        </button>
+      )}
+    </div>
+  );
 }
