@@ -150,7 +150,7 @@ export default function ViewProfile({ username }: ViewProfileProps) {
         <div className="spacedSection">
           <h3>Top Friends</h3>
           {topFriends.slice(0, 3).map((friend, i) => (
-            <p key={i}>
+            <p key={i} aria-label={"friend-" + friend.user.display}>
               {i + 1}. {friend.user.display} - Games played: {getFriendGameCount(friend)}
             </p>
           ))}

@@ -113,6 +113,7 @@ export default function LeaderboardSummaryView({ entryLimit = 10 }: LeaderboardS
             {entries.map((entry) => (
               <tr
                 key={entry.user?.username ?? entry.rank}
+                aria-label={"leaderboard-" + entry.user.display}
                 className="leaderboard-summary-row"
                 onClick={() => entry.user && navigate(`/profile/${entry.user.username}`)}
               >

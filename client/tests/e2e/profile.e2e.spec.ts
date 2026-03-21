@@ -39,8 +39,8 @@ test.describe("The username hide/reveal logic", () => {
     await page1.getByRole("button", { name: "Submit profile edits" }).click();
     await page1.waitForURL("/login");
 
-    // has only one link on home page
-    await page2.getByRole("link", { name: "The Knight Of Games" }).click();
+    // has a link on the home page
+    await page2.getByLabel("leaderboard-The Knight Of Games").click();
     await page2.waitForURL("/profile/user0");
     // wait for the user information to have loaded
     await page2.getByText("Profile for").waitFor();
@@ -56,7 +56,7 @@ test.describe("The username hide/reveal logic", () => {
     await page1.getByRole("button", { name: "Submit profile edits" }).click();
     await page1.waitForURL("/login");
 
-    await page3.getByRole("link", { name: "The Knight Of Games" }).click();
+    await page3.getByLabel("leaderboard-The Knight Of Games").click();
     await page3.waitForURL("/profile/user0");
     // wait for the user information to have loaded
     await page3.getByText("Profile for").waitFor();
@@ -82,8 +82,8 @@ test.describe("The private profile logic", () => {
     await page1.getByRole("button", { name: "Submit profile edits" }).click();
     await page1.waitForURL("/login");
 
-    // has only one link on home page
-    await page2.getByRole("link", { name: "Yāo" }).click();
+    // has a link on the home page
+    await page2.getByLabel("leaderboard-Yāo").click();
     await page2.waitForURL("/profile/user1");
     // wait for the user information to have loaded
     await page2.getByText("User profile is private").waitFor();

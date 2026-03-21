@@ -37,7 +37,7 @@ test.describe("The most-played-with friends list", () => {
   });
 
   test("Should show only two friends on user1's profile", async () => {
-    await page1.getByRole("link", { name: "Yāo" }).click();
+    await page1.getByLabel("leaderboard-Yāo").click();
     await page1.waitForURL("/profile/user1");
 
     await page1.getByText("Profile for").waitFor();
