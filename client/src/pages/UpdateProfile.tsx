@@ -164,8 +164,8 @@ export default function UpdateProfile() {
                 )}
                 {requests.map((req) => (
                   <div key={req.requestId} className="friendRequestRow">
-                    <span>
-                      <strong>{req.from.display}</strong>
+                    <span className="friendRequestMetaLarge">
+                      <strong className="friendRequestDisplayName">{req.from.display}</strong>
                       {!req.from.hideUsername && (
                         <span className="smallAndGray"> @{req.from.username}</span>
                       )}
@@ -174,14 +174,14 @@ export default function UpdateProfile() {
                     <div className="friendRequestActions">
                       <button
                         type="button"
-                        className="primary narrow"
+                        className="friendRequestAcceptButton"
                         onClick={() => handleResolve(req.requestId, "accept")}
                       >
                         Accept
                       </button>
                       <button
                         type="button"
-                        className="secondary narrow"
+                        className="friendRequestDeclineButton"
                         onClick={() => handleResolve(req.requestId, "decline")}
                       >
                         Decline
@@ -199,7 +199,7 @@ export default function UpdateProfile() {
             {activeSection === "game-background" && (
               <section className="profileSectionCard gameBgCard" id="game-background">
                 <div className="gameBgCard__header">
-                  <h3>Game Background</h3>
+                  <h3>Background</h3>
                   <button
                     type="button"
                     className="gameBgCard__reset"
@@ -213,9 +213,7 @@ export default function UpdateProfile() {
                     ↻ Reset
                   </button>
                 </div>
-                <p className="gameBgCard__help">
-                  Choose a color or image for your game background.
-                </p>
+                <p className="gameBgCard__help">Choose a color or image for your background.</p>
                 <div className="gameBgCard__divider" />
                 <div className="gameBgCard__images">
                   <label

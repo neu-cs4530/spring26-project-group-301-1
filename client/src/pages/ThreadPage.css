@@ -28,7 +28,6 @@ span.opBlue {
 
 .threadCard {
   width: 100%;
-  min-height: calc(var(--content-vh) - 5.2rem);
   border: 1px solid #dfe4ef;
   border-radius: 18px;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
@@ -60,6 +59,7 @@ span.opBlue {
   border: 1px solid #d8deea;
   border-radius: 14px;
   overflow: hidden;
+  background: #ffffff;
 }
 
 .threadCard__opCard {

@@ -5,7 +5,7 @@ import { Image, Lock, Shield } from "lucide-react";
 const SECTIONS = [
   {
     id: "game-background",
-    label: "Game Background",
+    label: "Background",
     icon: Image,
   },
   {

@@ -15,6 +15,25 @@ export default function ThreadPage() {
   // route with `:threadId` on the path
   const { threadInfo, setThread } = useThreadInfo(threadId!);
 
+  // Only apply background if the current user is the author
+  let forumBackgroundStyle = {};
+  if (!("message" in threadInfo)) {
+    const customBackground = (user.customBackground || "").trim();
+    if (customBackground) {
+      const isHex = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(customBackground);
+      if (isHex) {
+        forumBackgroundStyle = { backgroundColor: customBackground };
+      } else {
+        forumBackgroundStyle = {
+          backgroundImage: `url("${customBackground}")`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        };
+      }
+    }
+  }
+
   return (
     <div className="content threadPage">
       {"message" in threadInfo ? (
@@ -25,7 +44,7 @@ export default function ThreadPage() {
             {"\u2190"} Back to Forum
           </Link>
 
-          <section className="threadCard">
+          <section className="threadCard" style={forumBackgroundStyle}>
             <div className="threadCard__body">
               <div className="threadCard__opCard">
                 <div className="threadCard__opHeader">
