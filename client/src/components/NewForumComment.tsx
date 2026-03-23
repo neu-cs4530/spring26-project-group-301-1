@@ -20,15 +20,17 @@ export default function NewForumComment({ threadId, firstPost, setThread }: NewF
 
   return (
     <form className="newForumComment" onSubmit={handleSubmit}>
-      <textarea
-        className="notTooWide"
-        placeholder={firstPost ? "Be the first to comment" : "Share your thoughts"}
-        value={comment}
-        onChange={handleInputChange}
-      />
+      <div className="newForumComment__inputRow">
+        <textarea
+          className="newForumComment__input"
+          placeholder={firstPost ? "Write a comment..." : "Write a comment..."}
+          value={comment}
+          onChange={handleInputChange}
+        />
+      </div>
       {err && <p className="error-message">{err}</p>}
-      <div>
-        <button className="primary narrow">Add Comment</button>
+      <div className="newForumComment__actions">
+        <button className="newForumComment__submit">Post Comment</button>
       </div>
     </form>
   );
