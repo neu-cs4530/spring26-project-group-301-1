@@ -25,6 +25,18 @@ export default function NimGame({
 
   return (
     <div className="nimGame content spacedSection">
+      {gameOver ? (
+        <div
+          className={
+            userWon
+              ? "nimGame__winnerBanner"
+              : "nimGame__winnerBanner nimGame__winnerBanner--notWinner"
+          }
+        >
+          {winnerBannerText}
+        </div>
+      ) : null}
+
       <div className="nimGame__intro">
         Remove 1, 2, or 3 objects on your turn. The player who takes the last object loses.
       </div>
@@ -45,18 +57,6 @@ export default function NimGame({
           )}
         </div>
       </div>
-
-      {gameOver ? (
-        <div
-          className={
-            userWon
-              ? "nimGame__winnerBanner"
-              : "nimGame__winnerBanner nimGame__winnerBanner--notWinner"
-          }
-        >
-          {winnerBannerText}
-        </div>
-      ) : null}
 
       {userPlayerIndex >= 0 && (
         <div className="nimGame__actions">
