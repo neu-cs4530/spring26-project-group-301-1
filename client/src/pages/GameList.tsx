@@ -22,7 +22,10 @@ export default function GameList() {
         </Heading>
         <Box display="flex" alignItems="center" gap={2} className="home-card__actions">
           <Button
-            background="green"
+            background="#f0fdf4"
+            color="#166534"
+            border="1px solid #bbf7d0"
+            _hover={{ background: "#dcfce7", borderColor: "#86efac" }}
             size="sm"
             borderRadius="md"
             fontWeight="600"
