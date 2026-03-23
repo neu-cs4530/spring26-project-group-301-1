@@ -106,21 +106,15 @@ export default function TicTacToeGame({
 
   const boardFull = displayView.board.every((row) => row.every((entry) => entry !== null));
 
+  // Only show status for draw or forfeits, not for win/loss (handled by winner banner)
   const statusMessage = (() => {
     if (displayView.winningEntry) {
-      const winnerIndex = (displayView.nextPlayer + 1) % 2;
-      if (userPlayerIndex >= 0) {
-        const didUserWin = winnerIndex === userPlayerIndex;
-        if (displayView.forfeited) {
-          return "You lost by forfeit.";
-        }
-        return didUserWin ? "You won!" : "You lost.";
+      if (displayView.forfeited && userPlayerIndex >= 0) {
+        return "You lost by forfeit.";
       }
-
-      const winnerName = players[winnerIndex]?.display ?? "A player";
-      return displayView.forfeited ? `${winnerName} won by forfeit.` : `${winnerName} won!`;
+      // No text for win/loss, handled by winner banner
+      return "";
     }
-
     if (boardFull) return "Draw game.";
     return "";
   })();
@@ -151,8 +145,43 @@ export default function TicTacToeGame({
     );
   };
 
+  // Winner banner logic (consistent with Nim)
+  let winnerBanner: React.ReactNode = null;
+  if (displayView.winningEntry) {
+    const winnerIndex = (displayView.nextPlayer + 1) % 2;
+    const didUserWin = userPlayerIndex >= 0 && winnerIndex === userPlayerIndex;
+    const winnerName = players[winnerIndex]?.display ?? "A player";
+    const bannerText = displayView.forfeited
+      ? didUserWin
+        ? "You won by forfeit"
+        : didUserWin === false
+          ? "You lost by forfeit"
+          : `${winnerName} won by forfeit`
+      : didUserWin
+        ? "You won!"
+        : didUserWin === false
+          ? "You lost."
+          : `${winnerName} won!`;
+    winnerBanner = (
+      <div
+        className={
+          didUserWin
+            ? "nimGame__winnerBanner"
+            : "nimGame__winnerBanner nimGame__winnerBanner--notWinner"
+        }
+      >
+        {bannerText}
+      </div>
+    );
+  } else if (boardFull) {
+    winnerBanner = (
+      <div className="nimGame__winnerBanner nimGame__winnerBanner--notWinner">Draw game.</div>
+    );
+  }
+
   return (
-    <div className="ticTacToeGame content spacedSection">
+    <div className="ticTacToeGame content">
+      {winnerBanner}
       {statusMessage && <div className="ticTacToeStatus">{statusMessage}</div>}
       <div
         className={statusMessage ? "ticTacToeBoard ticTacToeBoard--withStatus" : "ticTacToeBoard"}

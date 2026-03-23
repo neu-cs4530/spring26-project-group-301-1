@@ -21,7 +21,7 @@ export default function NimGame({
   const winnerBannerText =
     view.forfeited === true
       ? `${winnerDisplay(view.nextPlayer)} won by forfeit`
-      : `${winnerDisplay(view.nextPlayer)} won`;
+      : `${winnerDisplay(view.nextPlayer)} won!`;
 
   return (
     <div className="nimGame content spacedSection">
