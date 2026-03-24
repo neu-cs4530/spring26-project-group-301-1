@@ -19,7 +19,7 @@ export default function GameDispatch({
   players,
   view,
 }: GameDispatchProps): JSX.Element {
-  const { socket, user } = useLoginContext();
+  const { socket } = useLoginContext();
   const auth = useAuth();
 
   function makeMove(move: unknown) {
