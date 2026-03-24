@@ -1,6 +1,14 @@
-import { useState } from "react";
+type EyeToggleProps = {
+  shown: boolean;
+  onClick: React.MouseEventHandler<HTMLButtonElement>;
+  label?: string;
+};
 
-export default function EyeToggle({ shown, onClick, label = "Show/Hide Password" }) {
+export default function EyeToggle({
+  shown,
+  onClick,
+  label = "Show/Hide Password",
+}: EyeToggleProps) {
   return (
     <button
       type="button"

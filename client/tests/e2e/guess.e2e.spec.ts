@@ -25,8 +25,10 @@ test.describe("The game selection infrastructure", () => {
 });
 
 test.describe("The game of Number Guesser", () => {
+  let username1: string;
+
   test.beforeEach(async () => {
-    await createAndLoadGame(page1, page2, "guess", false, false);
+    username1 = await createAndLoadGame(page1, page2, "guess", false, false);
   });
 
   test("should show two winners when both guesses are the same", async () => {
@@ -35,9 +37,7 @@ test.describe("The game of Number Guesser", () => {
     await page1.getByRole("button", { name: "Submit Guess", exact: true }).click();
     await page2.getByRole("button", { name: "Submit Guess", exact: true }).click();
 
-    await expect(page1.getByText("Game over!")).toBeVisible();
-    await expect(page2.getByText("Game over!")).toBeVisible();
-    expect(await page1.getByText("👑").count()).toBe(2);
-    expect(await page2.getByText("👑").count()).toBe(2);
+    await expect(page1.getByText("You and Sénior Dos tie")).toBeVisible();
+    await expect(page2.getByText(username1 + " and You tie")).toBeVisible();
   });
 });

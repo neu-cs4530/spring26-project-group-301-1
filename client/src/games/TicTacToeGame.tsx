@@ -182,7 +182,6 @@ export default function TicTacToeGame({
   return (
     <div className="ticTacToeGame content">
       {winnerBanner}
-      {statusMessage && <div className="ticTacToeStatus">{statusMessage}</div>}
       <div
         className={statusMessage ? "ticTacToeBoard ticTacToeBoard--withStatus" : "ticTacToeBoard"}
         role="grid"
