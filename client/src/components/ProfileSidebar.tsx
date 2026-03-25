@@ -57,8 +57,7 @@ export default function ProfileSidebar({
       {typeof isDirty === "boolean" && isDirty && (
         <div style={{ marginTop: "auto" }}>
           <button
-            className="primary narrow"
-            style={{ width: "100%", marginTop: "1.2rem" }}
+            className="profileSidebar__saveButton"
             aria-label="Submit profile edits"
             type="submit"
             onClick={onSubmit}

@@ -1,3 +1,25 @@
+/* Save Changes button styling */
+.profileSidebar__saveButton {
+  width: 100%;
+  margin-top: 1.2rem;
+  background: #e0edff;
+  color: #1d3b7a;
+  border: 1.5px solid #90b4e8;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  min-height: 2.5rem;
+  font-size: 1.08rem;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s;
+}
+.profileSidebar__saveButton:hover,
+.profileSidebar__saveButton:focus {
+  background: #c3dbfa;
+  border-color: #3b82f6;
+  color: #1741a0;
+}
 .profileSidebar {
   top: 80px;
   width: 260px;
