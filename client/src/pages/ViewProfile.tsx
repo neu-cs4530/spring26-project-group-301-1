@@ -6,6 +6,7 @@ import useLoginContext from "../hooks/useLoginContext";
 import { getUserById } from "../services/userService";
 import { getFriendStatus, sendFriendRequest, removeFriend } from "../services/friendsService";
 import useTopFriendsList from "../hooks/useTopFriendsList";
+import UserLink from "../components/UserLink";
 
 type FriendStatus =
   | "loading"
@@ -172,7 +173,7 @@ export default function ViewProfile({ username }: ViewProfileProps) {
               return (
                 <div key={friend.user.username} className="profileTopFriendCard">
                   <div className="profileTopFriendNameRow">
-                    <span className="profileTopFriendName">{friend.user.display}</span>
+                    <UserLink user={friend.user} />
                   </div>
                   {!friend.user.hideUsername && (
                     <div className="profileTopFriendUsername">@{friend.user.username}</div>
