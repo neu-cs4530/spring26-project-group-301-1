@@ -3,10 +3,12 @@ import { useState, useEffect, useMemo } from "react";
 import type { FriendRequestInfo } from "@gamenite/shared";
 import useLoginContext from "../hooks/useLoginContext";
 import useTimeSince from "../hooks/useTimeSince";
-
+import useTopFriendsList from "../hooks/useTopFriendsList";
 import useEditProfileForm from "../hooks/useEditProfileForm";
 import { getPendingRequests, resolveRequest } from "../services/friendsService";
 import ProfileSidebar from "../components/ProfileSidebar";
+import UserLink from "../components/UserLink";
+import { Gamepad2 } from "lucide-react";
 
 const PRESET_BACKGROUNDS: { label: string; url: string }[] = [
   { label: "Stripes", url: "/backgrounds/stripes.jpeg" },
@@ -100,6 +102,40 @@ export default function UpdateProfile() {
     }
   }
 
+  const { getTopFriends, getFriendGameCount } = useTopFriendsList(user.username);
+  const topFriends = getTopFriends(-1); // get all friends without slicing
+
+  function renderTopFriends() {
+    return (
+      topFriends.length > 0 && (
+        <section className="profileSectionCard">
+          <h3>All Friends</h3>
+          <div className="profileTopFriendsList">
+            {topFriends.map((friend) => {
+              const gamesPlayedWithFriend = getFriendGameCount(friend);
+              return (
+                <div key={friend.user.username} className="profileTopFriendCard">
+                  <div className="profileTopFriendNameRow">
+                    <UserLink user={friend.user} capitalize />
+                  </div>
+                  {!friend.user.hideUsername && (
+                    <div className="profileTopFriendUsername">@{friend.user.username}</div>
+                  )}
+                  <div className="profileTopFriendStatRow">
+                    <Gamepad2 className="profileTopFriendStatIcon" aria-hidden="true" />
+                    <span>
+                      {gamesPlayedWithFriend}{" "}
+                      {gamesPlayedWithFriend === 1 ? "game played" : "games played"}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )
+    );
+  }
   return (
     <div>
       <form className="profileForm" onSubmit={handleSubmit}>
@@ -195,6 +231,14 @@ export default function UpdateProfile() {
               </section>
             )}
           </div>
+          <div className="profileCol">
+            {activeSection === "friends" && (
+              <section className="friendsProfileSectionCard" id="friends">
+                {renderTopFriends()}
+              </section>
+            )}
+          </div>
+
           <div className="profileCol">
             {activeSection === "game-background" && (
               <section className="profileSectionCard gameBgCard" id="game-background">
