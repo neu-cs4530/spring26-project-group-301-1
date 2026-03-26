@@ -33,34 +33,42 @@ test.describe("The username hide/reveal logic", () => {
     await logInUser(page2, "user1", "pwd1111");
     await logInUser(page3, "user2", "pwd2222");
 
-    await page1.getByRole("link", { name: "Profile" }).click();
+    await page1.getByRole("link", { name: "View Profile" }).waitFor({ state: "visible" });
+    await page1.getByRole("link", { name: "View Profile" }).click();
     await page1.waitForURL("/profile/user0");
-    await page1.getByLabel("Hide username").click();
+    await page1.getByRole("button", { name: "Privacy" }).click();
+    await page1.getByLabel("Toggle hide username").waitFor({ state: "visible" });
+    await page1.getByLabel("Toggle hide username").click();
     await page1.getByRole("button", { name: "Submit profile edits" }).click();
     await page1.waitForURL("/login");
 
-    // has a link on the home page
-    await page2.getByLabel("leaderboard-The Knight Of Games").click();
+    // has a link on home page
+    await page2.getByRole("link", { name: "The Knight Of Games" }).first().click();
     await page2.waitForURL("/profile/user0");
+    await page2.waitForTimeout(1000); // Wait 1 second for content to render
+
     // wait for the user information to have loaded
-    await page2.getByText("Profile for").waitFor();
-    expect(await page2.getByText("user0").count()).toBe(0);
+    await page2.getByText("The Knight Of Games").waitFor({ state: "visible" });
+    expect(await page2.getByText("@user0").count()).toBe(0);
 
     await page2.getByRole("link", { name: "Home" }).click();
     await page2.waitForURL("/");
 
     await logInUser(page1, "user0", "pwd0000");
-    await page1.getByRole("link", { name: "Profile" }).click();
+    await page1.getByRole("link", { name: "Profile" }).first().click();
     await page1.waitForURL("/profile/user0");
-    await page1.getByLabel("Hide username").click();
+    await page1.getByRole("button", { name: "Privacy" }).click();
+    await page1.getByLabel("Toggle hide username").waitFor({ state: "visible" });
+    await page1.getByLabel("Toggle hide username").click();
     await page1.getByRole("button", { name: "Submit profile edits" }).click();
     await page1.waitForURL("/login");
 
-    await page3.getByLabel("leaderboard-The Knight Of Games").click();
+    await page3.getByRole("link", { name: "The Knight Of Games" }).first().click();
     await page3.waitForURL("/profile/user0");
     // wait for the user information to have loaded
-    await page3.getByText("Profile for").waitFor();
-    expect(await page3.getByText("user0").count()).toBe(1);
+    await page2.waitForTimeout(1000); // Wait 1 second for content to render
+    await page3.getByText("The Knight Of Games").waitFor({ state: "visible" });
+    expect(await page3.getByText("@user0").count()).toBe(1);
   });
 });
 
@@ -76,34 +84,41 @@ test.describe("The private profile logic", () => {
     await logInUser(page1, "user1", "pwd1111");
     await logInUser(page2, "user3", "pwd3333");
 
-    await page1.getByRole("link", { name: "Profile" }).click();
+    await page1.getByRole("link", { name: "View Profile" }).waitFor({ state: "visible" });
+    await page1.getByRole("link", { name: "View Profile" }).click();
     await page1.waitForURL("/profile/user1");
-    await page1.getByLabel("Private profile").click();
+    await page1.getByRole("button", { name: "Privacy" }).click();
+    await page1.getByLabel("Toggle private profile").waitFor({ state: "visible" });
+    await page1.getByLabel("Toggle private profile").click();
     await page1.getByRole("button", { name: "Submit profile edits" }).click();
     await page1.waitForURL("/login");
 
-    // has a link on the home page
-    await page2.getByLabel("leaderboard-Yāo").click();
+    // has only one link on home page
+    await page2.getByRole("link", { name: "Yāo" }).first().click();
     await page2.waitForURL("/profile/user1");
     // wait for the user information to have loaded
-    await page2.getByText("User profile is private").waitFor();
+    await page2.getByText("User profile is private").waitFor({ state: "visible" });
     expect(await page2.getByText("Account created").count()).toBe(0);
 
     await page2.getByRole("link", { name: "Home" }).click();
     await page2.waitForURL("/");
 
     await logInUser(page1, "user1", "pwd1111");
-    await page1.getByRole("link", { name: "Profile" }).click();
+    await page1.getByRole("link", { name: "View Profile" }).waitFor({ state: "visible" });
+    await page1.getByRole("link", { name: "View Profile" }).click();
     await page1.waitForURL("/profile/user1");
-    await page1.getByLabel("Private profile").click();
+    await page1.getByRole("button", { name: "Privacy" }).click();
+    await page1.getByLabel("Toggle private profile").waitFor({ state: "visible" });
+    await page1.getByLabel("Toggle private profile").click();
     await page1.getByRole("button", { name: "Submit profile edits" }).click();
     await page1.waitForURL("/login");
 
     await logInUser(page2, "user3", "pwd3333");
-    await page2.getByRole("link", { name: "Yāo" }).click();
+    await page2.getByRole("link", { name: "Yāo" }).first().click();
     await page2.waitForURL("/profile/user1");
     // wait for the user information to have loaded
-    await page2.getByText("Profile for").waitFor();
-    expect(await page2.getByText("Account created").count()).toBe(1);
+    await page2.waitForTimeout(1000); // Wait 1 second for content to render
+    await page2.getByText("The Knight Of Games").waitFor({ state: "visible" });
+    expect(await page2.getByText("Joined").count()).toBe(1);
   });
 });

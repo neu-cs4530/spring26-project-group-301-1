@@ -1,26 +1,177 @@
 .gamePanel {
   padding: 1rem;
-  padding-right: 0;
   display: grid;
-  grid-template-rows: max-content 1fr;
+  grid-template-rows: max-content minmax(0, 1fr);
+  gap: 0.75rem;
+  height: 100%;
+  min-height: 0;
 }
 
 .gameRoster {
-  position: relative;
+  display: grid;
+  gap: 0.7rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background: #ffffff;
+  padding: 1rem;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
 }
 
-.gameRoster button {
-  position: absolute;
-  right: 0;
-  top: 0;
+.gameRoster__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.gameRoster__title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #0f172a;
+}
+
+.gameRoster__titleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.gameRoster__titleTime {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.gameRoster__meta {
+  margin-top: 0.35rem;
+  font-size: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 1.2rem;
+  color: #6b7280;
+}
+
+.gameRoster__action {
+  white-space: nowrap;
+}
+
+.gameRoster__action--forfeit {
+  border: 1px solid #fca5a5;
+  border-radius: 10px;
+  padding: 0.5rem 0.85rem;
+  background: #fff1f2;
+  color: #b91c1c;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.gameRoster__action--forfeit:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+.gameRoster__list {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.6rem;
+  background: #f8fafc;
+}
+
+.gameRoster__playerCard {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 0.65rem 0.8rem;
+}
+
+.gameRoster__playerCard--activeTurn {
+  border-color: #60a5fa;
+  background: #eff6ff;
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.25);
+}
+
+.gameRoster__itemName {
+  font-size: 1.32rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.15;
+}
+
+.gameRoster__itemName a {
+  color: #0f172a;
+  text-decoration-color: #bfdbfe;
+}
+
+.gameRoster__itemRole {
+  margin-top: 0.2rem;
+  font-size: 1rem;
+  color: #475569;
+  font-weight: 600;
+}
+
+.gameRoster__duel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.gameRoster__versus {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1e293b;
+  text-transform: uppercase;
 }
 
 .gameFrame {
-  border: 1px solid black;
-  border-radius: 0.5rem;
-  margin-top: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
+  min-height: 0;
 }
 
-.gameFrame.waiting {
-  background-color: var(--gray-background);
+.gameFrame--waiting {
+  display: grid;
+  place-items: center;
+  background: #f8fafc;
+}
+
+.gameFrame__waitingText {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+@media (max-width: 820px) {
+  .gamePanel {
+    padding: 0.8rem;
+  }
+
+  .gameRoster__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .gameRoster__title {
+    font-size: 1.55rem;
+  }
+
+  .gameRoster__duel {
+    grid-template-columns: 1fr;
+  }
+
+  .gameRoster__versus {
+    justify-self: center;
+  }
+
+  .gameRoster__action {
+    width: 100%;
+  }
 }

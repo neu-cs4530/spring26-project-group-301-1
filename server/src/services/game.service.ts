@@ -4,6 +4,7 @@ import { populateSafeUserInfo } from "./user.service.ts";
 import { type GameServicer } from "../games/gameServiceManager.ts";
 import { nimGameService } from "../games/nim.ts";
 import { guessGameService } from "../games/guess.ts";
+import { automatedTicTacToeGameService } from "../games/automatedTicTacToe.ts";
 import { ticTacToeGameService } from "../games/ticTacToe.ts";
 import { type GameViewUpdates, type UserWithId } from "../types.ts";
 import { GameRepo } from "../repository.ts";
@@ -15,6 +16,7 @@ export const gameServices: { [key in GameKey]: GameServicer } = {
   nim: nimGameService,
   guess: guessGameService,
   tictactoe: ticTacToeGameService,
+  automatedTicTacToe: automatedTicTacToeGameService,
 };
 
 /**
@@ -195,14 +197,15 @@ export async function updateGame(
   game.state = result.state;
   game.done = game.done || result.done;
   await GameRepo.set(gameId, game);
-  const service = gameServices[game.type];
 
   return {
     views: result.views,
     moveDescription: result.moveDescription,
     chatId: game.chat,
     done: result.done,
-    winnerUserId: result.done ? service.getWinner(result.state, game.players) : null,
+    winnerUserId: result.done
+      ? gameServices[game.type].getWinner(result.state, game.players)
+      : null,
     playerUserIds: game.players,
     gameType: game.type,
   };

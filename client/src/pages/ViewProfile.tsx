@@ -1,5 +1,6 @@
 import type { SafeUserInfo } from "@gamenite/shared";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { CalendarDays, Gamepad2 } from "lucide-react";
 import useTimeSince from "../hooks/useTimeSince";
 import useLoginContext from "../hooks/useLoginContext";
 import { getUserById } from "../services/userService";
@@ -7,6 +8,7 @@ import { getFriendStatus, sendFriendRequest, removeFriend } from "../services/fr
 import useTopFriendsList from "../hooks/useTopFriendsList";
 import usePlayersStatsInfo from "../hooks/usePlayerStatsInfo";
 import GameSummaryView from "../components/GameSummaryView";
+import UserLink from "../components/UserLink";
 
 type FriendStatus =
   | "loading"
@@ -32,6 +34,29 @@ export default function ViewProfile({ username }: ViewProfileProps) {
   const [friendActionErr, setFriendActionErr] = useState<string | null>(null);
   const { games, friends, getTopFriends, getFriendGameCount } = useTopFriendsList(username);
   const topFriends = getTopFriends();
+  const gamesPlayedCount =
+    games !== null && !("error" in games)
+      ? games.filter((game) => game.players.some((player) => player.username === username)).length
+      : null;
+
+  const publicProfileBackgroundStyle = useMemo<CSSProperties>(() => {
+    if (componentState.type !== "profile") return {};
+
+    const customBackground = (componentState.user.customBackground || "").trim();
+    if (!customBackground) return {};
+
+    const isHex = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(customBackground);
+    if (isHex) {
+      return { backgroundColor: customBackground };
+    }
+
+    return {
+      backgroundImage: `url("${customBackground}")`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
+    };
+  }, [componentState]);
   const { getWins, getLosses, getCompletedGames, getWaitingGames, getActiveGames } =
     usePlayersStatsInfo(username);
   const recentGames = getCompletedGames();
@@ -124,13 +149,13 @@ export default function ViewProfile({ username }: ViewProfileProps) {
         return <span className="smallAndGray">Loading...</span>;
       case "friends":
         return (
-          <button className="secondary narrow" onClick={handleRemoveFriend}>
+          <button className="secondary narrow profileDangerButton" onClick={handleRemoveFriend}>
             Remove Friend
           </button>
         );
       case "not-friends":
         return (
-          <button className="primary narrow" onClick={handleSendRequest}>
+          <button className="primary narrow profilePrimaryButton" onClick={handleSendRequest}>
             Add Friend
           </button>
         );
@@ -147,14 +172,31 @@ export default function ViewProfile({ username }: ViewProfileProps) {
   function renderTopFriends() {
     return (
       topFriends.length > 0 && (
-        <div className="spacedSection">
+        <section className="profileSectionCard">
           <h3>Top Friends</h3>
-          {topFriends.slice(0, 3).map((friend, i) => (
-            <p key={i} aria-label={"friend-" + friend.user.display}>
-              {i + 1}. {friend.user.display} - Games played: {getFriendGameCount(friend)}
-            </p>
-          ))}
-        </div>
+          <div className="profileTopFriendsList">
+            {topFriends.slice(0, 3).map((friend) => {
+              const gamesPlayedWithFriend = getFriendGameCount(friend);
+              return (
+                <div key={friend.user.username} className="profileTopFriendCard">
+                  <div className="profileTopFriendNameRow">
+                    <UserLink user={friend.user} capitalize />
+                  </div>
+                  {!friend.user.hideUsername && (
+                    <div className="profileTopFriendUsername">@{friend.user.username}</div>
+                  )}
+                  <div className="profileTopFriendStatRow">
+                    <Gamepad2 className="profileTopFriendStatIcon" aria-hidden="true" />
+                    <span>
+                      {gamesPlayedWithFriend}{" "}
+                      {gamesPlayedWithFriend === 1 ? "game played" : "games played"}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
       )
     );
   }
@@ -219,20 +261,46 @@ export default function ViewProfile({ username }: ViewProfileProps) {
       return <div>Loading...</div>;
     case "profile":
       return (
-        <div className="content spacedSection">
+        <div
+          className="profileForm profileForm--publicBackground"
+          style={publicProfileBackgroundStyle}
+        >
           {(componentState.user.privateProfile && friendStatus === "friends") ||
           !componentState.user.privateProfile ? (
             <>
-              <h2>Profile for {componentState.user.display}</h2>
-              <ul>
-                {!componentState.user.hideUsername && (
-                  <li>Username: {componentState.user.username}</li>
-                )}
-                <li>Account created {timeSince(componentState.user.createdAt)}</li>
-                {friendStatusLabel() && <li>Friend Status: {friendStatusLabel()}</li>}
-              </ul>
-              <div style={{ alignSelf: "flex-start" }}>{renderFriendControls()}</div>
+              <div className="profileIdentityCard profileIdentityCard--actionsTopRight">
+                <div className="profileIdentityMain">
+                  <div>
+                    <div className="profileIdentityName">{componentState.user.display}</div>
+                    {!componentState.user.hideUsername && (
+                      <div className="profileIdentityMeta">@{componentState.user.username}</div>
+                    )}
+                    <div className="profileIdentityMetaRow">
+                      <span className="profileIdentityMetaJoined">
+                        <CalendarDays className="profileIdentityMetaIcon" aria-hidden="true" />
+                        Joined {timeSince(componentState.user.createdAt)}
+                      </span>
+                      {friendStatusLabel() && (
+                        <>
+                          <span className="profileIdentityMetaDot" aria-hidden="true">
+                            •
+                          </span>
+                          <span className="profileIdentityStatusPill">{friendStatusLabel()}</span>
+                        </>
+                      )}
+                    </div>
+                    {gamesPlayedCount !== null && (
+                      <div className="profileIdentityMeta">Games played: {gamesPlayedCount}</div>
+                    )}
+                  </div>
+                </div>
+                <div className="profileIdentityRight profileIdentityRight--topRight">
+                  {renderFriendControls()}
+                </div>
+              </div>
+
               {friendActionErr && <p className="error-message">{friendActionErr}</p>}
+
               {games !== null &&
                 !("error" in games) &&
                 friends !== null &&
@@ -242,11 +310,12 @@ export default function ViewProfile({ username }: ViewProfileProps) {
               {renderGames()}
             </>
           ) : (
-            <>
+            <section className="profileSectionCard">
+              <h3>Profile</h3>
               <p>User profile is private</p>
-              <div style={{ alignSelf: "flex-start" }}>{renderFriendControls()}</div>
+              <div className="profilePrivateControls">{renderFriendControls()}</div>
               {friendActionErr && <p className="error-message">{friendActionErr}</p>}
-            </>
+            </section>
           )}
         </div>
       );

@@ -19,27 +19,11 @@ export default function GameDispatch({
   players,
   view,
 }: GameDispatchProps): JSX.Element {
-  const { socket, user } = useLoginContext();
+  const { socket } = useLoginContext();
   const auth = useAuth();
 
   function makeMove(move: unknown) {
     socket.emit("gameMakeMove", { auth, payload: { gameId, move } });
-  }
-
-  // Determine background style
-  const backgroundStyle: React.CSSProperties = {};
-  if (user.customBackground) {
-    if (user.customBackground.startsWith("#") || user.customBackground.startsWith("rgb")) {
-      backgroundStyle.background = user.customBackground;
-    } else if (user.customBackground.startsWith("/")) {
-      // Local preset image path
-      backgroundStyle.backgroundImage = `url('${user.customBackground}')`;
-      backgroundStyle.backgroundSize = "cover";
-      backgroundStyle.backgroundPosition = "center";
-    } else {
-      // Fallback: treat as color
-      backgroundStyle.background = user.customBackground;
-    }
   }
 
   /**
@@ -57,21 +41,14 @@ export default function GameDispatch({
         break;
       case "tictactoe":
         gameComponent = <TicTacToeGame {...{ ...childProps, view: view.view }} />;
+        break;
+      case "automatedTicTacToe":
+        gameComponent = <TicTacToeGame {...{ ...childProps, view: view.view }} />;
+        break;
     }
     return gameComponent;
   }
 
   const childProps = { userPlayerIndex, players, makeMove };
-  return (
-    <div className="content">
-      {getGame()}
-      {userPlayerIndex === -1 ? (
-        <></>
-      ) : (
-        <button className="primary narrow" onClick={() => makeMove({ type: "forfeit" })}>
-          Forfeit Game
-        </button>
-      )}
-    </div>
-  );
+  return <div className="content">{getGame()}</div>;
 }

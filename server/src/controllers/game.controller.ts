@@ -11,11 +11,13 @@ import {
   viewGame,
 } from "../services/game.service.ts";
 import { addMoveLogToChat } from "../services/chat.service.ts";
-import { recordGameResult } from "../services/stats.service.ts";
 import { z } from "zod";
 import { logSocketError } from "./socket.controller.ts";
 import { checkAuth, enforceAuth } from "../services/auth.service.ts";
 import { populateSafeUserInfo } from "../services/user.service.ts";
+import { recordGameResult } from "../../src/services/stats.service.ts";
+
+const AUTOMATED_MOVE_LOG_DELAY_MS = 1500;
 
 /**
  * Handle POST requests to `/api/game/create` by creating a game. The game
@@ -35,6 +37,14 @@ export const postCreate: RestAPI<GameInfo> = async (req, res) => {
   }
 
   const game = await createGame(user, body.data.payload, new Date());
+
+  if (game.type === "automatedTicTacToe") {
+    await startGame(game.gameId, user);
+    const started = await getGameById(game.gameId);
+    res.send(started ?? game);
+    return;
+  }
+
   res.send(game);
 };
 
@@ -181,7 +191,6 @@ export const socketMakeMove: SocketAPI = (socket, io) => async (body) => {
     const user = await enforceAuth(auth);
     const { views, moveDescription, chatId, done, winnerUserId, playerUserIds, gameType } =
       await updateGame(gameId, user, move);
-    sendViewUpdates(io, gameId, views);
 
     // Store the game result if the game is done in leadersboards and update all players' stats.
     if (done) {
@@ -193,13 +202,27 @@ export const socketMakeMove: SocketAPI = (socket, io) => async (body) => {
         }),
       );
     }
+    // Split "human||automated" into separate chat messages.
+    // For normal games, this is just one entry.
+    const moveMessages = (moveDescription ?? "")
+      .split("||")
+      .map((s) => s.trim())
+      .filter(Boolean);
 
-    // Store the move description suffix and broadcast to the chat room
-    const now = new Date();
-    const moveLogPayload = await addMoveLogToChat(chatId, moveDescription, user, now);
+    sendViewUpdates(io, gameId, views);
 
-    // Broadcast the move log to the chat room
-    io.to(chatId).emit("chatMoveLog", moveLogPayload);
+    // Store + emit each move log as its own chat message
+    for (const text of moveMessages) {
+      if (gameType === "automatedTicTacToe" && text.startsWith("automated opponent moved")) {
+        await new Promise((resolve) => {
+          setTimeout(resolve, AUTOMATED_MOVE_LOG_DELAY_MS);
+        });
+      }
+
+      const now = new Date();
+      const moveLogPayload = await addMoveLogToChat(chatId, text, user, now);
+      io.to(chatId).emit("chatMoveLog", moveLogPayload);
+    }
   } catch (err) {
     logSocketError(socket, err);
   }

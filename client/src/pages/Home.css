@@ -1,0 +1,46 @@
+/* ...existing code... */
+
+.home-game-list {
+  align-items: stretch;
+  grid-auto-rows: 1fr; /* each row uses tallest card in that row */
+}
+
+.home-game-list__item {
+  height: 100%;
+  display: flex;
+}
+
+.home-game-list__item > * {
+  width: 100%;
+}
+
+.home-game-list__item {
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+  padding: 1rem;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease;
+  height: 100%;
+}
+
+.home-game-list__item:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+}
+
+.home-game-list__item:focus-within {
+  border-color: #14b8a6;
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.2);
+}
+
+@media (max-width: 768px) {
+  .home-game-list__item {
+    padding: 0.9rem;
+    border-radius: 14px;
+  }
+}

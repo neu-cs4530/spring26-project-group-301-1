@@ -1,4 +1,6 @@
 div.chatWindow {
+  height: 100%;
+  min-height: 0;
   overflow-x: clip;
   overflow-y: scroll;
 }
@@ -13,7 +15,8 @@ div.chatScroller {
 div.chatScroller .chatMeta {
   text-align: center;
   font-size: 0.75rem;
-  color: var(--gray-foreground);
+  font-weight: 700;
+  color: #393939;
 }
 
 div.chatScroller .chatMoveLog {
@@ -30,12 +33,14 @@ div.chatScroller .chatMoveLog {
 
 div.chatScroller .chatSender {
   font-size: 0.75rem;
-  color: var(--gray-foreground);
+  font-weight: 700;
+  color: #393939;
 }
 
 div.chatScroller .chatMe .chatSender {
   font-size: 0.75rem;
-  color: var(--gray-foreground);
+  font-weight: 700;
+  color: #393939;
   text-align: right;
 }
 
@@ -91,4 +96,15 @@ div.chatScroller .chatMe .chatContent {
 .chatDeleted {
   color: #999;
   font-style: italic;
+}
+
+div.chatContainer--lightText div.chatScroller .chatMeta {
+  color: #f8fafc;
+  font-weight: 700;
+}
+
+div.chatContainer--lightText div.chatScroller .chatSender,
+div.chatContainer--lightText div.chatScroller .chatMe .chatSender {
+  color: #f8fafc;
+  font-weight: 700;
 }

@@ -58,8 +58,6 @@ test.describe("The game of Nim", () => {
     await expect(page2.getByRole("button", { name: "Take two" })).toBeDisabled();
     await page1.getByRole("button", { name: "Take one" }).click(); // 0 left
 
-    await expect(
-      page2.getByText(`The game is over: you won by forcing ${username1} to take the last object.`),
-    ).toBeVisible();
+    await expect(page2.getByText(`${username1} took one token and lost the game`)).toBeVisible();
   });
 });
