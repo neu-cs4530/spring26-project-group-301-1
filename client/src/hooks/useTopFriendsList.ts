@@ -70,7 +70,7 @@ export default function useTopFriendsList(username: string) {
    * Gets a list of the top friends for the given user, sorted in descending order.
    * @returns a list of FriendInfo, corresponding to most played with friends
    */
-  function getTopFriends() {
+  function getTopFriends(numberToReturn = 5): FriendInfo[] {
     if (games === null || "error" in games || friends === null || "error" in friends) return [];
 
     const gamesWithPlayer = games.filter((game) =>
@@ -81,7 +81,10 @@ export default function useTopFriendsList(username: string) {
     friendsCopy.sort((a, b) => {
       return countFriendOccurences(b, friendsPerGame) - countFriendOccurences(a, friendsPerGame);
     });
-    return friendsCopy;
+    if (numberToReturn < 0) {
+      return friendsCopy;
+    }
+    return friendsCopy.slice(0, numberToReturn);
   }
 
   useEffect(() => {

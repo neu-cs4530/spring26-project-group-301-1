@@ -31,7 +31,7 @@ export default function ViewProfile({ username }: ViewProfileProps) {
   const [friendStatus, setFriendStatus] = useState<FriendStatus>("loading" as FriendStatus);
   const [friendActionErr, setFriendActionErr] = useState<string | null>(null);
   const { games, friends, getTopFriends, getFriendGameCount } = useTopFriendsList(username);
-  const topFriends = getTopFriends();
+  const topFriends = getTopFriends(3); // get top 3 friends for display
   const gamesPlayedCount =
     games !== null && !("error" in games)
       ? games.filter((game) => game.players.some((player) => player.username === username)).length
@@ -168,7 +168,7 @@ export default function ViewProfile({ username }: ViewProfileProps) {
         <section className="profileSectionCard">
           <h3>Top Friends</h3>
           <div className="profileTopFriendsList">
-            {topFriends.slice(0, 3).map((friend) => {
+            {topFriends.map((friend) => {
               const gamesPlayedWithFriend = getFriendGameCount(friend);
               return (
                 <div key={friend.user.username} className="profileTopFriendCard">
