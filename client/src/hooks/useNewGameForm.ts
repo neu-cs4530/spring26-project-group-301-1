@@ -14,6 +14,14 @@ import { createGame } from "../services/gameService.ts";
  */
 type OpponentType = "player" | "automated";
 
+type UseNewGameFormResult = {
+  gameKey: GameKey | "";
+  opponentType: OpponentType;
+  handleInputChange: (e: ChangeEvent<HTMLSelectElement | HTMLInputElement>) => void;
+  err: string | null;
+  handleSubmit: (e: SyntheticEvent<HTMLFormElement>) => Promise<void>;
+};
+
 function resolveGameKey(gameKey: GameKey, opponentType: OpponentType): GameKey {
   if (gameKey === "tictactoe" && opponentType === "automated") {
     return "automatedTicTacToe" as GameKey;
@@ -21,7 +29,7 @@ function resolveGameKey(gameKey: GameKey, opponentType: OpponentType): GameKey {
   return gameKey;
 }
 
-export default function useNewGameForm() {
+export default function useNewGameForm(): UseNewGameFormResult {
   const [gameKey, setGameKey] = useState<GameKey | "">("");
   const [opponentType, setOpponentType] = useState<OpponentType>("player");
   const [err, setErr] = useState<string | null>(null);

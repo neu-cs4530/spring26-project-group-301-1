@@ -19,17 +19,32 @@ export default function GameSummaryView({
   const timeSince = useTimeSince();
   const navigate = useNavigate();
   const numPlayers = players.length;
+
+  const statusClass =
+    status === "waiting"
+      ? "gameSummary__status--waiting"
+      : status === "active"
+        ? "gameSummary__status--active"
+        : "gameSummary__status--done";
+
   return (
     <div className="gameSummary" role="listitem">
-      <div className="stats" onClick={() => navigate(`/game/${gameId}`)}>
+      <div className="gameSummary__header">
+        <NavLink to={`/game/${gameId}`} className="gameSummary__titleLink">
+          {gameNames[type]}
+        </NavLink>
+
+        <div className="gameSummary__lastActivity">
+          <UserLink user={createdBy} capitalize /> created {timeSince(createdAt)}
+        </div>
+      </div>
+
+      <div
+        className={`gameSummary__status ${statusClass}`}
+        onClick={() => navigate(`/game/${gameId}`)}
+      >
         {status}
         {status !== "done" && `, ${numPlayers} player${numPlayers === 1 ? "" : "s"}`}
-      </div>
-      <NavLink to={`/game/${gameId}`} className="mid">
-        A game of {gameNames[type]}
-      </NavLink>
-      <div className="lastActivity">
-        <UserLink user={createdBy} capitalize /> created {timeSince(createdAt)}
       </div>
     </div>
   );

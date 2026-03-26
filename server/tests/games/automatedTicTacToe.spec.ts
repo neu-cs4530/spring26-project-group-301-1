@@ -326,17 +326,20 @@ describe(`Automated Tic Tac Toe's update() logic`, () => {
       0,
     );
 
-    expect(result).toStrictEqual({
-      board: [
-        ["O", "O", null],
-        ["X", "X", "X"],
-        [null, "O", null],
-      ],
-      nextPlayer: 0,
-      opponentType: "minimax",
-      autoPlayer: 1,
-      forfeited: false,
-    });
+    expect(result).toEqual(
+      expect.objectContaining({
+        board: [
+          ["O", "O", null],
+          ["X", "X", "X"],
+          [null, "O", null],
+        ],
+        nextPlayer: 0,
+        opponentType: "minimax",
+        autoPlayer: 1,
+        forfeited: false,
+        aiMoveTimestamp: expect.any(Number),
+      }),
+    );
   });
 
   it("Should default autoPlayer to the automated player index when autoPlayer is undefined", () => {

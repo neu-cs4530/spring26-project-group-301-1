@@ -11,7 +11,6 @@ import type { GameLogic } from "./gameLogic.ts";
 import { GameService } from "./gameServiceManager.ts";
 
 const NUM_PLAYERS: number = 2;
-
 export const ticTacToeLogic: GameLogic<TicTacToeState, TicTacToeView> = {
   minPlayers: 2,
   maxPlayers: 2,

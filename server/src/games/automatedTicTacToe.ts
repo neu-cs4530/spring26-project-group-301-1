@@ -21,6 +21,7 @@ type TicTacToeOpponentType = "human" | "random" | "minimax";
 export type AutomatedTicTacToeState = TicTacToeState & {
   opponentType?: TicTacToeOpponentType;
   autoPlayer?: number;
+  aiMoveTimestamp?: number;
 };
 
 export type AutomatedTicTacToeView = TicTacToeView;
@@ -206,6 +207,7 @@ export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, Automat
       ...nextState,
       board: afterAiBoard,
       nextPlayer: (nextState.nextPlayer + 1) % NUM_PLAYERS,
+      aiMoveTimestamp: Date.now(),
     };
 
     return nextState;
