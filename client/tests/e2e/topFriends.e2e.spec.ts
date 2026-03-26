@@ -33,7 +33,7 @@ test.describe("The most-played-with friends list", () => {
     await page2.getByText("Top Friends").waitFor();
 
     expect(await page2.getByText("Sénior Dos").count()).toBe(1);
-    expect(await page2.getByText("Yāo").count()).toBe(1);
+    expect(await page2.getByText("You").count()).toBe(1);
     expect(await page2.getByText("Frau Drei").count()).toBe(1);
   });
 
@@ -46,7 +46,7 @@ test.describe("The most-played-with friends list", () => {
     await page1.getByText("Top Friends").waitFor();
 
     expect(await page1.getByText("Sénior Dos").count()).toBe(1);
-    expect(await page1.getByText("The Knight Of Games").count()).toBe(1);
+    expect(await page1.getByText("You").count()).toBe(1);
     expect(await page1.getByText("Frau Drei").count()).toBe(0);
   });
 });

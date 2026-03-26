@@ -173,7 +173,7 @@ export default function ViewProfile({ username }: ViewProfileProps) {
               return (
                 <div key={friend.user.username} className="profileTopFriendCard">
                   <div className="profileTopFriendNameRow">
-                    <UserLink user={friend.user} />
+                    <UserLink user={friend.user} capitalize />
                   </div>
                   {!friend.user.hideUsername && (
                     <div className="profileTopFriendUsername">@{friend.user.username}</div>
