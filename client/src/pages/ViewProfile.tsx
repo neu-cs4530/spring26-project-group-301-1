@@ -1,5 +1,6 @@
-import type { SafeUserInfo } from "@gamenite/shared";
+import { type SafeUserInfo, type GameInfo } from "@gamenite/shared";
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { Box } from "@chakra-ui/react";
 import { CalendarDays, Gamepad2 } from "lucide-react";
 import useTimeSince from "../hooks/useTimeSince";
 import useLoginContext from "../hooks/useLoginContext";
@@ -33,11 +34,18 @@ export default function ViewProfile({ username }: ViewProfileProps) {
   const [friendStatus, setFriendStatus] = useState<FriendStatus>("loading" as FriendStatus);
   const [friendActionErr, setFriendActionErr] = useState<string | null>(null);
   const { games, friends, getTopFriends, getFriendGameCount } = useTopFriendsList(username);
+  const { getWins, getLosses, getCompletedGames, getWaitingGames, getActiveGames } =
+    usePlayersStatsInfo(username);
+  const recentGames = getCompletedGames();
+  const activeGames = getActiveGames();
+  const waitingGames = getWaitingGames();
   const topFriends = getTopFriends();
   const gamesPlayedCount =
     games !== null && !("error" in games)
       ? games.filter((game) => game.players.some((player) => player.username === username)).length
       : null;
+  const gamesWinCount = getWins();
+  const gamesLostCount = getLosses();
 
   const publicProfileBackgroundStyle = useMemo<CSSProperties>(() => {
     if (componentState.type !== "profile") return {};
@@ -57,11 +65,6 @@ export default function ViewProfile({ username }: ViewProfileProps) {
       backgroundRepeat: "no-repeat",
     };
   }, [componentState]);
-  const { getWins, getLosses, getCompletedGames, getWaitingGames, getActiveGames } =
-    usePlayersStatsInfo(username);
-  const recentGames = getCompletedGames();
-  const activeGames = getActiveGames();
-  const waitingGames = getWaitingGames();
 
   useEffect(() => {
     let cancel = false;
@@ -201,56 +204,55 @@ export default function ViewProfile({ username }: ViewProfileProps) {
     );
   }
 
-  function renderStats() {
+  function getGameListElement(game: GameInfo, key: number) {
     return (
-      <div className="spacedSection">
-        <h3>Player Stats</h3>
-        <p>Wins: {getWins()}</p>
-        <p>Losses: {getLosses()}</p>
-      </div>
+      <Box
+        borderRadius="xl"
+        border="1px solid #E5E7EB"
+        bg="white"
+        p={5}
+        boxShadow="xs"
+        transition="box-shadow 0.2s"
+        _hover={{ boxShadow: "md" }}
+        className="home-game-list__item"
+      >
+        <div key={key}>
+          <GameSummaryView {...game} />
+        </div>
+      </Box>
     );
   }
 
   function renderGames() {
     return (
-      <div>
-        <h3>Pending Games</h3>
-        {waitingGames.length > 0 ? (
-          <div className="spacesSection">
-            {waitingGames.slice(0, 3).map((game, i) => (
-              <div key={i}>
-                <GameSummaryView {...game} />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="smallAndGray">This player has no pending games to join</p>
-        )}
-        <h3>Active Games</h3>
-        {activeGames.length > 0 ? (
-          <div className="spacesSection">
-            {activeGames.slice(0, 3).map((game, i) => (
-              <div key={i}>
-                <GameSummaryView {...game} />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="smallAndGray">This player has no active games</p>
-        )}
-        <h3>Completed Games</h3>
-        {recentGames.length > 0 ? (
-          <div className="spacesSection">
-            {recentGames.slice(0, 3).map((game, i) => (
-              <div key={i}>
-                <GameSummaryView {...game} />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="smallAndGray">This player has not completed any games</p>
-        )}
-      </div>
+      <section className="profileSectionCard">
+        <div>
+          <h3>Pending Games</h3>
+          {waitingGames.length > 0 ? (
+            <div className="spacesSection">
+              {waitingGames.slice(0, 3).map((game, i) => getGameListElement(game, i))}
+            </div>
+          ) : (
+            <p className="smallAndGray">This player has no pending games to join</p>
+          )}
+          <h3>Active Games</h3>
+          {activeGames.length > 0 ? (
+            <div className="spacesSection">
+              {activeGames.slice(0, 3).map((game, i) => getGameListElement(game, i))}
+            </div>
+          ) : (
+            <p className="smallAndGray">This player has no active games</p>
+          )}
+          <h3>Completed Games</h3>
+          {recentGames.length > 0 ? (
+            <div className="spacesSection">
+              {recentGames.slice(0, 3).map((game, i) => getGameListElement(game, i))}
+            </div>
+          ) : (
+            <p className="smallAndGray">This player has not completed any games</p>
+          )}
+        </div>
+      </section>
     );
   }
 
@@ -292,6 +294,12 @@ export default function ViewProfile({ username }: ViewProfileProps) {
                     {gamesPlayedCount !== null && (
                       <div className="profileIdentityMeta">Games played: {gamesPlayedCount}</div>
                     )}
+                    {gamesWinCount !== null && (
+                      <div className="profileIdentityMeta">Games Won: {gamesWinCount}</div>
+                    )}
+                    {gamesLostCount !== null && (
+                      <div className="profileIdentityMeta">Games Lost: {gamesLostCount}</div>
+                    )}
                   </div>
                 </div>
                 <div className="profileIdentityRight profileIdentityRight--topRight">
@@ -306,7 +314,6 @@ export default function ViewProfile({ username }: ViewProfileProps) {
                 friends !== null &&
                 !("error" in friends) &&
                 renderTopFriends()}
-              {renderStats()}
               {renderGames()}
             </>
           ) : (
