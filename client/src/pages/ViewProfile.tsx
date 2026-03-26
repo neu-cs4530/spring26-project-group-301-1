@@ -44,8 +44,6 @@ export default function ViewProfile({ username }: ViewProfileProps) {
     games !== null && !("error" in games)
       ? games.filter((game) => game.players.some((player) => player.username === username)).length
       : null;
-  const gamesWinCount = getWins();
-  const gamesLostCount = getLosses();
 
   const publicProfileBackgroundStyle = useMemo<CSSProperties>(() => {
     if (componentState.type !== "profile") return {};
@@ -294,11 +292,11 @@ export default function ViewProfile({ username }: ViewProfileProps) {
                     {gamesPlayedCount !== null && (
                       <div className="profileIdentityMeta">Games played: {gamesPlayedCount}</div>
                     )}
-                    {gamesWinCount !== null && (
-                      <div className="profileIdentityMeta">Games Won: {gamesWinCount}</div>
+                    {getWins() !== null && (
+                      <div className="profileIdentityMeta">Games Won: {getWins()}</div>
                     )}
-                    {gamesLostCount !== null && (
-                      <div className="profileIdentityMeta">Games Lost: {gamesLostCount}</div>
+                    {getLosses() !== null && (
+                      <div className="profileIdentityMeta">Games Lost: {getLosses()}</div>
                     )}
                   </div>
                 </div>
