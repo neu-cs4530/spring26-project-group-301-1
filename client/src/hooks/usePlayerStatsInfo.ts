@@ -26,10 +26,11 @@ export default function usePlayersStatsInfo(username: string) {
     if ("error" in leaderboardEntry) {
       return "error!";
     }
-    if (leaderboardEntry.length < 1) {
-      return "error!";
+    let wins: number = 0;
+    for (const entry of leaderboardEntry) {
+      wins += entry.wins;
     }
-    return leaderboardEntry[0].wins;
+    return wins;
   }
 
   /**
@@ -43,10 +44,11 @@ export default function usePlayersStatsInfo(username: string) {
     if ("error" in leaderboardEntry) {
       return "error!";
     }
-    if (leaderboardEntry.length < 1) {
-      return "error!";
+    let losses: number = 0;
+    for (const entry of leaderboardEntry) {
+      losses += entry.losses;
     }
-    return leaderboardEntry[0].losses;
+    return losses;
   }
 
   /**
