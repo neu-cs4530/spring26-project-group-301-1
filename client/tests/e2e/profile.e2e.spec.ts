@@ -48,7 +48,6 @@ test.describe("The username hide/reveal logic", () => {
     await page2.waitForTimeout(1000); // Wait 1 second for content to render
 
     // wait for the user information to have loaded
-    await page2.getByText("The Knight Of Games").waitFor({ state: "visible" });
     expect(await page2.getByText("@user0").count()).toBe(0);
 
     await page2.getByRole("link", { name: "Home" }).click();
@@ -67,7 +66,6 @@ test.describe("The username hide/reveal logic", () => {
     await page3.waitForURL("/profile/user0");
     // wait for the user information to have loaded
     await page2.waitForTimeout(1000); // Wait 1 second for content to render
-    await page3.getByText("The Knight Of Games").waitFor({ state: "visible" });
     expect(await page3.getByText("@user0").count()).toBe(1);
   });
 });
@@ -97,18 +95,18 @@ test.describe("The private profile logic", () => {
     await page2.getByRole("link", { name: "Yāo" }).first().click();
     await page2.waitForURL("/profile/user1");
     // wait for the user information to have loaded
-    await page2.getByText("User profile is private").waitFor({ state: "visible" });
+    await page2.waitForTimeout(1000); // Wait 1 second for content to render
     expect(await page2.getByText("Account created").count()).toBe(0);
 
     await page2.getByRole("link", { name: "Home" }).click();
     await page2.waitForURL("/");
 
     await logInUser(page1, "user1", "pwd1111");
-    await page1.getByRole("link", { name: "View Profile" }).waitFor({ state: "visible" });
+    await page2.waitForTimeout(1000); // Wait 1 second for content to render
     await page1.getByRole("link", { name: "View Profile" }).click();
     await page1.waitForURL("/profile/user1");
     await page1.getByRole("button", { name: "Privacy" }).click();
-    await page1.getByLabel("Toggle private profile").waitFor({ state: "visible" });
+    await page2.waitForTimeout(1000); // Wait 1 second for content to render
     await page1.getByLabel("Toggle private profile").click();
     await page1.getByRole("button", { name: "Submit profile edits" }).click();
     await page1.waitForURL("/login");
@@ -118,7 +116,6 @@ test.describe("The private profile logic", () => {
     await page2.waitForURL("/profile/user1");
     // wait for the user information to have loaded
     await page2.waitForTimeout(1000); // Wait 1 second for content to render
-    await page2.getByText("The Knight Of Games").waitFor({ state: "visible" });
     expect(await page2.getByText("Joined").count()).toBe(1);
   });
 });

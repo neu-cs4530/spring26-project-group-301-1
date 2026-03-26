@@ -1,11 +1,14 @@
-import type { SafeUserInfo } from "@gamenite/shared";
+import { type SafeUserInfo, type GameInfo } from "@gamenite/shared";
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { Box } from "@chakra-ui/react";
 import { CalendarDays, Gamepad2 } from "lucide-react";
 import useTimeSince from "../hooks/useTimeSince";
 import useLoginContext from "../hooks/useLoginContext";
 import { getUserById } from "../services/userService";
 import { getFriendStatus, sendFriendRequest, removeFriend } from "../services/friendsService";
 import useTopFriendsList from "../hooks/useTopFriendsList";
+import usePlayersStatsInfo from "../hooks/usePlayerStatsInfo";
+import GameSummaryView from "../components/GameSummaryView";
 import UserLink from "../components/UserLink";
 
 type FriendStatus =
@@ -31,6 +34,11 @@ export default function ViewProfile({ username }: ViewProfileProps) {
   const [friendStatus, setFriendStatus] = useState<FriendStatus>("loading" as FriendStatus);
   const [friendActionErr, setFriendActionErr] = useState<string | null>(null);
   const { games, friends, getTopFriends, getFriendGameCount } = useTopFriendsList(username);
+  const { getWins, getLosses, getCompletedGames, getWaitingGames, getActiveGames } =
+    usePlayersStatsInfo(username);
+  const recentGames = getCompletedGames();
+  const activeGames = getActiveGames();
+  const waitingGames = getWaitingGames();
   const topFriends = getTopFriends(3); // get top 3 friends for display
   const gamesPlayedCount =
     games !== null && !("error" in games)
@@ -194,6 +202,58 @@ export default function ViewProfile({ username }: ViewProfileProps) {
     );
   }
 
+  function getGameListElement(game: GameInfo, key: number) {
+    return (
+      <Box
+        borderRadius="xl"
+        border="1px solid #E5E7EB"
+        bg="white"
+        p={5}
+        boxShadow="xs"
+        transition="box-shadow 0.2s"
+        _hover={{ boxShadow: "md" }}
+        className="home-game-list__item"
+      >
+        <div key={key}>
+          <GameSummaryView {...game} />
+        </div>
+      </Box>
+    );
+  }
+
+  function renderGames() {
+    return (
+      <section className="profileSectionCard">
+        <div>
+          <h3>Pending Games</h3>
+          {waitingGames.length > 0 ? (
+            <div className="spacesSection">
+              {waitingGames.slice(0, 3).map((game, i) => getGameListElement(game, i))}
+            </div>
+          ) : (
+            <p className="smallAndGray">This player has no pending games to join</p>
+          )}
+          <h3>Active Games</h3>
+          {activeGames.length > 0 ? (
+            <div className="spacesSection">
+              {activeGames.slice(0, 3).map((game, i) => getGameListElement(game, i))}
+            </div>
+          ) : (
+            <p className="smallAndGray">This player has no active games</p>
+          )}
+          <h3>Completed Games</h3>
+          {recentGames.length > 0 ? (
+            <div className="spacesSection">
+              {recentGames.slice(0, 3).map((game, i) => getGameListElement(game, i))}
+            </div>
+          ) : (
+            <p className="smallAndGray">This player has not completed any games</p>
+          )}
+        </div>
+      </section>
+    );
+  }
+
   switch (componentState.type) {
     case "error":
       return <div style={{ color: "#f00" }}>{componentState.msg}</div>;
@@ -232,6 +292,12 @@ export default function ViewProfile({ username }: ViewProfileProps) {
                     {gamesPlayedCount !== null && (
                       <div className="profileIdentityMeta">Games played: {gamesPlayedCount}</div>
                     )}
+                    {getWins() !== null && (
+                      <div className="profileIdentityMeta">Games Won: {getWins()}</div>
+                    )}
+                    {getLosses() !== null && (
+                      <div className="profileIdentityMeta">Games Lost: {getLosses()}</div>
+                    )}
                   </div>
                 </div>
                 <div className="profileIdentityRight profileIdentityRight--topRight">
@@ -246,6 +312,7 @@ export default function ViewProfile({ username }: ViewProfileProps) {
                 friends !== null &&
                 !("error" in friends) &&
                 renderTopFriends()}
+              {renderGames()}
             </>
           ) : (
             <section className="profileSectionCard">

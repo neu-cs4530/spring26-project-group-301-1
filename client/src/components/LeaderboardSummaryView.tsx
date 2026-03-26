@@ -110,6 +110,7 @@ export default function LeaderboardSummaryView({ entryLimit = 10 }: LeaderboardS
               {entries.map((entry) => (
                 <tr
                   key={entry.user?.username ?? entry.rank}
+                  aria-label={"leaderboard-" + entry.user.display}
                   className="leaderboard-summary-row"
                   onClick={() => entry.user && navigate(`/profile/${entry.user.username}`)}
                 >
@@ -131,7 +132,9 @@ export default function LeaderboardSummaryView({ entryLimit = 10 }: LeaderboardS
 
           <div className="leaderboard-summary-podium" aria-label="Top three players">
             <div
-              className={`leaderboard-summary-podium__slot leaderboard-summary-podium__slot--second ${second?.user ? "clickable" : "is-empty"}`}
+              className={`leaderboard-summary-podium__slot leaderboard-summary-podium__slot--second ${
+                second?.user ? "clickable" : "is-empty"
+              }`}
               onClick={() => second?.user && navigate(`/profile/${second.user.username}`)}
             >
               <div className="leaderboard-summary-podium__medal">🥈 2nd</div>
@@ -145,7 +148,9 @@ export default function LeaderboardSummaryView({ entryLimit = 10 }: LeaderboardS
             </div>
 
             <div
-              className={`leaderboard-summary-podium__slot leaderboard-summary-podium__slot--first ${first?.user ? "clickable" : "is-empty"}`}
+              className={`leaderboard-summary-podium__slot leaderboard-summary-podium__slot--first ${
+                first?.user ? "clickable" : "is-empty"
+              }`}
               onClick={() => first?.user && navigate(`/profile/${first.user.username}`)}
             >
               <div className="leaderboard-summary-podium__medal">🥇 1st</div>
@@ -159,7 +164,9 @@ export default function LeaderboardSummaryView({ entryLimit = 10 }: LeaderboardS
             </div>
 
             <div
-              className={`leaderboard-summary-podium__slot leaderboard-summary-podium__slot--third ${third?.user ? "clickable" : "is-empty"}`}
+              className={`leaderboard-summary-podium__slot leaderboard-summary-podium__slot--third ${
+                third?.user ? "clickable" : "is-empty"
+              }`}
               onClick={() => third?.user && navigate(`/profile/${third.user.username}`)}
             >
               <div className="leaderboard-summary-podium__medal">🥉 3rd</div>
