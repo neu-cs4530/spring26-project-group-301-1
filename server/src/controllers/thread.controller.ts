@@ -87,17 +87,17 @@ export const postByIdComment: RestAPI<ThreadInfo, { id: string }> = async (req, 
     return;
   }
 
+  const thread = await addCommentToThread(req.params.id, user, body.data.payload, new Date());
+  if (!thread) {
+    res.status(404).send({ error: "Thread not found" });
+    return;
+  }
+
   const safeComment = await moderateMessage(body.data.payload);
   if (safeComment.label === "UNSAFE") {
     res.send({
       error: "Comment violates content policy. Reason: " + safeComment.categories.join(", "),
     });
-    return;
-  }
-
-  const thread = await addCommentToThread(req.params.id, user, body.data.payload, new Date());
-  if (!thread) {
-    res.status(404).send({ error: "Thread not found" });
     return;
   }
 
