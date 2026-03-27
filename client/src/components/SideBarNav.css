@@ -1,25 +1,60 @@
+.sidebarAlertBadge {
+  background: #ef4444;
+  color: #fff;
+  border-radius: 999px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  margin-left: 0.5em;
+}
 .sideBarNav {
-  padding-inline: 1rem;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
   width: 200px;
-  gap: 1rem;
-  padding-block: 1rem;
-  background-color: var(--gray-background);
+  gap: 0.65rem;
+  background-color: #f3f4f8;
   grid-area: sidebar;
 }
 
 .menu_button {
   display: flex;
-  justify-content: center;
   align-items: center;
-  min-height: 2.5rem;
-  width: 100%;
-  border-radius: 0.5rem;
-  color: cornflowerblue;
+  gap: 0.65rem;
+  min-height: 3rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 12px;
+  color: #63708f;
   text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 500;
+  transition:
+    background-color 140ms ease,
+    color 140ms ease;
+}
+
+.menu_button:hover {
+  background: #e7ebf3;
+  color: #4d5c7e;
+}
+
+.menu_icon {
+  width: 1.2rem;
+  height: 1.2rem;
+  color: inherit;
+  opacity: 0.95;
+  flex-shrink: 0;
+  stroke-width: 2.2;
 }
 
 .menu_selected {
-  background: #cccccc;
+  background: #dfe3ed;
+  color: #1f2d4d;
+  font-weight: 700;
 }

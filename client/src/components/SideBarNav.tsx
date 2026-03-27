@@ -1,7 +1,8 @@
 import "./SideBarNav.css";
-import { useState } from "react";
 import { NavLink, type NavLinkRenderProps } from "react-router-dom";
+import { House, Gamepad2, MessageCircle, User } from "lucide-react";
 import useAuth from "../hooks/useAuth.ts";
+import useFriendRequestCount from "../hooks/useFriendRequestCount";
 
 /**
  * The SideBarNav component contains the primary naviagation menu. It
@@ -9,12 +10,8 @@ import useAuth from "../hooks/useAuth.ts";
  * menu items are clicked.
  */
 export default function SideBarNav() {
-  const [showOptions, setShowOptions] = useState<boolean>(false);
   const { username } = useAuth();
-
-  const toggleOptions = () => {
-    setShowOptions(!showOptions);
-  };
+  const friendRequestCount = useFriendRequestCount();
 
   const navClass = ({ isActive }: NavLinkRenderProps) =>
     `menu_button ${isActive ? "menu_selected" : ""}`;
@@ -22,21 +19,29 @@ export default function SideBarNav() {
   return (
     <div className="sideBarNav">
       <NavLink to="/" className={navClass}>
-        Home
+        <House className="menu_icon" aria-hidden="true" />
+        <span>Home</span>
       </NavLink>
+
       <NavLink to="/games" className={navClass}>
-        Games
+        <Gamepad2 className="menu_icon" aria-hidden="true" />
+        <span>Games</span>
       </NavLink>
+
       <NavLink to="/forum" className={navClass}>
-        Forum
+        <MessageCircle className="menu_icon" aria-hidden="true" />
+        <span>Forum</span>
       </NavLink>
+
       <NavLink
         to={`/profile/${username}`}
         id="menu_user"
         className={navClass}
-        onClick={toggleOptions}
+        style={{ position: "relative" }}
       >
-        Profile
+        <User className="menu_icon" aria-hidden="true" />
+        <span>Profile</span>
+        {friendRequestCount > 0 && <span className="sidebarAlertBadge">{friendRequestCount}</span>}
       </NavLink>
     </div>
   );

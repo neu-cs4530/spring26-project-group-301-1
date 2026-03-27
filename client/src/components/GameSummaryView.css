@@ -1,21 +1,62 @@
 .gameSummary {
   display: flex;
-  flex-direction: row;
-  border-top: 1px dashed black;
+  flex-direction: column;
+  gap: 0.35rem;
   color: var(--gray-foreground);
+  width: 100%;
 }
 
-.gameSummary div {
+.gameSummary__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  width: 100%;
+}
+
+.gameSummary__titleLink {
+  color: #2563eb;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-decoration: none;
+  line-height: 1.2;
+}
+
+.gameSummary__titleLink:visited {
+  color: #796781;
+}
+
+.gameSummary__titleLink:hover {
+  text-decoration: underline;
+}
+
+.gameSummary__status {
   white-space: nowrap;
+  cursor: pointer;
+  font-size: 1.1rem;
 }
 
-.gameSummary .mid {
-  flex-grow: 1;
-  color: cornflowerblue;
+.gameSummary__status--waiting {
+  color: #ca8a04;
 }
 
-.gameSummary .stats {
-  text-align: center;
-  width: 10rem;
+.gameSummary__status--active {
+  color: #16a34a;
+}
+
+.gameSummary__lastActivity {
+  white-space: nowrap;
+  text-align: right;
   flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+  .gameSummary__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .gameSummary__lastActivity {
+    text-align: left;
+  }
 }

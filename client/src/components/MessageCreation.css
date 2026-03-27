@@ -1,4 +1,11 @@
 form.messageCreation textarea {
-  width: calc(100% - 2rem);
-  margin: 1rem;
+  width: calc(100% - 1.5rem);
+  margin: 0.75rem;
+  border-radius: 0.8rem;
+  padding: 0.72rem 0.8rem;
+  min-height: 2.8rem;
+}
+
+form.messageCreation {
+  border-top: 1px solid #e5e7eb;
 }

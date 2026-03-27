@@ -1,5 +1,59 @@
 div.chatContainer {
   display: grid;
-  grid-template-rows: 1fr min-content;
-  height: var(--content-vh);
+  grid-template-rows: max-content minmax(0, 1fr) min-content;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+div.chatHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.95rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.chatHeader__title {
+  margin: 0;
+  font-size: 1.65rem;
+  color: #0f172a;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+div.chatContainer--lightText .chatMeta,
+div.chatContainer--lightText .chatSender,
+div.chatContainer--lightText .chatMe .chatSender {
+  color: #f6f6f6;
+  font-weight: 700;
+}
+
+div.chatContainer--lightText .chatHeader {
+  border-bottom-color: rgba(248, 250, 252, 0.3);
+}
+
+div.chatContainer--lightText .chatHeader__title {
+  color: #f8fafc;
+}
+
+div.chatContainer--lightText .chatMeta a,
+div.chatContainer--lightText .chatSender a {
+  color: #ffffff;
+  font-weight: 700;
+  text-decoration-color: rgba(255, 255, 255, 0.85);
+}
+
+div.chatContainer--lightText .messageCreation textarea,
+div.chatContainer--lightText .messageCreation .messageCooldown {
+  color: #f8fafc;
+}
+
+div.chatContainer--lightText .messageCreation textarea {
+  background-color: rgba(15, 23, 42, 0.5);
+  border-color: rgba(248, 250, 252, 0.7);
+}
+
+div.chatContainer--lightText .messageCreation textarea::placeholder {
+  color: rgba(248, 250, 252, 0.85);
 }

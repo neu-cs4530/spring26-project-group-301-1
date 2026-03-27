@@ -59,7 +59,8 @@ test.describe("Chat in the context of a Nim game", () => {
     await page2
       .getByRole("listitem")
       .filter({ hasText: username1 })
-      .getByRole("link", { name: /^A game of.+/ })
+      .getByRole("link")
+      .first()
       .click();
 
     for (let i = 0; i < ITERATIONS; i += 1) {
