@@ -2,7 +2,7 @@ import { Anthropic } from "@anthropic-ai/sdk";
 import "dotenv/config";
 
 const client = new Anthropic({
-  apiKey: process.env.CLAUDE_API_TOKEN,
+  apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
 const SYSTEM_PROMPT = `You are a content moderation assistant. Your job is to classify chat messages as SAFE or UNSAFE.
