@@ -31,6 +31,12 @@ export type ChatMessage =
       dateTime: Date;
       moveDescription: string;
       user: SafeUserInfo;
+    }
+  | {
+      messageId: string;
+      meta: "moderate";
+      text: string;
+      dateTime: Date;
     };
 
 export interface GameProps<View, Move> {

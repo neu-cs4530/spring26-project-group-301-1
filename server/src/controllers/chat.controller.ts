@@ -6,6 +6,7 @@ import { populateSafeUserInfo } from "../services/user.service.ts";
 import { createMessage, deleteMessage, MessageCooldownError } from "../services/message.service.ts";
 import { logSocketError } from "./socket.controller.ts";
 import { enforceAuth } from "../services/auth.service.ts";
+import { moderateMessage } from "../services/moderate.service.ts";
 
 /**
  * Handle a socket request to join a chat: send the connection the chat's
@@ -53,8 +54,8 @@ export const socketLeave: SocketAPI = (socket) => async (body) => {
 };
 
 /**
- * Handle a socket request to send a message to the chat: store the chat and
- * let everyone know about the new message.
+ * Handle a socket request to send a message to the chat: store the chat, moderate it, and
+ * let everyone know about the new message if its safe, otherwise do not move forward with the chat.
  */
 export const socketSendMessage: SocketAPI = (socket, io) => async (body) => {
   try {
@@ -65,6 +66,24 @@ export const socketSendMessage: SocketAPI = (socket, io) => async (body) => {
     const user = await enforceAuth(auth);
     const now = new Date();
     const message = await createMessage(user, text, now);
+
+    try {
+      const moderationResult = await moderateMessage(text);
+      if (moderationResult.label === "UNSAFE") {
+        socket.emit("chatSendError", {
+          code: "MESSAGE_UNSAFE",
+          message:
+            "[Message violates content policy. Reason: " +
+            moderationResult.categories.join(", ") +
+            "]",
+        });
+        return;
+      }
+    } catch (err) {
+      logSocketError(socket, err);
+      // If moderation fails for some reason, we default to allowing the message
+    }
+
     await addMessageToChat(chatId, user, message.messageId);
 
     // Send the message to everyone, including the sender
