@@ -142,6 +142,21 @@ export default function useSocketsForChat(chatId: string) {
     };
 
     const handleSocketError = (err: ChatSendErrorPayload) => {
+      if (err.code === "MESSAGE_UNSAFE") {
+        setMessages((oldMessages) => {
+          if (!oldMessages) return null;
+          return [
+            ...oldMessages,
+            {
+              messageId: `meta${Math.random()}`,
+              meta: "moderate",
+              text: err.message,
+              dateTime: new Date(),
+            },
+          ];
+        });
+        return;
+      }
       if (err?.code !== "MESSAGE_COOLDOWN") return;
       const retryAfterMs = Math.max(0, err.retryAfterMs ?? 0);
       setCooldownUntil(Date.now() + retryAfterMs);

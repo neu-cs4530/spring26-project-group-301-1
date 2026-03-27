@@ -6,6 +6,7 @@ import { populateSafeUserInfo } from "../services/user.service.ts";
 import { createMessage, deleteMessage, MessageCooldownError } from "../services/message.service.ts";
 import { logSocketError } from "./socket.controller.ts";
 import { enforceAuth } from "../services/auth.service.ts";
+import { moderateMessage } from "../services/moderate.service.ts";
 
 /**
  * Handle a socket request to join a chat: send the connection the chat's
@@ -65,6 +66,18 @@ export const socketSendMessage: SocketAPI = (socket, io) => async (body) => {
     const user = await enforceAuth(auth);
     const now = new Date();
     const message = await createMessage(user, text, now);
+
+    // Moderate the message before adding it to the chat
+    const moderationResult = await moderateMessage(text);
+    if (moderationResult.label === "UNSAFE") {
+      socket.emit("chatSendError", {
+        code: "MESSAGE_UNSAFE",
+        message:
+          "[Message removed by moderation: Reason: " + moderationResult.categories.join(", ") + "]",
+      });
+      return;
+    }
+
     await addMessageToChat(chatId, user, message.messageId);
 
     // Send the message to everyone, including the sender

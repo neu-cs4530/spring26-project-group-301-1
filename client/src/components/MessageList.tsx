@@ -32,6 +32,13 @@ export default function MessageList({ messages, onDeleteMessage }: MessageListPr
                 </div>
               );
             }
+            if (message.meta === "moderate") {
+              return (
+                <div key={message.messageId} className="chatMeta">
+                  {message.text}
+                </div>
+              );
+            }
             return (
               <div key={message.messageId} className="chatMeta">
                 <UserLink user={message.user} /> {message.meta}
