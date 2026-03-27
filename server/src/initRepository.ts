@@ -76,6 +76,7 @@ async function resetStoredThreads() {
       title: "Nim?",
       text: "Is anyone around that wants to play Nim? I'll be here for the next hour or so.",
       comments: [],
+      filtered: true,
     },
     deadbeefdeadbeefdeadbeef: {
       createdBy: user1id,
@@ -83,6 +84,7 @@ async function resetStoredThreads() {
       title: "Hello game knights",
       text: "I'm a big Nim buff and am excited to join this community.",
       comments: [],
+      filtered: true,
     },
     [randomUUID().toString()]: {
       createdBy: user3id,
@@ -90,6 +92,7 @@ async function resetStoredThreads() {
       title: "Other games?",
       text: "Nim is great, but I'm hoping some new strategy games will get introduced soon.",
       comments: [],
+      filtered: true,
     },
     [randomUUID().toString()]: {
       createdBy: user2id,
@@ -97,6 +100,7 @@ async function resetStoredThreads() {
       title: "Strategy guide?",
       text: "I'm pretty confused about the right strategy for Nim, is there anyone around who can help explain this?",
       comments: [],
+      filtered: true,
     },
     [randomUUID().toString()]: {
       createdBy: user0id,
@@ -104,6 +108,7 @@ async function resetStoredThreads() {
       title: "New game: multiplayer number guesser!",
       text: "Strategy.town now has an exciting new game: guess! Try it out today: multiple people can join this exciting game, and guess a number between 1 and 100!",
       comments: [],
+      filtered: true,
     },
   };
   await ThreadRepo.clear();

@@ -47,6 +47,9 @@
   line-height: 1.15;
   white-space: normal;
   overflow-wrap: anywhere;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
 }
 
 .threadSummary .mid:visited {

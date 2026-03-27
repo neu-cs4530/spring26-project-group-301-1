@@ -113,6 +113,7 @@ export interface ThreadRecord {
   createdAt: DateISO;
   createdBy: RecordId; // References User records
   comments: RecordId[]; // References Comment records
+  filtered: boolean;
 }
 
 /**
