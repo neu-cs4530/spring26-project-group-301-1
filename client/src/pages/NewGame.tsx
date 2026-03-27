@@ -1,9 +1,10 @@
 import useNewGameForm from "../hooks/useNewGameForm.ts";
 import { gameNames } from "../util/consts.ts";
-import { Gamepad2, Users, Plus } from "lucide-react";
+import { Gamepad2, Users, Plus, ShieldCheck } from "lucide-react";
 
 export default function NewGame() {
-  const { gameKey, opponentType, handleInputChange, err, handleSubmit } = useNewGameForm();
+  const { gameKey, opponentType, filtered, handleInputChange, err, handleSubmit } =
+    useNewGameForm();
 
   return (
     <div className="newGamePage">
@@ -50,6 +51,27 @@ export default function NewGame() {
                 <option value="automated">Automated</option>
               </select>
             </label>
+          )}
+
+          <label className="newGameCard__selectRow" htmlFor="filtered-select">
+            <ShieldCheck className="newGameCard__icon" aria-hidden="true" />
+            <select
+              id="filtered-select"
+              name="filtered"
+              className="newGameCard__select"
+              value={String(filtered)}
+              aria-label="Chat moderation"
+              onChange={handleInputChange}
+            >
+              <option value="true">Chat Moderation: On</option>
+              <option value="false">Chat Moderation: Off</option>
+            </select>
+          </label>
+          {!filtered && (
+            <p className="newGameCard__warning">
+              Warning: Turning off chat filtering may allow profanity and unsafe content into your
+              chat. Are you sure you want to do this?
+            </p>
           )}
 
           <button className="newGameCard__submit" type="submit">

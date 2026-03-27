@@ -7,7 +7,7 @@ import { guessGameService } from "../games/guess.ts";
 import { automatedTicTacToeGameService } from "../games/automatedTicTacToe.ts";
 import { ticTacToeGameService } from "../games/ticTacToe.ts";
 import { type GameViewUpdates, type UserWithId } from "../types.ts";
-import { GameRepo } from "../repository.ts";
+import { ChatRepo, GameRepo } from "../repository.ts";
 
 /**
  * The service interface for individual games
@@ -36,6 +36,7 @@ async function populateGameInfo(gameId: string): Promise<GameInfo> {
     type: game.type,
     status: !game.state ? "waiting" : game.done ? "done" : "active",
     minPlayers: gameServices[game.type].minPlayers,
+    chatFiltered: (await ChatRepo.get(game.chat)).chatFiltered,
   };
 }
 
@@ -51,8 +52,9 @@ export async function createGame(
   user: UserWithId,
   type: GameKey,
   createdAt: Date,
+  filtered: boolean,
 ): Promise<GameInfo> {
-  const chat = await createChat(createdAt);
+  const chat = await createChat(createdAt, filtered);
   const gameId = await GameRepo.add({
     type,
     done: false,

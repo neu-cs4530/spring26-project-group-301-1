@@ -4,6 +4,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { gameNames } from "../util/consts.ts";
 import useTimeSince from "../hooks/useTimeSince.ts";
 import UserLink from "./UserLink.tsx";
+import { ShieldCheck, ShieldOff } from "lucide-react";
 
 /**
  * Summarizes information for a single game as part of a list of games
@@ -15,6 +16,7 @@ export default function GameSummaryView({
   players,
   createdAt,
   createdBy,
+  chatFiltered,
 }: GameInfo) {
   const timeSince = useTimeSince();
   const navigate = useNavigate();
@@ -45,6 +47,11 @@ export default function GameSummaryView({
       >
         {status}
         {status !== "done" && `, ${numPlayers} player${numPlayers === 1 ? "" : "s"}`}
+        {chatFiltered ? (
+          <span title="Chat moderated"><ShieldCheck size={14} /></span>
+        ) : (
+          <span title="Chat not moderated"><ShieldOff size={14} /></span>
+        )}
       </div>
     </div>
   );
