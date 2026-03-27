@@ -38,6 +38,12 @@ api.interceptors.response.use(
  */
 export function exceptionToErrorMsg(error: unknown): ErrorMsg {
   if (axios.isAxiosError(error) && error.response) {
+    // If there is a structured error message, then it is from moderation and
+    // that message should be displayed.
+    const data = error.response.data as unknown;
+    if (data && typeof data === "object" && "error" in data) {
+      return { error: String((data as Record<string, unknown>).error) };
+    }
     return { error: `Error during request: ${error.response.statusText}` };
   } else {
     return { error: "Error during request" };

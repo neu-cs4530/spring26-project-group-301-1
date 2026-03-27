@@ -26,6 +26,7 @@ export const updateUser = async (
   try {
     const res = await api.post<SafeUserInfo | ErrorMsg>(`${USER_API_URL}/${auth.username}`, {
       auth,
+      
       payload: updates,
     });
     return res.data;

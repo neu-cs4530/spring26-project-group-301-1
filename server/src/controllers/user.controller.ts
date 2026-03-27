@@ -8,6 +8,7 @@ import {
 import { type RestAPI } from "../types.ts";
 import { z } from "zod";
 import { checkAuth, getUserByUsername } from "../services/auth.service.ts";
+import { moderateMessage } from "../services/moderate.service.ts";
 
 /**
  * Handles user login by validating credentials.
@@ -32,7 +33,7 @@ export const postLogin: RestAPI<SafeUserInfo> = async (req, res) => {
 
 /**
  * Update a user's information
- * @param req A request containing a new password
+ * @param req A request containing the updated user information
  * @param res The response, either returning the updated user or an error
  */
 export const postByUsername: RestAPI<SafeUserInfo, { username: string }> = async (req, res) => {
@@ -61,6 +62,14 @@ export const postSignup: RestAPI<SafeUserInfo> = async (req, res) => {
   const userAuth = zUserAuth.safeParse(req.body);
   if (!userAuth.success) {
     res.status(400).send({ error: "Poorly-formed request" });
+    return;
+  }
+
+  const safeUsername = await moderateMessage(userAuth.data.username);
+  if (safeUsername.label === "UNSAFE") {
+    res.send({
+      error: "Username violates content policy: " + safeUsername.categories.join(", "),
+    });
     return;
   }
 

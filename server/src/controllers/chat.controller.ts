@@ -54,8 +54,8 @@ export const socketLeave: SocketAPI = (socket) => async (body) => {
 };
 
 /**
- * Handle a socket request to send a message to the chat: store the chat and
- * let everyone know about the new message.
+ * Handle a socket request to send a message to the chat: store the chat, moderate it, and
+ * let everyone know about the new message if its safe, otherwise do not move forward with the chat.
  */
 export const socketSendMessage: SocketAPI = (socket, io) => async (body) => {
   try {
@@ -67,7 +67,6 @@ export const socketSendMessage: SocketAPI = (socket, io) => async (body) => {
     const now = new Date();
     const message = await createMessage(user, text, now);
 
-    // Moderate the message before adding it to the chat
     const moderationResult = await moderateMessage(text);
     if (moderationResult.label === "UNSAFE") {
       socket.emit("chatSendError", {
