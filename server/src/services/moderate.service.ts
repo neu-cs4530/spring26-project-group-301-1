@@ -14,7 +14,7 @@ Unsafe messages include:
 - Explicit/adult content
 - Spam or scam attempts
 - Sharing of personal/sensitive information
-- Profanity or offensive language
+- Profanity or offensive language, even if in a nice context
 
 Respond ONLY with a JSON object in this exact format, no markdown, no extra text:
 {
