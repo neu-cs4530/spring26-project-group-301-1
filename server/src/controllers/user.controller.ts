@@ -68,7 +68,7 @@ export const postSignup: RestAPI<SafeUserInfo> = async (req, res) => {
   const safeUsername = await moderateMessage(userAuth.data.username);
   if (safeUsername.label === "UNSAFE") {
     res.send({
-      error: "Username violates content policy: " + safeUsername.categories.join(", "),
+      error: "Username violates content policy. Reason: " + safeUsername.categories.join(", "),
     });
     return;
   }

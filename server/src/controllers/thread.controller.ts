@@ -13,6 +13,7 @@ import {
 import { type RestAPI } from "../types.ts";
 import { z } from "zod";
 import { checkAuth } from "../services/auth.service.ts";
+import { moderateMessage } from "../services/moderate.service.ts";
 
 /**
  * Handle GET requests to `/api/thread/list`. Returns all threads in reverse
@@ -52,6 +53,20 @@ export const postCreate: RestAPI<ThreadInfo> = async (req, res) => {
     return;
   }
 
+  const safeTitle = await moderateMessage(body.data.payload.title);
+  const safeText = await moderateMessage(body.data.payload.text);
+  if (safeTitle.label === "UNSAFE") {
+    res.send({
+      error: "Title violates content policy. Reason: " + safeTitle.categories.join(", "),
+    });
+    return;
+  } else if (body.data.payload.text && safeText.label === "UNSAFE") {
+    res.send({
+      error: "Text violates content policy. Reason: " + safeText.categories.join(", "),
+    });
+    return;
+  }
+
   res.send(await createThread(user, body.data.payload, new Date()));
 };
 
@@ -69,6 +84,14 @@ export const postByIdComment: RestAPI<ThreadInfo, { id: string }> = async (req, 
   const user = await checkAuth(body.data.auth);
   if (!user) {
     res.status(403).send({ error: "Invalid credentials" });
+    return;
+  }
+
+  const safeComment = await moderateMessage(body.data.payload);
+  if (safeComment.label === "UNSAFE") {
+    res.send({
+      error: "Comment violates content policy. Reason: " + safeComment.categories.join(", "),
+    });
     return;
   }
 

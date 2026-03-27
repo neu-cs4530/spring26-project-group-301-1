@@ -72,7 +72,9 @@ export const socketSendMessage: SocketAPI = (socket, io) => async (body) => {
       socket.emit("chatSendError", {
         code: "MESSAGE_UNSAFE",
         message:
-          "[Message removed by moderation: Reason: " + moderationResult.categories.join(", ") + "]",
+          "[Message violates content policy. Reason: " +
+          moderationResult.categories.join(", ") +
+          "]",
       });
       return;
     }
