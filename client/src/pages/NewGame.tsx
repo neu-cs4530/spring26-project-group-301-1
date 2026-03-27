@@ -60,11 +60,11 @@ export default function NewGame() {
               name="filtered"
               className="newGameCard__select"
               value={String(filtered)}
-              aria-label="Chat moderation"
+              aria-label="Chat filtering"
               onChange={handleInputChange}
             >
-              <option value="true">Chat Moderation: On</option>
-              <option value="false">Chat Moderation: Off</option>
+              <option value="true">Chat Filter: On</option>
+              <option value="false">Chat Filter: Off</option>
             </select>
           </label>
           {!filtered && (

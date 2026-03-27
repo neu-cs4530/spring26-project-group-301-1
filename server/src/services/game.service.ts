@@ -46,6 +46,7 @@ async function populateGameInfo(gameId: string): Promise<GameInfo> {
  * @param user - Initial player in the game's waiting room
  * @param type - Game key
  * @param createdAt - Creation time for this game
+ * @param filtered - Whether the game should have its chat filtered for content violations
  * @returns the new game's info object
  */
 export async function createGame(

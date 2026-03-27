@@ -55,11 +55,13 @@ export default function useSocketsForChat(chatId: string) {
   const [cooldownUntil, setCooldownUntil] = useState<number>(0);
   const [cooldownMessage, setCooldownMessage] = useState<string | null>(null);
   const [showCooldownFeedback, setShowCooldownFeedback] = useState<boolean>(false);
+  const [chatFilter, setChatFilter] = useState<boolean>(true);
 
   useEffect(() => {
     const handleChatJoined = (chat: ChatInfo) => {
       if (chat.chatId !== chatId) return;
       socket.off("chatJoined", handleChatJoined);
+      setChatFilter(chat.chatFiltered);
 
       // Build the initial message list by merging stored messages and
       // persisted move log entries chronologically (both are already sorted)
@@ -228,5 +230,12 @@ export default function useSocketsForChat(chatId: string) {
     socket.emit("chatDeleteMessage", { auth, payload: { chatId, messageId } });
   }
 
-  return { messages, handleMessageCreation, handleMessageDeletion, cooldownUntil, cooldownMessage };
+  return {
+    messages,
+    handleMessageCreation,
+    handleMessageDeletion,
+    cooldownUntil,
+    cooldownMessage,
+    chatFilter,
+  };
 }
