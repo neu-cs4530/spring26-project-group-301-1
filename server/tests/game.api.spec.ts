@@ -25,15 +25,17 @@ describe("POST /api/game/create", () => {
   it("should return 403 with bad auth", async () => {
     response = await supertest(app)
       .post(`/api/game/create`)
-      .send({ auth: authBad, payload: "nim" });
+      .send({ auth: authBad, payload: { gameKey: "nim" } });
     expect(response.status).toBe(403);
   });
 
   it("should succeed when asked to create a game of nim", async () => {
-    response = await supertest(app).post(`/api/game/create`).send({
-      auth: auth3,
-      payload: "nim",
-    });
+    response = await supertest(app)
+      .post(`/api/game/create`)
+      .send({
+        auth: auth3,
+        payload: { gameKey: "nim" },
+      });
     expect(response.status).toBe(200);
     expect(response.body).toStrictEqual({
       gameId: expect.anything(),
@@ -58,6 +60,7 @@ describe("POST /api/game/create", () => {
           privateProfile: false,
         },
       ],
+      chatFiltered: true,
     });
   });
 });
@@ -69,10 +72,12 @@ describe("GET /api/game/:id", () => {
   });
 
   it("should succeed if a created game is requested", async () => {
-    response = await supertest(app).post(`/api/game/create`).send({
-      auth: auth3,
-      payload: "nim",
-    });
+    response = await supertest(app)
+      .post(`/api/game/create`)
+      .send({
+        auth: auth3,
+        payload: { gameKey: "nim" },
+      });
     expect(response.status).toBe(200);
     const gameInfo = response.body;
 
