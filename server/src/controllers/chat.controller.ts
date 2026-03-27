@@ -67,16 +67,21 @@ export const socketSendMessage: SocketAPI = (socket, io) => async (body) => {
     const now = new Date();
     const message = await createMessage(user, text, now);
 
-    const moderationResult = await moderateMessage(text);
-    if (moderationResult.label === "UNSAFE") {
-      socket.emit("chatSendError", {
-        code: "MESSAGE_UNSAFE",
-        message:
-          "[Message violates content policy. Reason: " +
-          moderationResult.categories.join(", ") +
-          "]",
-      });
-      return;
+    try {
+      const moderationResult = await moderateMessage(text);
+      if (moderationResult.label === "UNSAFE") {
+        socket.emit("chatSendError", {
+          code: "MESSAGE_UNSAFE",
+          message:
+            "[Message violates content policy. Reason: " +
+            moderationResult.categories.join(", ") +
+            "]",
+        });
+        return;
+      }
+    } catch (err) {
+      logSocketError(socket, err);
+      // If moderation fails for some reason, we default to allowing the message
     }
 
     await addMessageToChat(chatId, user, message.messageId);
