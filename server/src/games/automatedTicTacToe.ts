@@ -212,7 +212,7 @@ export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, Automat
 
     return nextState;
   },
-  isDone: (state) => isGameDone(state.board as TicTacToeBoard),
+  isDone: (state) => isGameDone(state.board as TicTacToeBoard) || state.forfeited === true,
   viewAs: (state) => ({
     board: state.board,
     nextPlayer: state.nextPlayer,
