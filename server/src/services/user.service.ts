@@ -1,6 +1,11 @@
-import { type SafeUserInfo, type UserUpdateRequest } from "@gamenite/shared";
+import {
+  type SafeUserInfo,
+  type UserUpdateRequest,
+  type SocialProfileLinkType,
+} from "@gamenite/shared";
 import { getUserByUsername, updateAuth } from "./auth.service.ts";
 import { UserRepo } from "../repository.ts";
+import { is } from "is-social";
 
 const disallowedUsernames = new Set(["login", "signup", "list"]);
 
@@ -19,6 +24,7 @@ export async function populateSafeUserInfo(userId: string): Promise<SafeUserInfo
     customBackground: record.customBackground,
     hideUsername: record.hideUsername,
     privateProfile: record.privateProfile,
+    profileLinks: record.profileLinks,
   });
 }
 
@@ -45,6 +51,7 @@ export async function createUser(
     display: username,
     hideUsername: false,
     privateProfile: false,
+    profileLinks: [],
   });
   await updateAuth(username, password, id);
   return Promise.resolve({
@@ -53,6 +60,7 @@ export async function createUser(
     display: username,
     hideUsername: false,
     privateProfile: false,
+    profileLinks: [],
   });
 }
 
@@ -86,6 +94,29 @@ export async function safeUserFromUsername(username: string): Promise<SafeUserIn
 }
 
 /**
+ * Helper function to verify provided URL is valid
+ * @param link the URL to the social media account
+ * @param type the type of social media account being linked
+ * @returns
+ */
+function validateProfileURL(link: string, type: SocialProfileLinkType): boolean {
+  if (type === "twitter") {
+    return is.twitter.profile(link);
+  } else if (type === "instagram") {
+    return is.instagram.url(link);
+  } else if (type === "facebook") {
+    return is.facebook.profile(link);
+  } else if (type === "patreon") {
+    return is.patreon.url(link);
+  } else if (type === "twitch") {
+    return is.twitch.url(link);
+  } else if (type === "youtube") {
+    return is.youtube.url(link);
+  }
+  return false;
+}
+
+/**
  * Updates user information in the database
  *
  * @param username - A valid username for the user to update
@@ -95,7 +126,16 @@ export async function safeUserFromUsername(username: string): Promise<SafeUserIn
  */
 export async function updateUser(
   username: string,
-  { display, password, customBackground, hideUsername, privateProfile }: UserUpdateRequest,
+  {
+    display,
+    password,
+    customBackground,
+    hideUsername,
+    privateProfile,
+    profileLink,
+    profileLinkType,
+    profileLinkReqType,
+  }: UserUpdateRequest,
 ): Promise<SafeUserInfo> {
   const user = await getUserByUsername(username);
   if (!user) throw new Error(`No user ${username}`);
@@ -105,6 +145,29 @@ export async function updateUser(
   if (customBackground !== undefined) newUser.customBackground = customBackground;
   if (hideUsername !== undefined) newUser.hideUsername = hideUsername;
   if (privateProfile !== undefined) newUser.privateProfile = privateProfile;
+
+  if (profileLink !== undefined) {
+    if (profileLinkType === undefined || profileLinkReqType === undefined)
+      throw new Error("Must specify account type and request type when uploading a profile link!");
+
+    if (validateProfileURL(profileLink, profileLinkType) === false) {
+      throw new Error("Invalid URL specified for credentials!");
+    }
+    // TODO: expose way to verify account
+    if (profileLinkReqType === "add") {
+      if (newUser.profileLinks.filter((p) => p.type === profileLinkType).length > 0) {
+        throw new Error("Already linked to this account type!");
+      }
+      newUser.profileLinks = [
+        { link: profileLink, type: profileLinkType, verified: false },
+        ...newUser.profileLinks,
+      ];
+    } else {
+      newUser.profileLinks = newUser.profileLinks.filter((p) => {
+        return !(p.link === profileLink && p.type === profileLinkType);
+      });
+    }
+  }
   await UserRepo.set(user.userId, newUser);
   return populateSafeUserInfo(user.userId);
 }

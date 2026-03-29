@@ -298,6 +298,37 @@ export default function ViewProfile({ username }: ViewProfileProps) {
                     {getLosses() !== null && (
                       <div className="profileIdentityMeta">Games Lost: {getLosses()}</div>
                     )}
+                    <div>
+                      <h3>Social Profiles</h3>
+                      {componentState.user.profileLinks.length === 0 ? (
+                        <span className="smallAndGray">
+                          This user has no linked social accounts
+                        </span>
+                      ) : (
+                        componentState.user.profileLinks.map((p) => {
+                          return (
+                            <div>
+                              <a href={p.link} target="_blank">
+                                {p.type} account
+                              </a>
+                              {p.verified === true ? (
+                                <p>
+                                  <span className="smallAndGray">
+                                    This account has been verified
+                                  </span>
+                                </p>
+                              ) : (
+                                <p>
+                                  <span className="smallAndGray">
+                                    Warning: This account has not been verified
+                                  </span>
+                                </p>
+                              )}
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
                   </div>
                 </div>
                 <div className="profileIdentityRight profileIdentityRight--topRight">

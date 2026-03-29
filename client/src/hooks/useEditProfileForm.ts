@@ -2,7 +2,7 @@ import { type SubmitEvent, useState } from "react";
 import useLoginContext from "./useLoginContext.ts";
 import useAuth from "./useAuth.ts";
 import { updateUser } from "../services/userService.ts";
-import type { UserUpdateRequest } from "@gamenite/shared";
+import { type UserUpdateRequest, type SocialProfileLinkType } from "@gamenite/shared";
 
 /**
  * Custom hook to manage profile form logic
@@ -64,6 +64,9 @@ export default function useEditProfileForm() {
   const [password, setPassword] = useState("");
   const [hideUsername, setHideUsername] = useState<boolean>(user.hideUsername);
   const [privateProfile, setPrivateProfile] = useState<boolean>(user.privateProfile);
+  const [socialLink, setSocialLink] = useState<string>("");
+  const [socialLinkType, setSocialLinkType] = useState<SocialProfileLinkType | null>(null);
+  const [addLink, setAddLink] = useState<boolean>(true);
   const [confirm, setConfirm] = useState("");
   const [err, setErr] = useState<null | string>(null);
   const auth = useAuth();
@@ -81,28 +84,30 @@ export default function useEditProfileForm() {
       password === confirm &&
       password === "" &&
       user.hideUsername === hideUsername &&
-      user.privateProfile === privateProfile
+      user.privateProfile === privateProfile &&
+      socialLink === "" &&
+      socialLinkType === null
     ) {
       setErr("No changes to submit");
       return;
     }
 
-    if (display.trim() !== display) {
+    if (display !== user.display && display.trim() !== display) {
       setErr("Display names can't begin or end with whitespace");
       return;
     }
 
-    if (display.trim() === "") {
+    if (display !== user.display && display.trim() === "") {
       setErr("Please enter a display name");
       return;
     }
 
-    if (password.trim() !== password) {
+    if (password !== "" && password.trim() !== password) {
       setErr("Passwords can't begin or end with whitespace");
       return;
     }
 
-    if (password !== confirm) {
+    if (password !== "" && password !== confirm) {
       setErr("Passwords don't match");
       return;
     }
@@ -113,6 +118,11 @@ export default function useEditProfileForm() {
     if (password !== "") updates.password = password;
     if (user.hideUsername !== hideUsername) updates.hideUsername = hideUsername;
     if (user.privateProfile !== privateProfile) updates.privateProfile = privateProfile;
+    if (socialLink !== "" && socialLinkType !== null) {
+      updates.profileLink = socialLink;
+      updates.profileLinkType = socialLinkType;
+      updates.profileLinkReqType = addLink === true ? "add" : "delete";
+    }
     const response = await updateUser(auth, updates);
     if ("error" in response) {
       setErr(response.error);
@@ -141,6 +151,12 @@ export default function useEditProfileForm() {
     setHideUsername,
     privateProfile,
     setPrivateProfile,
+    socialLink,
+    setSocialLink,
+    socialLinkType,
+    setSocialLinkType,
+    addLink,
+    setAddLink,
     err,
     setErr,
     handleSubmit,

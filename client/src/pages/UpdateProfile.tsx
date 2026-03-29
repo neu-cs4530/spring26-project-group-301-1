@@ -1,6 +1,6 @@
 import "./Profile.css";
 import { useState, useEffect, useMemo } from "react";
-import type { FriendRequestInfo } from "@gamenite/shared";
+import type { FriendRequestInfo, SocialProfileLinkType } from "@gamenite/shared";
 import useLoginContext from "../hooks/useLoginContext";
 import useTimeSince from "../hooks/useTimeSince";
 import useTopFriendsList from "../hooks/useTopFriendsList";
@@ -46,6 +46,12 @@ export default function UpdateProfile() {
     setHideUsername,
     privateProfile,
     setPrivateProfile,
+    socialLink,
+    setSocialLink,
+    socialLinkType,
+    setSocialLinkType,
+    addLink,
+    setAddLink,
     err,
     handleSubmit,
   } = useEditProfileForm();
@@ -58,7 +64,8 @@ export default function UpdateProfile() {
       user.display !== display ||
       (user.customBackground || "") !== (backgroundType === "color" ? color : imageUrl) ||
       user.hideUsername !== hideUsername ||
-      user.privateProfile !== privateProfile
+      user.privateProfile !== privateProfile ||
+      (socialLink !== "" && socialLinkType !== null)
     );
   }, [
     password,
@@ -69,6 +76,8 @@ export default function UpdateProfile() {
     imageUrl,
     hideUsername,
     privateProfile,
+    socialLink,
+    socialLinkType,
     user,
   ]);
 
@@ -261,7 +270,9 @@ export default function UpdateProfile() {
                 <div className="gameBgCard__divider" />
                 <div className="gameBgCard__images">
                   <label
-                    className={`gameBgTile gameBgTile--color ${backgroundType === "color" ? "is-selected" : ""}`}
+                    className={`gameBgTile gameBgTile--color ${
+                      backgroundType === "color" ? "is-selected" : ""
+                    }`}
                     aria-label="Pick custom background color"
                     onClick={() => {
                       setBackgroundType("color");
@@ -289,7 +300,9 @@ export default function UpdateProfile() {
                     />
                     <span className="gameBgTile__label">Pick custom color</span>
                     <span
-                      className={`gameBgTile__check ${!hideSelectionCheck && backgroundType === "color" ? "is-selected" : ""}`}
+                      className={`gameBgTile__check ${
+                        !hideSelectionCheck && backgroundType === "color" ? "is-selected" : ""
+                      }`}
                     >
                       {!hideSelectionCheck && backgroundType === "color" ? "✓" : ""}
                     </span>
@@ -311,7 +324,9 @@ export default function UpdateProfile() {
                       >
                         <img src={bg.url} alt={bg.label} />
                         <span
-                          className={`gameBgTile__check ${!hideSelectionCheck && selected ? "is-selected" : ""}`}
+                          className={`gameBgTile__check ${
+                            !hideSelectionCheck && selected ? "is-selected" : ""
+                          }`}
                         >
                           {!hideSelectionCheck && selected ? "✓" : ""}
                         </span>
@@ -390,6 +405,55 @@ export default function UpdateProfile() {
                   </div>
                 </div>
                 {err && <p className="error-message">{err}</p>}
+              </section>
+            )}
+            {activeSection === "social-media" && (
+              <section className="profileSectionCard" id="social-media">
+                <h3>Social Media</h3>
+                <div>
+                  <p>Linked accounts: </p>
+                  {user.profileLinks.length === 0 ? (
+                    <p>You have no linked accounts</p>
+                  ) : (
+                    user.profileLinks.map((l) => {
+                      return <li>Type: {l.type}</li>;
+                    })
+                  )}
+                </div>
+                <div>
+                  <p>Modify linked account:</p>
+                  <input
+                    type="text"
+                    placeholder="Social Profile URL"
+                    onChange={(e) => setSocialLink(e.target.value)}
+                  />
+                  <select
+                    onChange={(e) => setSocialLinkType(e.target.value as SocialProfileLinkType)}
+                  >
+                    <option value="twitter">Twitter</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="facebook">Facebook</option>
+                    <option value="patreon">Patreon</option>
+                    <option value="twitch">Twitch</option>
+                    <option value="youtube">YouTube</option>
+                  </select>
+                  <div className="privacyRow">
+                    <div className="privacyRowText">
+                      <span className="privacyRowDescription">
+                        Add profile link (toggle off to delete)
+                      </span>
+                    </div>
+                    <label className="toggleSwitch" aria-label="Toggle add/delete">
+                      <input
+                        type="checkbox"
+                        checked={addLink}
+                        onChange={() => setAddLink((v: boolean) => !v)}
+                      />
+                      <span className="toggleSlider" />
+                    </label>
+                  </div>
+                </div>
+                <div></div>
               </section>
             )}
           </div>

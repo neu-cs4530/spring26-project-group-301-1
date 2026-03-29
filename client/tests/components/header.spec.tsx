@@ -24,6 +24,7 @@ describe("Header component", () => {
               createdAt: new Date("01-02-2025"),
               hideUsername: false,
               privateProfile: false,
+              profileLinks: [],
             },
             pass: "pwd",
             socket: {} as GameSocket,

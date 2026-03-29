@@ -1,6 +1,6 @@
 import React from "react";
 import "./ProfileSidebar.css";
-import { Image, Lock, Shield, Heart } from "lucide-react";
+import { Image, Lock, Shield, Heart, Hand } from "lucide-react";
 
 const SECTIONS = [
   {
@@ -22,6 +22,11 @@ const SECTIONS = [
     id: "privacy",
     label: "Privacy",
     icon: Shield,
+  },
+  {
+    id: "social-media",
+    label: "Social Media",
+    icon: Hand,
   },
 ];
 
