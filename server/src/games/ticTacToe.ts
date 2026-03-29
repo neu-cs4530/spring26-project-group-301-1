@@ -68,6 +68,7 @@ export const ticTacToeLogic: GameLogic<TicTacToeState, TicTacToeView> = {
       nextPlayer: state.nextPlayer,
       winningEntry: getWinningEntry(state.board),
       forfeited: state.forfeited,
+      opponentTypeSelected: true,
     };
     return stateView;
   },

@@ -21,7 +21,7 @@ export default function TicTacToeGame({
     window.dispatchEvent(
       new CustomEvent(AUTOMATED_OPPONENT_THINKING_EVENT, {
         detail: { thinking },
-      }),
+      })
     );
   };
 
@@ -122,7 +122,7 @@ export default function TicTacToeGame({
   const renderEntry = (row: number, col: number, entry: "O" | "X" | null) => {
     if (entry !== null) {
       const isWinningCell = displayView.winningEntry?.some(
-        ([winRow, winCol]) => winRow === row && winCol === col,
+        ([winRow, winCol]) => winRow === row && winCol === col
       );
       const cellClass = isWinningCell
         ? "tttCell tttCell--filled tttCell--winner"
@@ -155,13 +155,13 @@ export default function TicTacToeGame({
       ? didUserWin
         ? "You won by forfeit"
         : didUserWin === false
-          ? "You lost by forfeit"
-          : `${winnerName} won by forfeit`
+        ? "You lost by forfeit"
+        : `${winnerName} won by forfeit`
       : didUserWin
-        ? "You won!"
-        : didUserWin === false
-          ? "You lost."
-          : `${winnerName} won!`;
+      ? "You won!"
+      : didUserWin === false
+      ? "You lost."
+      : `${winnerName} won!`;
     winnerBanner = (
       <div
         className={
@@ -179,7 +179,9 @@ export default function TicTacToeGame({
     );
   }
 
-  return (
+  function getDifficultySelection() {}
+
+  return view.opponentTypeSelected ? (
     <div className="ticTacToeGame content">
       {winnerBanner}
       <div
@@ -192,9 +194,18 @@ export default function TicTacToeGame({
             <div className="ticTacToeCell" role="gridcell" key={`${row}-${col}`}>
               {renderEntry(row, col, entry)}
             </div>
-          )),
+          ))
         )}
       </div>
+    </div>
+  ) : (
+    <div>
+      <button onClick={() => makeMove({ type: "move", difficulty: "random" })}>
+        Random (easy)
+      </button>
+      <button onClick={() => makeMove({ type: "move", difficulty: "minimax" })}>
+        Minimax (hard)
+      </button>
     </div>
   );
 }

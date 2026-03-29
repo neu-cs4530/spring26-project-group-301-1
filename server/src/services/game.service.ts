@@ -50,7 +50,7 @@ async function populateGameInfo(gameId: string): Promise<GameInfo> {
 export async function createGame(
   user: UserWithId,
   type: GameKey,
-  createdAt: Date,
+  createdAt: Date
 ): Promise<GameInfo> {
   const chat = await createChat(createdAt);
   const gameId = await GameRepo.add({
@@ -175,7 +175,7 @@ export interface GameUpdateResult {
 export async function updateGame(
   gameId: string,
   user: UserWithId,
-  move: unknown,
+  move: unknown
 ): Promise<GameUpdateResult> {
   const game = await GameRepo.find(gameId);
   if (!game) throw new Error(`user ${user.username} acted on an invalid game`);
