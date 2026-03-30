@@ -33,7 +33,7 @@ export interface SafeUserInfo {
 
 /*** TYPES USED IN THE USER API ***/
 
-// export const zSocialProfileLinkType = z.enum(["twitter", "instagram", "twitch", "youtube"]);
+// export const zSocialProfileLinkType = z.enum(["Twitter", "Instagram", "Twitch", "YouTube"]);
 
 export type SocialProfileReqType = "add" | "delete" | "verify";
 

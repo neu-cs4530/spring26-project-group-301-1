@@ -1,9 +1,4 @@
-import {
-  type SocialProfileLinkType,
-  zSocialProfileLinkType,
-  type UserAuth,
-} from "@gamenite/shared";
-import { checkAuth } from "./auth.service.ts";
+import { type SocialProfileLinkType, zSocialProfileLinkType } from "@gamenite/shared";
 
 // https://developers.facebook.com/docs/instagram-platform/reference/oauth-authorize/
 // https://developers.google.com/youtube/v3/guides/auth/server-side-web-apps
@@ -118,12 +113,12 @@ type PlatformFuncs = {
 
 // TODO: make supported type so that Partial is not needed
 const PLATFORM_TO_FUNC: Partial<Record<SocialProfileLinkType, PlatformFuncs>> = {
-  twitch: {
+  Twitch: {
     getAuthUrl: getTwitchAuthUrl,
     getLogin: getTwitchLogin,
     exchangeCode: exchangeTwitchCode,
   },
-  youtube: {
+  YouTube: {
     getAuthUrl: getYoutubeAuthUrl,
     getLogin: getYoutubeLogin,
     exchangeCode: exchangeYoutubeCode,
@@ -154,18 +149,15 @@ export async function exchangeCode(code: string, platform: SocialProfileLinkType
  */
 export async function initOAuthFlow(
   platform: SocialProfileLinkType,
-  auth: UserAuth,
+  username: string,
   link: string
 ): Promise<{ url: string } | { error: string }> {
+  // TODO:; no longer async, has no await!
   const parsedPlatform = zSocialProfileLinkType.safeParse(platform);
   if (!parsedPlatform.success) return { error: "Unsupported platform" };
-
-  // TODO: validate auth in controller before calling this, change body def type!!!
-  const user = await checkAuth(auth);
-  if (!user) return { error: "Invalid credentials" };
 
   const funcs = PLATFORM_TO_FUNC[platform];
   if (!funcs) return { error: "Unsupported platform" };
 
-  return { url: funcs.getAuthUrl(user.username, link, platform) };
+  return { url: funcs.getAuthUrl(username, link, platform) };
 }

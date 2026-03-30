@@ -1,7 +1,16 @@
-import { type SafeUserInfo, type GameInfo } from "@gamenite/shared";
+import { type SafeUserInfo, type GameInfo, type SocialProfileLinkType } from "@gamenite/shared";
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { Box } from "@chakra-ui/react";
-import { CalendarDays, Gamepad2 } from "lucide-react";
+import {
+  CalendarDays,
+  Gamepad2,
+  CircleAlert,
+  CircleCheck,
+  SquarePlay,
+  Bird,
+  Camera,
+  MessageSquareQuote,
+} from "lucide-react";
 import useTimeSince from "../hooks/useTimeSince";
 import useLoginContext from "../hooks/useLoginContext";
 import { getUserById } from "../services/userService";
@@ -254,6 +263,21 @@ export default function ViewProfile({ username }: ViewProfileProps) {
     );
   }
 
+  // TOOD: cleaner way to do this
+  function getIconByPlatform(platform: SocialProfileLinkType) {
+    if (platform === "YouTube") {
+      return <SquarePlay color="red" />;
+    } else if (platform === "Twitter") {
+      return <Bird color="blue" />;
+    } else if (platform === "Instagram") {
+      return <Camera color="pink" />;
+    } else if (platform === "Twitch") {
+      return <MessageSquareQuote color="purple" />;
+    }
+
+    return <></>;
+  }
+
   switch (componentState.type) {
     case "error":
       return <div style={{ color: "#f00" }}>{componentState.msg}</div>;
@@ -307,21 +331,18 @@ export default function ViewProfile({ username }: ViewProfileProps) {
                       ) : (
                         componentState.user.profileLinks.map((p) => {
                           return (
-                            <div>
+                            <div className="profileSocialLink">
+                              {getIconByPlatform(p.type)}
                               <a href={p.link} target="_blank">
-                                {p.type} account
+                                {p.type}
                               </a>
                               {p.verified === true ? (
                                 <p>
-                                  <span className="smallAndGray">
-                                    This account has been verified
-                                  </span>
+                                  <CircleCheck color="green" />
                                 </p>
                               ) : (
                                 <p>
-                                  <span className="smallAndGray">
-                                    Warning: This account has not been verified
-                                  </span>
+                                  <CircleAlert color="orange" />
                                 </p>
                               )}
                             </div>

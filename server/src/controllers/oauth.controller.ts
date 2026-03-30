@@ -1,7 +1,11 @@
-import { zVerifySocialProfilePayload, type SocialProfileLinkType } from "@gamenite/shared";
+import {
+  withAuth,
+  zVerifySocialProfilePayload,
+  type SocialProfileLinkType,
+} from "@gamenite/shared";
+import { checkAuth, getUserByUsername } from "../services/auth.service.ts";
 import { type RestAPI } from "../types.ts";
 import { initOAuthFlow, exchangeCode, getLogin } from "../services/oauth.service.ts";
-import { getUserByUsername } from "../services/auth.service.ts";
 import { UserRepo } from "../repository.ts";
 
 const CLIENT_URL = "http://localhost:4530";
@@ -12,10 +16,10 @@ function validateAuthByPlatform(
   link: string,
   login: string,
 ): boolean {
-  if (platform === "twitch") {
+  if (platform === "Twitch") {
     const linkedUsername = link.match(/twitch\.tv\/([^/?#]+)/i)?.[1]?.toLowerCase();
     return linkedUsername !== undefined && login === linkedUsername;
-  } else if (platform === "youtube") {
+  } else if (platform === "YouTube") {
     const username = link.match(/(?:youtube\.com\/)(@[\w.]+|(?:c|user|channel)\/[\w.-]+)/);
     return username?.[1] !== null && username?.[1] === login;
   }
@@ -31,17 +35,22 @@ export const getAuthByPlatform: RestAPI<{ url: string }, { platform: string }> =
   req,
   res,
 ) => {
-  // TODO: use withAuth here!
-  const body = zVerifySocialProfilePayload.safeParse(req.body);
+  const body = withAuth(zVerifySocialProfilePayload).safeParse(req.body);
   if (!body.success) {
     res.status(400).send({ error: "Poorly-formed request" });
+    return;
+  }
+
+  const user = await checkAuth(body.data.auth);
+  if (user === null) {
+    res.status(400).send({ error: "Invalid user request" });
     return;
   }
   res.send(
     await initOAuthFlow(
       req.params.platform as SocialProfileLinkType,
-      { username: body.data.username, password: body.data.password },
-      body.data.link,
+      user.username,
+      body.data.payload.link,
     ),
   );
 };

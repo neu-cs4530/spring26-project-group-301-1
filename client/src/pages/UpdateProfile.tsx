@@ -458,16 +458,20 @@ export default function UpdateProfile() {
                   <select
                     onChange={(e) => setSocialLinkType(e.target.value as SocialProfileLinkType)}
                   >
-                    <option value=""></option>
-                    <option value="twitter">Twitter</option>
-                    <option value="instagram">Instagram</option>
-                    <option value="twitch">Twitch</option>
-                    <option value="youtube">YouTube</option>
+                    <option value="" selected disabled hidden>
+                      -- Select the Social Media Platform --
+                    </option>
+                    <option value="Twitter">Twitter</option>
+                    <option value="Instagram">Instagram</option>
+                    <option value="Twitch">Twitch</option>
+                    <option value="YouTube">YouTube</option>
                   </select>
                   <select
                     onChange={(e) => setSocialReqType(e.target.value as SocialProfileReqType)}
                   >
-                    <option value=""></option>
+                    <option value="" selected disabled hidden>
+                      -- Select the action --
+                    </option>
                     <option value="add">Add</option>
                     <option value="delete">Delete</option>
                   </select>

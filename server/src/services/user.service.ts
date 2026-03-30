@@ -100,13 +100,13 @@ export async function safeUserFromUsername(username: string): Promise<SafeUserIn
  * @returns
  */
 function validateProfileURL(link: string, type: SocialProfileLinkType): boolean {
-  if (type === "twitter") {
+  if (type === "Twitter") {
     return is.twitter.profile(link);
-  } else if (type === "instagram") {
+  } else if (type === "Instagram") {
     return is.instagram.url(link);
-  } else if (type === "twitch") {
+  } else if (type === "Twitch") {
     return is.twitch.url(link);
-  } else if (type === "youtube") {
+  } else if (type === "YouTube") {
     return is.youtube.url(link);
   }
   return false;
