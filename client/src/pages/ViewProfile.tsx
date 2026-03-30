@@ -1,4 +1,4 @@
-import { type SafeUserInfo, type GameInfo, type SocialProfileLinkType } from "@gamenite/shared";
+import { type SafeUserInfo, type GameInfo, type SocialProfilePlatform } from "@gamenite/shared";
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { Box } from "@chakra-ui/react";
 import {
@@ -264,14 +264,14 @@ export default function ViewProfile({ username }: ViewProfileProps) {
   }
 
   // TOOD: cleaner way to do this
-  function getIconByPlatform(platform: SocialProfileLinkType) {
-    if (platform === "YouTube") {
+  function getIconByPlatform(platform: SocialProfilePlatform) {
+    if (platform === "youtube") {
       return <SquarePlay color="red" />;
-    } else if (platform === "Twitter") {
+    } else if (platform === "twitter") {
       return <Bird color="blue" />;
-    } else if (platform === "Instagram") {
+    } else if (platform === "instagram") {
       return <Camera color="pink" />;
-    } else if (platform === "Twitch") {
+    } else if (platform === "twitch") {
       return <MessageSquareQuote color="purple" />;
     }
 

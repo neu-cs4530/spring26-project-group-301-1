@@ -1,4 +1,7 @@
-import { type SocialProfileLinkType, zSocialProfileLinkType } from "@gamenite/shared";
+import {
+  type SocialProfilePlatformWithAuth,
+  zSocialProfilePlatformWithAuth,
+} from "@gamenite/shared";
 
 // https://developers.facebook.com/docs/instagram-platform/reference/oauth-authorize/
 // https://developers.google.com/youtube/v3/guides/auth/server-side-web-apps
@@ -11,10 +14,16 @@ const YOUTUBE_CLIENT_ID = process.env.YOUTUBE_CLIENT_ID;
 const YOUTUBE_CLIENT_SECRET = process.env.YOUTUBE_CLIENT_SECRET;
 const YOUTUBE_REDIRECT_URI = "http://localhost:8000/api/oauth/youtube/callback";
 
+type PlatformFuncs = {
+  getAuthUrl: (username: string, link: string, type: SocialProfilePlatformWithAuth) => string;
+  getLogin: (accessToken: string) => Promise<string>;
+  exchangeCode: (code: string) => Promise<string>;
+};
+
 export function getTwitchAuthUrl(
   username: string,
   link: string,
-  type: SocialProfileLinkType
+  type: SocialProfilePlatformWithAuth
 ): string {
   const state = Buffer.from(JSON.stringify({ username, link, type })).toString("base64");
   const query = `client_id=${TWITCH_CLIENT_ID}&redirect_uri=${encodeURIComponent(
@@ -26,7 +35,7 @@ export function getTwitchAuthUrl(
 export function getYoutubeAuthUrl(
   username: string,
   link: string,
-  type: SocialProfileLinkType
+  type: SocialProfilePlatformWithAuth
 ): string {
   // https://www.googleapis.com/auth/youtube
   const state = Buffer.from(JSON.stringify({ username, link, type })).toString("base64");
@@ -54,7 +63,7 @@ export async function exchangeTwitchCode(code: string): Promise<string> {
   });
   if (!response.ok) throw new Error(`Twitch token exchange failed: ${response.status}`);
   const data = (await response.json()) as { access_token: string };
-  return data.accessToken;
+  return data.access_token;
 }
 
 export async function exchangeYoutubeCode(code: string): Promise<string> {
@@ -105,20 +114,14 @@ export async function getYoutubeLogin(accessToken: string): Promise<string> {
   return data.items[0].snippet.customUrl.toLowerCase();
 }
 
-type PlatformFuncs = {
-  getAuthUrl: (username: string, link: string, type: SocialProfileLinkType) => string;
-  getLogin: (accessToken: string) => Promise<string>;
-  exchangeCode: (code: string) => Promise<string>;
-};
-
 // TODO: make supported type so that Partial is not needed
-const PLATFORM_TO_FUNC: Partial<Record<SocialProfileLinkType, PlatformFuncs>> = {
-  Twitch: {
+const PLATFORM_TO_FUNC: Record<SocialProfilePlatformWithAuth, PlatformFuncs> = {
+  twitch: {
     getAuthUrl: getTwitchAuthUrl,
     getLogin: getTwitchLogin,
     exchangeCode: exchangeTwitchCode,
   },
-  YouTube: {
+  youtube: {
     getAuthUrl: getYoutubeAuthUrl,
     getLogin: getYoutubeLogin,
     exchangeCode: exchangeYoutubeCode,
@@ -127,14 +130,17 @@ const PLATFORM_TO_FUNC: Partial<Record<SocialProfileLinkType, PlatformFuncs>> = 
 
 export async function getLogin(
   accessToken: string,
-  platform: SocialProfileLinkType
+  platform: SocialProfilePlatformWithAuth
 ): Promise<string> {
   const funcs = PLATFORM_TO_FUNC[platform];
   if (!funcs) throw new Error("Unsupported platform for verification!");
   return funcs.getLogin(accessToken);
 }
 
-export async function exchangeCode(code: string, platform: SocialProfileLinkType): Promise<string> {
+export async function exchangeCode(
+  code: string,
+  platform: SocialProfilePlatformWithAuth
+): Promise<string> {
   const funcs = PLATFORM_TO_FUNC[platform];
   if (!funcs) throw new Error("Unsupported platform for verification!");
   return funcs.exchangeCode(code);
@@ -148,12 +154,12 @@ export async function exchangeCode(code: string, platform: SocialProfileLinkType
  * @returns The OAuth URL to redirect the user to, or an error message.
  */
 export async function initOAuthFlow(
-  platform: SocialProfileLinkType,
+  platform: SocialProfilePlatformWithAuth,
   username: string,
   link: string
 ): Promise<{ url: string } | { error: string }> {
-  // TODO:; no longer async, has no await!
-  const parsedPlatform = zSocialProfileLinkType.safeParse(platform);
+  // TODO: no longer async, has no await!
+  const parsedPlatform = zSocialProfilePlatformWithAuth.safeParse(platform);
   if (!parsedPlatform.success) return { error: "Unsupported platform" };
 
   const funcs = PLATFORM_TO_FUNC[platform];

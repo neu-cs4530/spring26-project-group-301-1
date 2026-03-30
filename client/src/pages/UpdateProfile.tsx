@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { initiateOAuth } from "../services/oauthService";
 import type {
   FriendRequestInfo,
-  SocialProfileLinkType,
+  SocialProfilePlatform,
   SocialProfileReqType,
 } from "@gamenite/shared";
 import useLoginContext from "../hooks/useLoginContext";
@@ -97,7 +97,7 @@ export default function UpdateProfile() {
           setRequestsErr(res.error);
           setRequests([]);
         }
-      },
+      }
     );
   }, [user.username, pass]);
 
@@ -108,7 +108,7 @@ export default function UpdateProfile() {
     const res = await resolveRequest(
       { username: user.username, password: pass },
       requestId,
-      action,
+      action
     );
     if ("error" in res) {
       setResolveErrors((prev: Record<string, string>) => ({ ...prev, [requestId]: res.error }));
@@ -434,7 +434,7 @@ export default function UpdateProfile() {
                                 l.type,
                                 user.username,
                                 pass,
-                                l.link,
+                                l.link
                               );
                               if ("url" in result) {
                                 window.location.href = result.url;
@@ -456,15 +456,15 @@ export default function UpdateProfile() {
                     onChange={(e) => setSocialLink(e.target.value)}
                   />
                   <select
-                    onChange={(e) => setSocialLinkType(e.target.value as SocialProfileLinkType)}
+                    onChange={(e) => setSocialLinkType(e.target.value as SocialProfilePlatform)}
                   >
                     <option value="" selected disabled hidden>
                       -- Select the Social Media Platform --
                     </option>
-                    <option value="Twitter">Twitter</option>
-                    <option value="Instagram">Instagram</option>
-                    <option value="Twitch">Twitch</option>
-                    <option value="YouTube">YouTube</option>
+                    <option value="twitter">Twitter</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="twitch">Twitch</option>
+                    <option value="youtube">YouTube</option>
                   </select>
                   <select
                     onChange={(e) => setSocialReqType(e.target.value as SocialProfileReqType)}

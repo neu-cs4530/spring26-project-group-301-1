@@ -4,7 +4,7 @@ import useAuth from "./useAuth.ts";
 import { updateUser } from "../services/userService.ts";
 import {
   type UserUpdateRequest,
-  type SocialProfileLinkType,
+  type SocialProfilePlatform,
   type SocialProfileReqType,
 } from "@gamenite/shared";
 
@@ -61,7 +61,7 @@ export default function useEditProfileForm() {
   const isColor = isPreset || isHexColor(initialBg);
   const isPresetImg = isPresetImage(initialBg);
   const [backgroundType, setBackgroundType] = useState(
-    isColor ? "color" : isPresetImg ? "preset" : initialBg ? "image" : "color",
+    isColor ? "color" : isPresetImg ? "preset" : initialBg ? "image" : "color"
   );
   const [color, setColor] = useState(isColor ? initialBg : presetColors[0]);
   const [imageUrl, setImageUrl] = useState(isPresetImg || !isColor ? initialBg : "");
@@ -69,7 +69,7 @@ export default function useEditProfileForm() {
   const [hideUsername, setHideUsername] = useState<boolean>(user.hideUsername);
   const [privateProfile, setPrivateProfile] = useState<boolean>(user.privateProfile);
   const [socialLink, setSocialLink] = useState<string>("");
-  const [socialLinkType, setSocialLinkType] = useState<SocialProfileLinkType | null>(null);
+  const [socialLinkType, setSocialLinkType] = useState<SocialProfilePlatform | null>(null);
   const [socialReqType, setSocialReqType] = useState<SocialProfileReqType | null>(null);
   const [confirm, setConfirm] = useState("");
   const [err, setErr] = useState<null | string>(null);

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { type SocialProfileLinkType, zSocialProfileLinkType } from "./oauth.types.ts";
+import { type SocialProfilePlatform, zSocialProfilePlatform } from "./oauth.types.ts";
 
 /**
  * Represents a link to a user's social media profile.
@@ -9,7 +9,7 @@ import { type SocialProfileLinkType, zSocialProfileLinkType } from "./oauth.type
  */
 export interface SocialProfileLink {
   link: string;
-  type: SocialProfileLinkType;
+  type: SocialProfilePlatform;
   verified: boolean;
 }
 
@@ -33,7 +33,7 @@ export interface SafeUserInfo {
 
 /*** TYPES USED IN THE USER API ***/
 
-// export const zSocialProfileLinkType = z.enum(["Twitter", "Instagram", "Twitch", "YouTube"]);
+// export const zSocialProfilePlatform = z.enum(["twitter", "instagram", "twitch", "youtube"]);
 
 export type SocialProfileReqType = "add" | "delete" | "verify";
 
@@ -50,6 +50,6 @@ export const zUserUpdateRequest = z.object({
   hideUsername: z.boolean().optional(),
   privateProfile: z.boolean().optional(),
   profileLink: z.string().optional(),
-  profileLinkType: zSocialProfileLinkType.optional(),
+  profileLinkType: zSocialProfilePlatform.optional(),
   profileLinkReqType: zSocialProfileReqType.optional(),
 });

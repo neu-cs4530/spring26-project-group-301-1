@@ -1,4 +1,4 @@
-import type { GameKey, FriendRequestStatus, SocialProfileLinkType } from "@gamenite/shared";
+import type { GameKey, FriendRequestStatus, SocialProfilePlatform } from "@gamenite/shared";
 
 /**
  * Record identifiers used to look up keys in a database. This type
@@ -20,7 +20,7 @@ export type DateISO = string;
  */
 export interface SocialProfileLink {
   link: string;
-  type: SocialProfileLinkType;
+  type: SocialProfilePlatform;
   verified: boolean;
 }
 

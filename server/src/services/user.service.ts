@@ -1,7 +1,7 @@
 import {
   type SafeUserInfo,
   type UserUpdateRequest,
-  type SocialProfileLinkType,
+  type SocialProfilePlatform,
 } from "@gamenite/shared";
 import { getUserByUsername, updateAuth } from "./auth.service.ts";
 import { UserRepo } from "../repository.ts";
@@ -37,7 +37,7 @@ export async function populateSafeUserInfo(userId: string): Promise<SafeUserInfo
 export async function createUser(
   username: string,
   password: string,
-  createdAt: Date,
+  createdAt: Date
 ): Promise<SafeUserInfo | { error: string }> {
   if ((await getUserByUsername(username)) !== null) {
     return { error: "User already exists" };
@@ -79,7 +79,7 @@ export async function getUsersByUsername(usernames: string[]): Promise<SafeUserI
         throw new Error(`No user ${username}`);
       }
       return populateSafeUserInfo(user.userId);
-    }),
+    })
   );
 }
 
@@ -99,14 +99,14 @@ export async function safeUserFromUsername(username: string): Promise<SafeUserIn
  * @param type the type of social media account being linked
  * @returns
  */
-function validateProfileURL(link: string, type: SocialProfileLinkType): boolean {
-  if (type === "Twitter") {
+function validateProfileURL(link: string, type: SocialProfilePlatform): boolean {
+  if (type === "twitter") {
     return is.twitter.profile(link);
-  } else if (type === "Instagram") {
+  } else if (type === "instagram") {
     return is.instagram.url(link);
-  } else if (type === "Twitch") {
+  } else if (type === "twitch") {
     return is.twitch.url(link);
-  } else if (type === "YouTube") {
+  } else if (type === "youtube") {
     return is.youtube.url(link);
   }
   return false;
@@ -131,7 +131,7 @@ export async function updateUser(
     profileLink,
     profileLinkType,
     profileLinkReqType,
-  }: UserUpdateRequest,
+  }: UserUpdateRequest
 ): Promise<SafeUserInfo> {
   const user = await getUserByUsername(username);
   if (!user) throw new Error(`No user ${username}`);
