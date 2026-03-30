@@ -1,5 +1,5 @@
 import "./GamePanel.css";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { GameInfo } from "@gamenite/shared";
 import { gameNames } from "../util/consts.ts";
 import useLoginContext from "../hooks/useLoginContext.ts";
@@ -8,11 +8,7 @@ import GameDispatch from "../games/GameDispatch.tsx";
 import useSocketsForGame from "../hooks/useSocketsForGame.ts";
 import useTimeSince from "../hooks/useTimeSince.ts";
 import UserLink from "./UserLink.tsx";
-
-const INACTIVITY_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
-const INACTIVITY_WARNING_MS = 60 * 1000; // warn 1 minute before forfeit
-
-const ACTIVITY_EVENTS = ["mousemove", "mousedown", "keydown", "touchstart", "scroll"] as const;
+import useInactivityForfeit from "../hooks/useInactivityForfeit.ts";
 
 /**
  * A game panel allows viewing the status and players of a live game
@@ -36,68 +32,17 @@ export default function GamePanel({
 
   const displayedPlayerCount = isAutomatedTicTacToe ? Math.max(players.length, 2) : players.length;
 
-  // Inactivity forfeit state
-  const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const warningTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [showInactivityWarning, setShowInactivityWarning] = useState(false);
-  const [inactivitySecondsLeft, setInactivitySecondsLeft] = useState(60);
-  const countdownInterval = useRef<ReturnType<typeof setInterval> | null>(null);
-
   const isActivePlayer = userPlayerIndex >= 0 && !!view;
-
-  const clearAllTimers = () => {
-    if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
-    if (warningTimer.current) clearTimeout(warningTimer.current);
-    if (countdownInterval.current) clearInterval(countdownInterval.current);
-    inactivityTimer.current = null;
-    warningTimer.current = null;
-    countdownInterval.current = null;
-  };
 
   const forfeitGame = useCallback(() => {
     socket.emit("gameMakeMove", { auth, payload: { gameId, move: { type: "forfeit" } } });
   }, [socket, auth, gameId]);
 
-  const resetInactivityTimer = useCallback(() => {
-    clearAllTimers();
-
-    // schedule the warning
-    warningTimer.current = setTimeout(() => {
-      setShowInactivityWarning(true);
-      setInactivitySecondsLeft(INACTIVITY_WARNING_MS / 1000);
-
-      countdownInterval.current = setInterval(() => {
-        setInactivitySecondsLeft((s) => Math.max(0, s - 1));
-      }, 1000);
-    }, INACTIVITY_TIMEOUT_MS - INACTIVITY_WARNING_MS);
-
-    // schedule the forfeit
-    inactivityTimer.current = setTimeout(() => {
-      clearAllTimers();
-      forfeitGame();
-    }, INACTIVITY_TIMEOUT_MS);
-  }, [forfeitGame]);
-
-  // Start/stop inactivity tracking based on whether the user is an active player
-  useEffect(() => {
-    if (!isActivePlayer) {
-      clearAllTimers();
-      return;
-    }
-
-    resetInactivityTimer();
-    const handleActivity = () => {
-      setShowInactivityWarning(false);
-      resetInactivityTimer();
-    };
-    ACTIVITY_EVENTS.forEach((e) => window.addEventListener(e, handleActivity, { passive: true }));
-
-    return () => {
-      clearAllTimers();
-      setShowInactivityWarning(false);
-      ACTIVITY_EVENTS.forEach((e) => window.removeEventListener(e, handleActivity));
-    };
-  }, [isActivePlayer, resetInactivityTimer]);
+  const {
+    showWarning,
+    secondsLeft,
+    reset: resetInactivityTimer,
+  } = useInactivityForfeit(isActivePlayer, forfeitGame);
 
   // AI thinking event
   useEffect(() => {
@@ -175,19 +120,13 @@ export default function GamePanel({
 
   return hasWatched ? (
     <>
-      {showInactivityWarning && inactivitySecondsLeft > 1 && (
+      {showWarning && secondsLeft > 1 && (
         <div className="gamePanel__inactivityWarning" role="alert">
           <span>
-            You've been inactive. You will forfeit in <strong>{inactivitySecondsLeft}s</strong>{" "}
-            unless you interact with the page.
+            You've been inactive. You will forfeit in <strong>{secondsLeft}s</strong> unless you
+            interact with the page.
           </span>
-          <button
-            className="primary narrow"
-            onClick={() => {
-              setShowInactivityWarning(false);
-              resetInactivityTimer();
-            }}
-          >
+          <button className="primary narrow" onClick={resetInactivityTimer}>
             I'm still here
           </button>
         </div>
