@@ -5,7 +5,7 @@ export const zSocialProfileLinkType = z.enum(["twitter", "instagram", "twitch", 
 
 export type VerifySocialProfilePayload = z.infer<typeof zVerifySocialProfilePayload>;
 export const zVerifySocialProfilePayload = z.object({
-  link: z.string(), // the profile URL
+  link: z.string(),
   username: z.string(),
   password: z.string(),
 });

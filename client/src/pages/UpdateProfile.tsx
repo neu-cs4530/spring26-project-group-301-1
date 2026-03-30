@@ -57,10 +57,6 @@ export default function UpdateProfile() {
     setSocialLinkType,
     socialReqType,
     setSocialReqType,
-    socialUsername,
-    setSocialUsername,
-    socialPassword,
-    setSocialPassword,
     err,
     handleSubmit,
   } = useEditProfileForm();
@@ -74,7 +70,7 @@ export default function UpdateProfile() {
       (user.customBackground || "") !== (backgroundType === "color" ? color : imageUrl) ||
       user.hideUsername !== hideUsername ||
       user.privateProfile !== privateProfile ||
-      (socialLink !== "" && socialLinkType !== null)
+      (socialLink !== "" && socialLinkType !== null && socialReqType !== null)
     );
   }, [
     password,
@@ -87,6 +83,7 @@ export default function UpdateProfile() {
     privateProfile,
     socialLink,
     socialLinkType,
+    socialReqType,
     user,
   ]);
 
@@ -100,7 +97,7 @@ export default function UpdateProfile() {
           setRequestsErr(res.error);
           setRequests([]);
         }
-      }
+      },
     );
   }, [user.username, pass]);
 
@@ -111,7 +108,7 @@ export default function UpdateProfile() {
     const res = await resolveRequest(
       { username: user.username, password: pass },
       requestId,
-      action
+      action,
     );
     if ("error" in res) {
       setResolveErrors((prev: Record<string, string>) => ({ ...prev, [requestId]: res.error }));
@@ -437,7 +434,7 @@ export default function UpdateProfile() {
                                 l.type,
                                 user.username,
                                 pass,
-                                l.link
+                                l.link,
                               );
                               if ("url" in result) {
                                 window.location.href = result.url;
@@ -458,19 +455,10 @@ export default function UpdateProfile() {
                     placeholder="Social Profile URL"
                     onChange={(e) => setSocialLink(e.target.value)}
                   />
-                  <input
-                    type="text"
-                    placeholder="Social Profile Username"
-                    onChange={(e) => setSocialUsername(e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Social Profile Password"
-                    onChange={(e) => setSocialPassword(e.target.value)}
-                  />
                   <select
                     onChange={(e) => setSocialLinkType(e.target.value as SocialProfileLinkType)}
                   >
+                    <option value=""></option>
                     <option value="twitter">Twitter</option>
                     <option value="instagram">Instagram</option>
                     <option value="twitch">Twitch</option>
@@ -479,9 +467,9 @@ export default function UpdateProfile() {
                   <select
                     onChange={(e) => setSocialReqType(e.target.value as SocialProfileReqType)}
                   >
+                    <option value=""></option>
                     <option value="add">Add</option>
                     <option value="delete">Delete</option>
-                    <option value="verify">Verify</option>
                   </select>
                 </div>
                 <div></div>

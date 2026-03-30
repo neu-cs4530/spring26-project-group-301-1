@@ -1,18 +1,46 @@
-import { type SocialProfileLinkType, zSocialProfileLinkType } from "@gamenite/shared";
+import {
+  type SocialProfileLinkType,
+  zSocialProfileLinkType,
+  type UserAuth,
+} from "@gamenite/shared";
 import { checkAuth } from "./auth.service.ts";
-import type { UserAuth } from "@gamenite/shared";
+
+// https://developers.facebook.com/docs/instagram-platform/reference/oauth-authorize/
+// https://developers.google.com/youtube/v3/guides/auth/server-side-web-apps
 
 const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID ?? "";
 const TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET ?? "";
-const TWITCH_REDIRECT_URI =
-  process.env.TWITCH_REDIRECT_URI ?? "http://localhost:8000/api/oauth/twitch/callback";
+const TWITCH_REDIRECT_URI = "http://localhost:8000/api/oauth/twitch/callback";
 
-export function getTwitchAuthUrl(username: string, link: string): string {
-  const state = Buffer.from(JSON.stringify({ username, link })).toString("base64");
+const YOUTUBE_CLIENT_ID = process.env.YOUTUBE_CLIENT_ID;
+const YOUTUBE_CLIENT_SECRET = process.env.YOUTUBE_CLIENT_SECRET;
+const YOUTUBE_REDIRECT_URI = "http://localhost:8000/api/oauth/youtube/callback";
+
+export function getTwitchAuthUrl(
+  username: string,
+  link: string,
+  type: SocialProfileLinkType
+): string {
+  const state = Buffer.from(JSON.stringify({ username, link, type })).toString("base64");
   const query = `client_id=${TWITCH_CLIENT_ID}&redirect_uri=${encodeURIComponent(
     TWITCH_REDIRECT_URI
   )}&response_type=code&scope=user%3Aread%3Aemail&state=${encodeURIComponent(state)}`;
   return `https://id.twitch.tv/oauth2/authorize?${query}`;
+}
+
+export function getYoutubeAuthUrl(
+  username: string,
+  link: string,
+  type: SocialProfileLinkType
+): string {
+  // https://www.googleapis.com/auth/youtube
+  const state = Buffer.from(JSON.stringify({ username, link, type })).toString("base64");
+  const query = `client_id=${YOUTUBE_CLIENT_ID}&redirect_uri=${encodeURIComponent(
+    YOUTUBE_REDIRECT_URI
+  )}&response_type=code&&scope=${encodeURIComponent(
+    "https://www.googleapis.com/auth/youtube.readonly"
+  )} &state=${encodeURIComponent(state)}`;
+  return `https://accounts.google.com/o/oauth2/v2/auth?${query}`;
 }
 
 /**
@@ -31,6 +59,19 @@ export async function exchangeTwitchCode(code: string): Promise<string> {
   });
   if (!response.ok) throw new Error(`Twitch token exchange failed: ${response.status}`);
   const data = (await response.json()) as { access_token: string };
+  return data.accessToken;
+}
+
+export async function exchangeYoutubeCode(code: string): Promise<string> {
+  const response = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    body: `client_id=${YOUTUBE_CLIENT_ID}&client_secret=${YOUTUBE_CLIENT_SECRET}&code=${code}&grant_type=authorization_code&redirect_uri=${encodeURIComponent(
+      YOUTUBE_REDIRECT_URI
+    )}`,
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  });
+  if (!response.ok) throw new Error(`Youtube token exchange failed: ${response.status}`);
+  const data = (await response.json()) as { access_token: string };
   return data.access_token;
 }
 
@@ -43,7 +84,7 @@ export async function exchangeTwitchCode(code: string): Promise<string> {
 export async function getTwitchLogin(accessToken: string): Promise<string> {
   const response = await fetch("https://api.twitch.tv/helix/users", {
     headers: {
-      Authorization: `Bearer ${accessToken}`,
+      ["Authorization"]: `Bearer ${accessToken}`,
       "Client-Id": TWITCH_CLIENT_ID,
     },
   });
@@ -51,6 +92,57 @@ export async function getTwitchLogin(accessToken: string): Promise<string> {
   const data = (await response.json()) as { data: { login: string }[] };
   if (!data.data[0]) throw new Error("No Twitch user returned");
   return data.data[0].login.toLowerCase();
+}
+
+export async function getYoutubeLogin(accessToken: string): Promise<string> {
+  const response = await fetch(
+    "https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true",
+    {
+      headers: {
+        ["Authorization"]: `Bearer ${accessToken}`,
+        "Client-Id": YOUTUBE_CLIENT_ID,
+      },
+    }
+  );
+  if (!response.ok) throw new Error(`Youtube users API failed: ${response.status}`);
+  const data = (await response.json()) as { items: { snippet: { customUrl: string } }[] };
+  if (!data.items?.[0]) throw new Error("No Youtube user returned");
+  return data.items[0].snippet.customUrl.toLowerCase();
+}
+
+type PlatformFuncs = {
+  getAuthUrl: (username: string, link: string, type: SocialProfileLinkType) => string;
+  getLogin: (accessToken: string) => Promise<string>;
+  exchangeCode: (code: string) => Promise<string>;
+};
+
+// TODO: make supported type so that Partial is not needed
+const PLATFORM_TO_FUNC: Partial<Record<SocialProfileLinkType, PlatformFuncs>> = {
+  twitch: {
+    getAuthUrl: getTwitchAuthUrl,
+    getLogin: getTwitchLogin,
+    exchangeCode: exchangeTwitchCode,
+  },
+  youtube: {
+    getAuthUrl: getYoutubeAuthUrl,
+    getLogin: getYoutubeLogin,
+    exchangeCode: exchangeYoutubeCode,
+  },
+};
+
+export async function getLogin(
+  accessToken: string,
+  platform: SocialProfileLinkType
+): Promise<string> {
+  const funcs = PLATFORM_TO_FUNC[platform];
+  if (!funcs) throw new Error("Unsupported platform for verification!");
+  return funcs.getLogin(accessToken);
+}
+
+export async function exchangeCode(code: string, platform: SocialProfileLinkType): Promise<string> {
+  const funcs = PLATFORM_TO_FUNC[platform];
+  if (!funcs) throw new Error("Unsupported platform for verification!");
+  return funcs.exchangeCode(code);
 }
 
 /**
@@ -68,12 +160,12 @@ export async function initOAuthFlow(
   const parsedPlatform = zSocialProfileLinkType.safeParse(platform);
   if (!parsedPlatform.success) return { error: "Unsupported platform" };
 
+  // TODO: validate auth in controller before calling this, change body def type!!!
   const user = await checkAuth(auth);
   if (!user) return { error: "Invalid credentials" };
 
-  if (platform === "twitch") {
-    return { url: getTwitchAuthUrl(user.username, link) };
-  }
+  const funcs = PLATFORM_TO_FUNC[platform];
+  if (!funcs) return { error: "Unsupported platform" };
 
-  return { error: "Unsupported platform" };
+  return { url: funcs.getAuthUrl(user.username, link, platform) };
 }

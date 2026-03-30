@@ -15,10 +15,11 @@ export const initiateOAuth = async (
   link: string,
 ): APIResponse<{ url: string }> => {
   try {
-    const res = await api.post<{ url: string } | ErrorMsg>(
-      `${OAUTH_API_URL}/${platform}/verify`,
-      { username, password, link },
-    );
+    const res = await api.post<{ url: string } | ErrorMsg>(`${OAUTH_API_URL}/${platform}/verify`, {
+      username,
+      password,
+      link,
+    });
     return res.data;
   } catch (error) {
     return exceptionToErrorMsg(error);

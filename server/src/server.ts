@@ -46,13 +46,13 @@ if (process.env.MODE === "production") {
   // In production mode, we want to serve the frontend code from Express
   app.use(express.static(path.join(import.meta.dirname, "../../client/dist")));
   app.get(/(.*)/, (req, res) =>
-    res.sendFile(path.join(import.meta.dirname, "../../client/dist/index.html"))
+    res.sendFile(path.join(import.meta.dirname, "../../client/dist/index.html")),
   );
 } else {
   app.get("/", (req, res) => {
     res.send(
       "You are connecting directly to the API server in development mode! " +
-        "You probably want to look elsewhere for the Vite frontend."
+        "You probably want to look elsewhere for the Vite frontend.",
     );
     res.end();
   });

@@ -28,7 +28,7 @@ app.use(
         .Router() //
         .post("/create", game.postCreate)
         .get("/list", game.getList)
-        .get("/:id", game.getById)
+        .get("/:id", game.getById),
     )
     .use(
       "/thread",
@@ -37,7 +37,7 @@ app.use(
         .post("/create", thread.postCreate)
         .get("/list", thread.getList)
         .get("/:id", thread.getById)
-        .post("/:id/comment", thread.postByIdComment)
+        .post("/:id/comment", thread.postByIdComment),
     )
     .use(
       "/user",
@@ -46,13 +46,13 @@ app.use(
         .post("/login", user.postLogin)
         .post("/signup", user.postSignup)
         .post("/:username", user.postByUsername)
-        .get("/:username", user.getByUsername)
+        .get("/:username", user.getByUsername),
     )
     .use(
       "/stats",
       Router()
         .get("/leaderboard", stats.getLeaderboardRoute)
-        .get("/:username", stats.getStatsByUsername)
+        .get("/:username", stats.getStatsByUsername),
     )
 
     .use(
@@ -64,15 +64,15 @@ app.use(
         .post("/request", friends.postRequest)
         .post("/request/:requestId/resolve", friends.postResolve)
         .post("/:username/status", friends.getStatus)
-        .post("/remove", friends.postRemove)
+        .post("/remove", friends.postRemove),
     )
 
     .use(
       "/oauth",
       Router()
         .post("/:platform/verify", oauth.getAuthByPlatform)
-        .get("/:platform/callback", oauth.getCallbackByPlatform)
-    )
+        .get("/:platform/callback", oauth.getCallbackByPlatform),
+    ),
 );
 
 io.on("connection", (socket) => {
@@ -103,8 +103,8 @@ io.on("connection", (socket) => {
     } else {
       console.log(
         `RECV [${socketId}] got ${name}${checked.data.auth.username} ${JSON.stringify(
-          checked.data.payload
-        )}`
+          checked.data.payload,
+        )}`,
       );
     }
   });
