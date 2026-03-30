@@ -1,6 +1,11 @@
 import "./Profile.css";
 import { useState, useEffect, useMemo } from "react";
-import type { FriendRequestInfo, SocialProfileLinkType } from "@gamenite/shared";
+import { initiateOAuth } from "../services/oauthService";
+import type {
+  FriendRequestInfo,
+  SocialProfileLinkType,
+  SocialProfileReqType,
+} from "@gamenite/shared";
 import useLoginContext from "../hooks/useLoginContext";
 import useTimeSince from "../hooks/useTimeSince";
 import useTopFriendsList from "../hooks/useTopFriendsList";
@@ -50,8 +55,12 @@ export default function UpdateProfile() {
     setSocialLink,
     socialLinkType,
     setSocialLinkType,
-    addLink,
-    setAddLink,
+    socialReqType,
+    setSocialReqType,
+    socialUsername,
+    setSocialUsername,
+    socialPassword,
+    setSocialPassword,
     err,
     handleSubmit,
   } = useEditProfileForm();
@@ -91,7 +100,7 @@ export default function UpdateProfile() {
           setRequestsErr(res.error);
           setRequests([]);
         }
-      },
+      }
     );
   }, [user.username, pass]);
 
@@ -102,7 +111,7 @@ export default function UpdateProfile() {
     const res = await resolveRequest(
       { username: user.username, password: pass },
       requestId,
-      action,
+      action
     );
     if ("error" in res) {
       setResolveErrors((prev: Record<string, string>) => ({ ...prev, [requestId]: res.error }));
@@ -415,9 +424,31 @@ export default function UpdateProfile() {
                   {user.profileLinks.length === 0 ? (
                     <p>You have no linked accounts</p>
                   ) : (
-                    user.profileLinks.map((l) => {
-                      return <li>Type: {l.type}</li>;
-                    })
+                    user.profileLinks.map((l) => (
+                      <li key={l.link}>
+                        {l.type}: {l.link}{" "}
+                        {l.verified ? (
+                          "✓ Verified"
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              const result = await initiateOAuth(
+                                l.type,
+                                user.username,
+                                pass,
+                                l.link
+                              );
+                              if ("url" in result) {
+                                window.location.href = result.url;
+                              }
+                            }}
+                          >
+                            Verify
+                          </button>
+                        )}
+                      </li>
+                    ))
                   )}
                 </div>
                 <div>
@@ -427,31 +458,31 @@ export default function UpdateProfile() {
                     placeholder="Social Profile URL"
                     onChange={(e) => setSocialLink(e.target.value)}
                   />
+                  <input
+                    type="text"
+                    placeholder="Social Profile Username"
+                    onChange={(e) => setSocialUsername(e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Social Profile Password"
+                    onChange={(e) => setSocialPassword(e.target.value)}
+                  />
                   <select
                     onChange={(e) => setSocialLinkType(e.target.value as SocialProfileLinkType)}
                   >
                     <option value="twitter">Twitter</option>
                     <option value="instagram">Instagram</option>
-                    <option value="facebook">Facebook</option>
-                    <option value="patreon">Patreon</option>
                     <option value="twitch">Twitch</option>
                     <option value="youtube">YouTube</option>
                   </select>
-                  <div className="privacyRow">
-                    <div className="privacyRowText">
-                      <span className="privacyRowDescription">
-                        Add profile link (toggle off to delete)
-                      </span>
-                    </div>
-                    <label className="toggleSwitch" aria-label="Toggle add/delete">
-                      <input
-                        type="checkbox"
-                        checked={addLink}
-                        onChange={() => setAddLink((v: boolean) => !v)}
-                      />
-                      <span className="toggleSlider" />
-                    </label>
-                  </div>
+                  <select
+                    onChange={(e) => setSocialReqType(e.target.value as SocialProfileReqType)}
+                  >
+                    <option value="add">Add</option>
+                    <option value="delete">Delete</option>
+                    <option value="verify">Verify</option>
+                  </select>
                 </div>
                 <div></div>
               </section>

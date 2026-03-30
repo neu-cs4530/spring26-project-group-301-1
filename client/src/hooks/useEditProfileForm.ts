@@ -2,7 +2,11 @@ import { type SubmitEvent, useState } from "react";
 import useLoginContext from "./useLoginContext.ts";
 import useAuth from "./useAuth.ts";
 import { updateUser } from "../services/userService.ts";
-import { type UserUpdateRequest, type SocialProfileLinkType } from "@gamenite/shared";
+import {
+  type UserUpdateRequest,
+  type SocialProfileLinkType,
+  type SocialProfileReqType,
+} from "@gamenite/shared";
 
 /**
  * Custom hook to manage profile form logic
@@ -57,7 +61,7 @@ export default function useEditProfileForm() {
   const isColor = isPreset || isHexColor(initialBg);
   const isPresetImg = isPresetImage(initialBg);
   const [backgroundType, setBackgroundType] = useState(
-    isColor ? "color" : isPresetImg ? "preset" : initialBg ? "image" : "color",
+    isColor ? "color" : isPresetImg ? "preset" : initialBg ? "image" : "color"
   );
   const [color, setColor] = useState(isColor ? initialBg : presetColors[0]);
   const [imageUrl, setImageUrl] = useState(isPresetImg || !isColor ? initialBg : "");
@@ -66,7 +70,9 @@ export default function useEditProfileForm() {
   const [privateProfile, setPrivateProfile] = useState<boolean>(user.privateProfile);
   const [socialLink, setSocialLink] = useState<string>("");
   const [socialLinkType, setSocialLinkType] = useState<SocialProfileLinkType | null>(null);
-  const [addLink, setAddLink] = useState<boolean>(true);
+  const [socialReqType, setSocialReqType] = useState<SocialProfileReqType | null>(null);
+  const [socialUsername, setSocialUsername] = useState<string>("");
+  const [socialPassword, setSocialPassword] = useState<string>("");
   const [confirm, setConfirm] = useState("");
   const [err, setErr] = useState<null | string>(null);
   const auth = useAuth();
@@ -118,10 +124,10 @@ export default function useEditProfileForm() {
     if (password !== "") updates.password = password;
     if (user.hideUsername !== hideUsername) updates.hideUsername = hideUsername;
     if (user.privateProfile !== privateProfile) updates.privateProfile = privateProfile;
-    if (socialLink !== "" && socialLinkType !== null) {
+    if (socialLink !== "" && socialLinkType !== null && socialReqType !== null) {
       updates.profileLink = socialLink;
       updates.profileLinkType = socialLinkType;
-      updates.profileLinkReqType = addLink === true ? "add" : "delete";
+      updates.profileLinkReqType = socialReqType;
     }
     const response = await updateUser(auth, updates);
     if ("error" in response) {
@@ -155,8 +161,12 @@ export default function useEditProfileForm() {
     setSocialLink,
     socialLinkType,
     setSocialLinkType,
-    addLink,
-    setAddLink,
+    socialReqType,
+    setSocialReqType,
+    socialUsername,
+    setSocialUsername,
+    socialPassword,
+    setSocialPassword,
     err,
     setErr,
     handleSubmit,

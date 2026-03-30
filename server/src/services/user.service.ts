@@ -37,7 +37,7 @@ export async function populateSafeUserInfo(userId: string): Promise<SafeUserInfo
 export async function createUser(
   username: string,
   password: string,
-  createdAt: Date,
+  createdAt: Date
 ): Promise<SafeUserInfo | { error: string }> {
   if ((await getUserByUsername(username)) !== null) {
     return { error: "User already exists" };
@@ -79,7 +79,7 @@ export async function getUsersByUsername(usernames: string[]): Promise<SafeUserI
         throw new Error(`No user ${username}`);
       }
       return populateSafeUserInfo(user.userId);
-    }),
+    })
   );
 }
 
@@ -104,10 +104,6 @@ function validateProfileURL(link: string, type: SocialProfileLinkType): boolean 
     return is.twitter.profile(link);
   } else if (type === "instagram") {
     return is.instagram.url(link);
-  } else if (type === "facebook") {
-    return is.facebook.profile(link);
-  } else if (type === "patreon") {
-    return is.patreon.url(link);
   } else if (type === "twitch") {
     return is.twitch.url(link);
   } else if (type === "youtube") {
@@ -135,7 +131,7 @@ export async function updateUser(
     profileLink,
     profileLinkType,
     profileLinkReqType,
-  }: UserUpdateRequest,
+  }: UserUpdateRequest
 ): Promise<SafeUserInfo> {
   const user = await getUserByUsername(username);
   if (!user) throw new Error(`No user ${username}`);

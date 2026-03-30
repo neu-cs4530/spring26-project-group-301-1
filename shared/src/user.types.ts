@@ -1,15 +1,5 @@
 import { z } from "zod";
-
-/**
- * Supported type of social profile link.
- */
-export type SocialProfileLinkType =
-  | "twitter"
-  | "instagram"
-  | "facebook"
-  | "patreon"
-  | "twitch"
-  | "youtube";
+import { type SocialProfileLinkType, zSocialProfileLinkType } from "./oauth.types.ts";
 
 /**
  * Represents a link to a user's social media profile.
@@ -43,18 +33,11 @@ export interface SafeUserInfo {
 
 /*** TYPES USED IN THE USER API ***/
 
-export const zSocialProfileLinkType = z.enum([
-  "twitter",
-  "instagram",
-  "facebook",
-  "patreon",
-  "twitch",
-  "youtube",
-]);
+// export const zSocialProfileLinkType = z.enum(["twitter", "instagram", "twitch", "youtube"]);
 
-export type SocialProfileReqType = "add" | "delete";
+export type SocialProfileReqType = "add" | "delete" | "verify";
 
-export const zSocialProfileReqType = z.enum(["add", "delete"]);
+export const zSocialProfileReqType = z.enum(["add", "delete", "verify"]);
 
 /**
  * Represents allowed updates to a user.
