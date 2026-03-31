@@ -69,7 +69,7 @@ export default function NewGame() {
           </label>
           {!filtered && (
             <p className="newGameCard__warning">
-              Warning: Turning off chat filtering may allow profanity and unsafe content into your
+              Warning: Turning off chat filtering allows profanity and unsafe content into your
               chat. Are you sure you want to do this?
             </p>
           )}

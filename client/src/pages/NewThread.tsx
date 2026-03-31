@@ -35,8 +35,8 @@ export default function NewThread() {
         </label>
         {!filtered && (
           <p className="newThread__warning">
-            Warning: Turning off moderation may allow profanity and unsafe content in your post and
-            its comments.
+            Warning: Turning off moderation allows profanity and unsafe content in your post and
+            its comments. Are you sure you want to do this?
           </p>
         )}
       </div>
