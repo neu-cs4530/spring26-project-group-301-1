@@ -126,7 +126,10 @@ export default function GamePanel({
           {
             // If the game hasn't started and user hasn't joined, they can join
             userPlayerIndex < 0 && !view && (
-              <button className="primary narrow gameRoster__action" onClick={joinGame}>
+              <button
+                className="primary narrow gameRoster__action gameRoster__action--join"
+                onClick={joinGame}
+              >
                 Join Game
               </button>
             )

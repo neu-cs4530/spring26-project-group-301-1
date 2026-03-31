@@ -58,6 +58,18 @@
   white-space: nowrap;
 }
 
+button.gameRoster__action--join {
+  background: #e0edff;
+  border: 1.5px solid #90b4e8;
+  color: #1d3b7a;
+}
+
+button.gameRoster__action--join:hover {
+  background: #c3dbfa;
+  border-color: #3b82f6;
+  color: #1741a0;
+}
+
 .gameRoster__action--forfeit {
   border: 1px solid #fca5a5;
   border-radius: 10px;
