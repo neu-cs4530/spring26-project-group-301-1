@@ -1,6 +1,7 @@
 import "./GamePanel.css";
 import { useCallback, useEffect, useState } from "react";
 import type { GameInfo } from "@gamenite/shared";
+import { getCurrentPlayer } from "@gamenite/shared";
 import { gameNames } from "../util/consts.ts";
 import useLoginContext from "../hooks/useLoginContext.ts";
 import useAuth from "../hooks/useAuth.ts";
@@ -32,11 +33,16 @@ export default function GamePanel({
 
   const displayedPlayerCount = isAutomatedTicTacToe ? Math.max(players.length, 2) : players.length;
 
-  const isActivePlayer = userPlayerIndex >= 0 && !!view;
-
   const forfeitGame = useCallback(() => {
     socket.emit("gameMakeMove", { auth, payload: { gameId, move: { type: "forfeit" } } });
   }, [socket, auth, gameId]);
+
+  const currentTurnPlayerIndex = view ? getCurrentPlayer(view) : null;
+
+  const isActivePlayer =
+    userPlayerIndex >= 0 &&
+    !!view &&
+    (currentTurnPlayerIndex === -1 || currentTurnPlayerIndex === userPlayerIndex);
 
   const {
     showWarning,
@@ -63,25 +69,6 @@ export default function GamePanel({
     if (type !== "tictactoe" && type !== "automatedTicTacToe") return "";
     return index === 0 ? " (O)" : " (X)";
   };
-
-  const currentTurnPlayerIndex = (() => {
-    if (!view) return null;
-
-    if (view.type === "tictactoe" || view.type === "automatedTicTacToe") {
-      const tttView = view.view;
-      const boardFull = tttView.board.every((row) => row.every((entry) => entry !== null));
-      if (tttView.winningEntry || tttView.forfeited || boardFull) return null;
-      return tttView.nextPlayer;
-    }
-
-    if (view.type === "nim") {
-      const nimView = view.view;
-      if (nimView.forfeited || nimView.remaining <= 0) return null;
-      return nimView.nextPlayer;
-    }
-
-    return null;
-  })();
 
   const renderPlayerCard = (player: (typeof players)[number], index: number, isTurn = false) => (
     <div
