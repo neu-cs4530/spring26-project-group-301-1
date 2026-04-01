@@ -1,7 +1,6 @@
 import {
   zTicTacToeMove,
   type TicTacEntry,
-  type TicTacToeMove,
   type TicTacToeState,
   type TicTacToeView,
   type TicTacToeGameMove,
@@ -68,7 +67,8 @@ function minimax(board: TicTacToeBoard, current: Mark, ai: Mark, depth: number):
   let best = isMax ? -Infinity : Infinity;
 
   for (const move of moves) {
-    const [r, c] = move.coord ? move.coord : [-1, -1];
+    const r: number = move.coord ? move.coord[0] : -1;
+    const c: number = move.coord ? move.coord[1] : -1;
     const next = cloneBoard(board);
     next[r][c] = current;
     const score = minimax(next, oppositeMark(current), ai, depth + 1);
@@ -96,9 +96,10 @@ export function chooseAutomatedMove(state: AutomatedTicTacToeState): TicTacToeGa
   let bestMove: TicTacToeGameMove = moves[0];
 
   for (const move of moves) {
-    const [r, c] = move.coord ? move.coord : [-1, -1];
+    const r: number = move.coord ? move.coord[0] : -1;
+    const c: number = move.coord ? move.coord[1] : -1;
     const next = cloneBoard(state.board as TicTacToeBoard);
-    next[r][c] = autoSymbol;
+    (next as TicTacEntry[][])[r][c] = autoSymbol;
     const score = minimax(next, oppositeMark(autoSymbol), autoSymbol, 0);
     if (score > bestScore) {
       bestScore = score;
@@ -119,7 +120,7 @@ function getWinnerSymbol(board: TicTacToeBoard): TicTacEntry {
 function findNewMoveForSymbol(
   before: TicTacToeBoard,
   after: TicTacToeBoard,
-  symbol: TicTacEntry
+  symbol: TicTacEntry,
 ): [number, number] | null {
   for (let r = 0; r < 3; r += 1) {
     for (let c = 0; c < 3; c += 1) {
@@ -176,7 +177,6 @@ export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, Automat
     if ("difficulty" in moveData) {
       if (state.opponentTypeSelected === true) return null;
 
-      console.log(moveData.difficulty);
       return {
         ...state,
         opponentTypeSelected: true,
@@ -184,10 +184,11 @@ export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, Automat
       };
     }
 
+    // if this is not difficulty selection, and difficulty has not been selected yet, return
+    if (state.opponentTypeSelected === false) return null;
+
     // Handle forfeit move
     if (move.data.type === "forfeit") {
-      // if game has not started, cannot forfeit yet
-      if (state.opponentTypeSelected === false) return null;
       // Mark game as forfeited
       return {
         ...state,
@@ -243,7 +244,7 @@ export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, Automat
   describeMove: (prevState, newState, payload) => {
     const move = zTicTacToeMove.parse(payload);
     if ("difficulty" in move) {
-      return ` selected ${move} difficulty`; // Difficulty selection
+      return ` selected ${move.difficulty} automated player type`; // Difficulty selection
     }
 
     // Forfeit message
@@ -258,7 +259,7 @@ export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, Automat
     const aiMove = findNewMoveForSymbol(
       prevState.board as TicTacToeBoard,
       newState.board as TicTacToeBoard,
-      aiSymbol
+      aiSymbol,
     );
 
     const winner = getWinnerSymbol(newState.board as TicTacToeBoard);
@@ -280,8 +281,8 @@ export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, Automat
       winner === aiSymbol
         ? ` automated opponent moved at (${r}, ${c}) and won the game`
         : isBoardFull(newState.board as TicTacToeBoard)
-        ? ` automated opponent moved at (${r}, ${c}) and ended the game in a draw`
-        : ` automated opponent moved at (${r}, ${c})`;
+          ? ` automated opponent moved at (${r}, ${c}) and ended the game in a draw`
+          : ` automated opponent moved at (${r}, ${c})`;
 
     return `${humanMsg}||${aiMsg}`;
   },
