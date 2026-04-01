@@ -11,6 +11,7 @@ import { type SafeUserInfo } from "./user.types.ts";
  * - `createdAt`: when the game was created
  * - `createdBy`: username of the person who created the game
  * - `minPlayers`: the minimum number of players required to start the game
+ * - `chatFiltered`: whether the game's chat is filtered
  */
 export interface GameInfo {
   gameId: string;
@@ -21,6 +22,7 @@ export interface GameInfo {
   createdAt: Date;
   createdBy: SafeUserInfo;
   minPlayers: number;
+  chatFiltered: boolean;
 }
 
 /**
@@ -67,6 +69,14 @@ export const zGameKey = z.union([
   z.literal("tictactoe"),
   z.literal("automatedTicTacToe"),
 ]);
+
+/*** TYPES USED IN CREATING GAMES ***/
+
+export const zCreateGamePayload = z.object({
+  gameKey: zGameKey,
+  filtered: z.boolean().optional().default(true),
+});
+export type CreateGamePayload = z.infer<typeof zCreateGamePayload>;
 
 /**
  * The TaggedGameView type allows the views for different game to be

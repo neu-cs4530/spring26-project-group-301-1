@@ -29,11 +29,13 @@ export interface AuthRecord {
  * - `messages`: the ordered list of messages in the chat
  * - `moveLog`: the ordered list of move log entries for this chat
  * - `createdAt`: when the chat was created
+ * - `chatFiltered`: whether the chat should be filtered for content violations
  */
 export interface ChatRecord {
   messages: RecordId[]; // References Message models
   moveLog: MoveLogEntry[];
   createdAt: DateISO;
+  chatFiltered: boolean;
 }
 
 /**
@@ -111,6 +113,7 @@ export interface ThreadRecord {
   createdAt: DateISO;
   createdBy: RecordId; // References User records
   comments: RecordId[]; // References Comment records
+  filtered: boolean;
 }
 
 /**

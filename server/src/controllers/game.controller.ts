@@ -1,4 +1,9 @@
-import { type GameInfo, withAuth, zGameKey, zGameMakeMovePayload } from "@gamenite/shared";
+import {
+  type GameInfo,
+  withAuth,
+  zCreateGamePayload,
+  zGameMakeMovePayload,
+} from "@gamenite/shared";
 import { type RestAPI, type GameViewUpdates, type SocketAPI, type GameServer } from "../types.ts";
 import {
   createGame,
@@ -24,7 +29,7 @@ const AUTOMATED_MOVE_LOG_DELAY_MS = 1500;
  * starts with one player, the user who made the POST request.
  */
 export const postCreate: RestAPI<GameInfo> = async (req, res) => {
-  const body = withAuth(zGameKey).safeParse(req.body);
+  const body = withAuth(zCreateGamePayload).safeParse(req.body);
   if (body.error) {
     res.status(400).send({ error: "Poorly-formed request" });
     return;
@@ -36,8 +41,12 @@ export const postCreate: RestAPI<GameInfo> = async (req, res) => {
     return;
   }
 
-  const game = await createGame(user, body.data.payload, new Date());
-
+  const game = await createGame(
+    user,
+    body.data.payload.gameKey,
+    new Date(),
+    body.data.payload.filtered,
+  );
   if (game.type === "automatedTicTacToe") {
     await startGame(game.gameId, user);
     const started = await getGameById(game.gameId);

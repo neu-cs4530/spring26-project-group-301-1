@@ -105,6 +105,9 @@ span.opBlue {
   padding: 0;
   color: #1c2948;
   font-size: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
 }
 
 .threadCard__commentsHeader {
