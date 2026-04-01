@@ -139,7 +139,7 @@ export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, Automat
       return players[0];
     }
     if (state.forfeited === true) {
-      return players[state.nextPlayer];
+      return players[DEFAULT_AUTO_PLAYER_INDEX];
     }
     return null;
   },
@@ -212,7 +212,7 @@ export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, Automat
 
     return nextState;
   },
-  isDone: (state) => isGameDone(state.board as TicTacToeBoard),
+  isDone: (state) => isGameDone(state.board as TicTacToeBoard) || state.forfeited === true,
   viewAs: (state) => ({
     board: state.board,
     nextPlayer: state.nextPlayer,
