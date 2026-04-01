@@ -1,6 +1,6 @@
 import "./SideBarNav.css";
 import { NavLink, type NavLinkRenderProps } from "react-router-dom";
-import { House, Gamepad2, MessageCircle, User } from "lucide-react";
+import { House, Gamepad2, MessageCircle, User, Mail } from "lucide-react";
 import useAuth from "../hooks/useAuth.ts";
 import useFriendRequestCount from "../hooks/useFriendRequestCount";
 
@@ -33,7 +33,8 @@ export default function SideBarNav() {
         <span>Forum</span>
       </NavLink>
       <NavLink to="/messages" className={navClass}>
-        Direct Messages
+        <Mail className="menu_icon" aria-hidden="true" />
+        Messages
       </NavLink>
 
       <NavLink

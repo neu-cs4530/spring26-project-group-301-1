@@ -160,7 +160,10 @@ export default function ViewProfile({ username }: ViewProfileProps) {
       case "friends":
         return (
           <>
-            <button className="primary narrow" onClick={() => void handleSendMessage()}>
+            <button
+              className="primary narrow profilePrimaryButton"
+              onClick={() => void handleSendMessage()}
+            >
               Send Message
             </button>
             <button className="secondary narrow profileDangerButton" onClick={handleRemoveFriend}>
