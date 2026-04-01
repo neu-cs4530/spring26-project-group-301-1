@@ -197,11 +197,18 @@ export default function TicTacToeGame({
       </div>
     </div>
   ) : (
-    <div>
-      <button onClick={() => makeMove({ type: "move", difficulty: "random" })}>
+    <div className="ticTacToeGame content">
+      <h3 style={{ fontSize: "1.5rem", fontWeight: "bold" }}>Select Difficulty:</h3>
+      <button
+        className="tttDifficultyButton__action--easy"
+        onClick={() => makeMove({ type: "move", difficulty: "random" })}
+      >
         Random (easy)
       </button>
-      <button onClick={() => makeMove({ type: "move", difficulty: "minimax" })}>
+      <button
+        className="tttDifficultyButton__action--hard"
+        onClick={() => makeMove({ type: "move", difficulty: "minimax" })}
+      >
         Minimax (hard)
       </button>
     </div>
