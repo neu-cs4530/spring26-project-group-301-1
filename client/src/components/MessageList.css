@@ -87,6 +87,13 @@ div.chatScroller .chatMe .chatContent {
   background-color: rgba(220, 53, 69, 0.9);
 }
 
+.chatDeleteIcon {
+  width: 10px;
+  height: 10px;
+  stroke: currentColor;
+  fill: none;
+}
+
 .chatDeletable:hover .chatDeleteBtn {
   display: flex;
   align-items: center;

@@ -155,3 +155,28 @@ span.opBlue {
   color: #2c3858;
   font-size: 1rem;
 }
+
+.threadCard__commentHidden {
+  color: #667085;
+  font-style: italic;
+}
+
+.threadCard__commentAction {
+  display: inline-block;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  margin-top: 0.35rem;
+  margin-left: 0.55rem;
+}
+
+.threadCard__commentAction:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}

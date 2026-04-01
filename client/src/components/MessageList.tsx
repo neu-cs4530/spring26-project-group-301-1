@@ -1,4 +1,5 @@
 import "./MessageList.css";
+import { Trash2 } from "lucide-react";
 import useLoginContext from "../hooks/useLoginContext.ts";
 import type { ChatMessage } from "../util/types.ts";
 import { useEffect, useRef } from "react";
@@ -118,7 +119,7 @@ export default function MessageList({
                   aria-label="Delete message"
                   onClick={() => onDeleteMessage(message.messageId)}
                 >
-                  ✕
+                  <Trash2 aria-hidden="true" focusable="false" className="chatDeleteIcon" />
                 </button>
                 <div className="chatSender">{timeSince(message.createdAt)}</div>
                 <div className="chatContent">{message.text}</div>
