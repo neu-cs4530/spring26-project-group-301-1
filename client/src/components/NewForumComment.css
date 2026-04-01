@@ -1,3 +1,49 @@
-form.newForumComment textarea {
-  width: 600px;
+.newForumComment {
+  padding: 0.75rem 0.9rem 0.85rem;
+}
+
+.newForumComment__inputRow {
+  display: flex;
+  align-items: center;
+  border: 1px solid #d3d9e8;
+  border-radius: 12px;
+  padding: 0.35rem 0.6rem;
+}
+
+.newForumComment__input {
+  width: 100%;
+  min-height: 1.6rem;
+  max-height: 5rem;
+  resize: vertical;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #2c3858;
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.newForumComment__input::placeholder {
+  color: #7b86a3;
+}
+
+.newForumComment__actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 0.55rem;
+}
+
+.newForumComment__submit {
+  border: 1px solid #93c5fd;
+  border-radius: 10px;
+  background: #dbeafe;
+  color: #1e3a8a;
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 0.42rem 1.05rem;
+}
+
+.newForumComment__submit:hover {
+  background: #bfdbfe;
+  border-color: #60a5fa;
 }

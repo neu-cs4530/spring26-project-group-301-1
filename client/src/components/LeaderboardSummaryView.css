@@ -1,0 +1,226 @@
+.leaderboard-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  position: relative; /* add */
+  padding-top: 0.1rem;
+}
+
+.leaderboard-summary-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: 0.25rem;
+  padding-top: 0.25rem;
+}
+
+.leaderboard-summary-updated {
+  font-size: 0.75rem;
+  color: var(--gray-foreground);
+}
+
+.leaderboard-summary-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: absolute; /* add */
+  top: -4rem; /* adjust if needed */
+  right: 0;
+  z-index: 1;
+}
+
+.leaderboard-summary-toggle-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--gray-foreground);
+}
+
+.leaderboard-summary-toggle select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--gray-foreground);
+  border-radius: 0.375rem;
+  background: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--gray-foreground);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.leaderboard-summary-toggle select:focus {
+  outline: 2px solid oklch(0.55 0.1 260);
+  outline-offset: 1px;
+}
+
+.leaderboard-summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1.1rem;
+  margin-top: 0.15rem; /* was 0.25rem */
+  margin-bottom: 0.35rem; /* was 0.5rem */
+}
+
+.leaderboard-summary-table thead th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--gray-foreground);
+  padding: 0.25rem 0.5rem;
+  border-bottom: 1px dashed black;
+  font-size: 1rem;
+}
+
+.leaderboard-summary-table thead th:not(:nth-child(2)) {
+  text-align: center;
+}
+
+.leaderboard-summary-row {
+  border-top: 1px dashed black;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.leaderboard-summary-row:hover {
+  background: color-mix(in oklch, oklch(0.55 0.1 260) 10%, transparent);
+}
+
+.leaderboard-summary-row td {
+  padding: 0.4rem 0.5rem;
+  white-space: nowrap;
+  font-size: 1rem;
+}
+
+.leaderboard-summary-rank {
+  text-align: center;
+  width: 2rem;
+  font-weight: 700;
+  color: var(--gray-foreground);
+}
+
+.leaderboard-summary-rank--gold {
+  color: gold;
+}
+
+.leaderboard-summary-rank--silver {
+  color: silver;
+}
+
+.leaderboard-summary-rank--bronze {
+  color: #cd7f32;
+}
+
+.leaderboard-summary-wins {
+  text-align: center;
+  color: #4caf50;
+  font-weight: 600;
+}
+
+.leaderboard-summary-losses {
+  text-align: center;
+  color: #e57373;
+}
+
+.leaderboard-summary-draws {
+  text-align: center;
+  color: var(--gray-foreground);
+}
+
+.leaderboard-summary-unknown {
+  color: var(--gray-foreground);
+  font-style: italic;
+}
+
+.leaderboard-summary-state {
+  font-size: 0.875rem;
+  color: var(--gray-foreground);
+}
+
+.leaderboard-summary-state--error {
+  color: #e57373;
+}
+
+.leaderboard-summary-podium {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: end;
+  gap: 0.75rem;
+  margin-top: 0.35rem; /* was 0.5rem */
+  min-height: 15rem; /* was 16rem */
+}
+
+.leaderboard-summary-podium__slot {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: center;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  background: #f8fafc;
+  padding: 0.6rem 0.45rem;
+}
+
+.leaderboard-summary-podium__slot.clickable {
+  cursor: pointer;
+}
+
+.leaderboard-summary-podium__slot.is-empty {
+  opacity: 0.45;
+}
+
+.leaderboard-summary-podium__slot--first {
+  min-height: 11rem;
+  background: #fff9db;
+  border-color: #facc15;
+}
+
+.leaderboard-summary-podium__slot--second {
+  min-height: 8rem;
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.leaderboard-summary-podium__slot--third {
+  min-height: 5rem;
+  background: #fff1e6;
+  border-color: #d97706;
+}
+
+.leaderboard-summary-podium__name {
+  order: 1; /* name first */
+  margin-top: 0;
+  margin-bottom: 0.2rem;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.leaderboard-summary-podium__medal {
+  order: 2; /* rank/medal second */
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.leaderboard-summary-podium__stats {
+  order: 3; /* stats last */
+  margin-top: 0.15rem;
+  font-size: 0.82rem;
+  color: var(--gray-foreground);
+}
+
+@media (max-width: 680px) {
+  .leaderboard-summary-podium {
+    gap: 0.4rem;
+    min-height: 13rem;
+  }
+
+  .leaderboard-summary-podium__slot--first {
+    min-height: 11.5rem;
+  }
+
+  .leaderboard-summary-podium__slot--second {
+    min-height: 7.8rem;
+  }
+
+  .leaderboard-summary-podium__slot--third {
+    min-height: 4.8rem;
+  }
+}

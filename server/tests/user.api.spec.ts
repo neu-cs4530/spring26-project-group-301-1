@@ -23,6 +23,7 @@ describe("GET /api/user/:id", () => {
       ...user1,
       createdAt: expect.anything(),
       hideUsername: false,
+      privateProfile: false,
     });
 
     response = await supertest(app).get(`/api/user/user2`);
@@ -31,6 +32,7 @@ describe("GET /api/user/:id", () => {
       ...user2,
       createdAt: expect.anything(),
       hideUsername: false,
+      privateProfile: false,
     });
   });
 });
@@ -68,6 +70,7 @@ describe("POST /api/user/login", () => {
       ...user1,
       createdAt: expect.anything(),
       hideUsername: false,
+      privateProfile: false,
     });
   });
 });
@@ -103,6 +106,7 @@ describe("POST/api/user/:username", () => {
       display: "New User 1 Display",
       createdAt: expect.anything(),
       hideUsername: false,
+      privateProfile: false,
     });
 
     // We have changed the username, which should be reflected
@@ -115,6 +119,7 @@ describe("POST/api/user/:username", () => {
       display: "New User 1 Display",
       createdAt: expect.anything(),
       hideUsername: false,
+      privateProfile: false,
     });
 
     // Change the password
@@ -127,6 +132,7 @@ describe("POST/api/user/:username", () => {
       display: "New User 1 Display",
       createdAt: expect.anything(),
       hideUsername: false,
+      privateProfile: false,
     });
 
     // We have changed the password, so auth shouldn't work
@@ -148,6 +154,7 @@ describe("POST/api/user/:username", () => {
       display: "Newer User 1 Display",
       createdAt: expect.anything(),
       hideUsername: false,
+      privateProfile: false,
     });
   });
 });
@@ -165,6 +172,7 @@ describe("POST /api/user/signup", () => {
       display: username,
       createdAt: expect.anything(),
       hideUsername: false,
+      privateProfile: false,
     });
   });
 
@@ -218,8 +226,8 @@ describe("POST /api/user/list", () => {
     response = await supertest(app).post("/api/user/list").send(["user2", "user1"]);
     expect(response.status).toBe(200);
     expect(response.body).toStrictEqual([
-      { ...user2, createdAt: expect.anything(), hideUsername: false },
-      { ...user1, createdAt: expect.anything(), hideUsername: false },
+      { ...user2, createdAt: expect.anything(), hideUsername: false, privateProfile: false },
+      { ...user1, createdAt: expect.anything(), hideUsername: false, privateProfile: false },
     ]);
   });
 
@@ -227,9 +235,9 @@ describe("POST /api/user/list", () => {
     response = await supertest(app).post("/api/user/list").send(["user1", "user2", "user1"]);
     expect(response.status).toBe(200);
     expect(response.body).toStrictEqual([
-      { ...user1, createdAt: expect.anything(), hideUsername: false },
-      { ...user2, createdAt: expect.anything(), hideUsername: false },
-      { ...user1, createdAt: expect.anything(), hideUsername: false },
+      { ...user1, createdAt: expect.anything(), hideUsername: false, privateProfile: false },
+      { ...user2, createdAt: expect.anything(), hideUsername: false, privateProfile: false },
+      { ...user1, createdAt: expect.anything(), hideUsername: false, privateProfile: false },
     ]);
   });
 });

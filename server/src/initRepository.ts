@@ -15,6 +15,11 @@ import {
 import type { GameRecord, ThreadRecord } from "./models.ts";
 import { createChat } from "./services/chat.service.ts";
 import { createUser, updateUser } from "./services/user.service.ts";
+import {
+  sendFriendRequest,
+  resolveRequest,
+  getPendingRequests,
+} from "./services/friends.service.ts";
 
 /** Reset stored games with example data. */
 async function resetStoredGames() {
@@ -71,6 +76,7 @@ async function resetStoredThreads() {
       title: "Nim?",
       text: "Is anyone around that wants to play Nim? I'll be here for the next hour or so.",
       comments: [],
+      filtered: true,
     },
     deadbeefdeadbeefdeadbeef: {
       createdBy: user1id,
@@ -78,6 +84,7 @@ async function resetStoredThreads() {
       title: "Hello game knights",
       text: "I'm a big Nim buff and am excited to join this community.",
       comments: [],
+      filtered: true,
     },
     [randomUUID().toString()]: {
       createdBy: user3id,
@@ -85,6 +92,7 @@ async function resetStoredThreads() {
       title: "Other games?",
       text: "Nim is great, but I'm hoping some new strategy games will get introduced soon.",
       comments: [],
+      filtered: true,
     },
     [randomUUID().toString()]: {
       createdBy: user2id,
@@ -92,6 +100,7 @@ async function resetStoredThreads() {
       title: "Strategy guide?",
       text: "I'm pretty confused about the right strategy for Nim, is there anyone around who can help explain this?",
       comments: [],
+      filtered: true,
     },
     [randomUUID().toString()]: {
       createdBy: user0id,
@@ -99,6 +108,7 @@ async function resetStoredThreads() {
       title: "New game: multiplayer number guesser!",
       text: "Strategy.town now has an exciting new game: guess! Try it out today: multiple people can join this exciting game, and guess a number between 1 and 100!",
       comments: [],
+      filtered: true,
     },
   };
   await ThreadRepo.clear();
@@ -120,6 +130,26 @@ async function resetStoredUsers() {
   await updateUser("user3", { display: "Frau Drei" });
 }
 
+/** Reset stored friends with example data */
+async function restoreStoredFriends() {
+  await FriendRepo.clear();
+
+  await sendFriendRequest("user1", "user0");
+  await sendFriendRequest("user2", "user0");
+  await sendFriendRequest("user3", "user0");
+
+  const user0Requests = await getPendingRequests("user0");
+  for (const request of user0Requests) {
+    await resolveRequest(request.requestId, "user0", "accept");
+  }
+
+  await sendFriendRequest("user2", "user1");
+  const user1Requests = await getPendingRequests("user1");
+  for (const request of user1Requests) {
+    await resolveRequest(request.requestId, "user1", "accept");
+  }
+}
+
 export async function resetEverythingToDefaults() {
   await AuthRepo.clear();
   await ChatRepo.clear();
@@ -135,4 +165,5 @@ export async function resetEverythingToDefaults() {
   await resetStoredUsers();
   await resetStoredThreads();
   await resetStoredGames();
+  await restoreStoredFriends();
 }

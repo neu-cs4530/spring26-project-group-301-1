@@ -22,6 +22,7 @@ import TimeContextKeeper from "./components/UpdatingTimeContext.tsx";
 import { DmContextProvider } from "./contexts/DmContext.tsx";
 import DirectMessageList from "./pages/DirectMessageList.tsx";
 import DirectMessage from "./pages/DirectMessage.tsx";
+import { Provider } from "./components/ui/provider.tsx";
 
 /** If `true`, all incoming socket messages will be logged */
 const DEBUG_SOCKETS = false;
@@ -50,36 +51,38 @@ export default function App() {
   const [auth, setAuth] = useState<AuthContext | null>(null);
   return (
     socket && (
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login setAuth={(auth) => setAuth(auth)} />} />
-          <Route
-            element={
-              <LoggedInRoute auth={auth} socket={socket}>
-                <DmContextProvider>
-                  <TimeContextKeeper updateFrequency={20 * 1000}>
-                    <ErrorBoundary fallbackRender={fallback}>
-                      <Layout />
-                    </ErrorBoundary>
-                  </TimeContextKeeper>
-                </DmContextProvider>
-              </LoggedInRoute>
-            }
-          >
-            <Route path="/" element={<Home />} />
-            <Route path="/forum" element={<ThreadList />} />
-            <Route path="/forum/post/new" element={<NewThread />} />
-            <Route path="/forum/post/:threadId" element={<ThreadPage />} />
-            <Route path="/games" element={<GameList />} />
-            <Route path="/game/new" element={<NewGame />} />
-            <Route path="/game/:gameId" element={<Game />} />
-            <Route path="/profile/:username" element={<Profile />} />
-            <Route path="/messages" element={<DirectMessageList />} />
-            <Route path="/messages/:dmId" element={<DirectMessage />} />
-            <Route path="/*" element={<NoSuchRoute />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <Provider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<Login setAuth={(auth) => setAuth(auth)} />} />
+            <Route
+              element={
+                <LoggedInRoute auth={auth} socket={socket}>
+                  <DmContextProvider>
+                    <TimeContextKeeper updateFrequency={20 * 1000}>
+                      <ErrorBoundary fallbackRender={fallback}>
+                        <Layout />
+                      </ErrorBoundary>
+                    </TimeContextKeeper>
+                  </DmContextProvider>
+                </LoggedInRoute>
+              }
+            >
+              <Route path="/" element={<Home />} />
+              <Route path="/forum" element={<ThreadList />} />
+              <Route path="/forum/post/new" element={<NewThread />} />
+              <Route path="/forum/post/:threadId" element={<ThreadPage />} />
+              <Route path="/games" element={<GameList />} />
+              <Route path="/game/new" element={<NewGame />} />
+              <Route path="/game/:gameId" element={<Game />} />
+              <Route path="/profile/:username" element={<Profile />} />
+              <Route path="/messages" element={<DirectMessageList />} />
+              <Route path="/messages/:dmId" element={<DirectMessage />} />
+              <Route path="/*" element={<NoSuchRoute />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </Provider>
     )
   );
 }

@@ -14,6 +14,7 @@ export interface SafeUserInfo {
   createdAt: Date;
   customBackground?: string;
   hideUsername: boolean;
+  privateProfile: boolean;
 }
 
 /*** TYPES USED IN THE USER API ***/
@@ -27,4 +28,5 @@ export const zUserUpdateRequest = z.object({
   display: z.string().optional(),
   customBackground: z.string().optional(),
   hideUsername: z.boolean().optional(),
+  privateProfile: z.boolean().optional(),
 });

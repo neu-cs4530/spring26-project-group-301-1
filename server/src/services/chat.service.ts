@@ -24,6 +24,7 @@ async function populateChatInfo(chatId: RecordId): Promise<ChatInfo> {
         createdAt: new Date(entry.createdAt),
       })),
     ),
+    chatFiltered: chat.chatFiltered,
   };
 }
 
@@ -31,13 +32,15 @@ async function populateChatInfo(chatId: RecordId): Promise<ChatInfo> {
  * Creates and store a new chat
  *
  * @param createdAt - Time of chat creation
+ * @param chatFiltered - Whether the chat should be filtered for content violations. Yes by default.
  * @returns the chat's info object
  */
-export async function createChat(createdAt: Date): Promise<ChatInfo> {
+export async function createChat(createdAt: Date, chatFiltered = true): Promise<ChatInfo> {
   const id = await ChatRepo.add({
     createdAt: createdAt.toISOString(),
     messages: [],
     moveLog: [],
+    chatFiltered,
   });
   return populateChatInfo(id);
 }

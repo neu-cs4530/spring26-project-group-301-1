@@ -1,5 +1,6 @@
 import type { NimMove, NimView } from "@gamenite/shared";
 import type { GameProps } from "../util/types.ts";
+import "./NimGame.css";
 
 export default function NimGame({
   view,
@@ -9,72 +10,77 @@ export default function NimGame({
 }: GameProps<NimView, NimMove>) {
   const disabled = userPlayerIndex !== view.nextPlayer || view.forfeited === true;
 
-  /** Player's name */
-  function playerDisplay(index: number) {
-    return index === userPlayerIndex ? "you" : players[index].display;
+  function winnerDisplay(index: number) {
+    return index === userPlayerIndex ? "You" : players[index].display;
   }
 
-  /** Possessive form of player's name */
-  function playerPoss(index: number) {
-    return index === userPlayerIndex ? "your" : `${players[index].display}'s`;
-  }
+  const pileObjects = Array.from({ length: view.remaining }, (_, index) => index);
+
+  const gameOver = view.remaining === 0 || view.forfeited === true;
+  const userWon = gameOver && userPlayerIndex >= 0 && view.nextPlayer === userPlayerIndex;
+  const winnerBannerText =
+    view.forfeited === true
+      ? `${winnerDisplay(view.nextPlayer)} won by forfeit`
+      : `${winnerDisplay(view.nextPlayer)} won!`;
 
   return (
-    <div className="content spacedSection">
-      <div>
-        The game of Nim is played as follows:
-        <ol>
-          <li>The game starts with a pile of objects. </li>
-          <li>Players take turns removing objects from the pile. </li>
-          <li>On their turn, a player must remove 1, 2, or 3 objects from the pile. </li>
-          <li>The player who removes the last object loses the game. </li>
-        </ol>
-        Think strategically and try to force your opponent into a losing position!
-      </div>
-      <hr />
-      <h2>Current game</h2>
-      <div>
-        There are {view.remaining} object{view.remaining !== 1 && "s"} left in the pile.
-      </div>
-      {view.remaining > 0 && view.forfeited === false && (
-        <div>Currently it is {playerPoss(view.nextPlayer)} turn</div>
-      )}
-      {(view.remaining === 0 || view.forfeited === true) && (
-        <div>
-          The game is over:{" "}
-          {view.forfeited === true
-            ? playerDisplay(view.nextPlayer) + " won by forfeit"
-            : playerDisplay(view.nextPlayer) +
-              " won by forcing " +
-              playerDisplay(1 - view.nextPlayer) +
-              " to take the last object."}
+    <div className="nimGame content spacedSection">
+      {gameOver ? (
+        <div
+          className={
+            userWon
+              ? "nimGame__winnerBanner"
+              : "nimGame__winnerBanner nimGame__winnerBanner--notWinner"
+          }
+        >
+          {winnerBannerText}
         </div>
-      )}
+      ) : null}
+
+      <div className="nimGame__intro">
+        Remove 1, 2, or 3 objects on your turn. The player who takes the last object loses.
+      </div>
+
+      <div className="nimGame__board">
+        <div className="nimGame__boardHeader">
+          <h2 className="nimGame__title">Current pile</h2>
+          <span className="nimGame__remainingBadge">
+            {view.remaining} object{view.remaining !== 1 && "s"}
+          </span>
+        </div>
+
+        <div className="nimGame__pile" aria-label={`Pile with ${view.remaining} objects`}>
+          {pileObjects.length > 0 ? (
+            pileObjects.map((objectIndex) => <span key={objectIndex} className="nimGame__object" />)
+          ) : (
+            <div className="nimGame__emptyPile">No objects left</div>
+          )}
+        </div>
+      </div>
+
       {userPlayerIndex >= 0 && (
-        <div>
-          <div style={{ display: "flex", flexDirection: "row", gap: "0.5rem" }}>
-            <button
-              className="secondary narrow"
-              disabled={disabled || view.remaining < 1}
-              onClick={() => makeMove({ type: "move", count: 1 })}
-            >
-              Take one
-            </button>
-            <button
-              disabled={disabled || view.remaining < 2}
-              className="secondary narrow"
-              onClick={() => makeMove({ type: "move", count: 2 })}
-            >
-              Take two
-            </button>
-            <button
-              disabled={disabled || view.remaining < 3}
-              className="secondary narrow"
-              onClick={() => makeMove({ type: "move", count: 3 })}
-            >
-              Take three
-            </button>
-          </div>
+        <div className="nimGame__actions">
+          <button
+            className="narrow nimGame__button"
+            disabled={disabled || view.remaining < 1}
+            onClick={() => makeMove({ type: "move", count: 1 })}
+          >
+            Take one
+          </button>
+          <button
+            disabled={disabled || view.remaining < 2}
+            className="narrow nimGame__button"
+            onClick={() => makeMove({ type: "move", count: 2 })}
+          >
+            Take two
+          </button>
+          <button
+            disabled={disabled || view.remaining < 3}
+            className="narrow nimGame__button"
+            onClick={() => makeMove({ type: "move", count: 3 })}
+          >
+            Take three
+          </button>
         </div>
       )}
     </div>

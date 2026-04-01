@@ -10,6 +10,9 @@ jobs:
   basic-checks:
     runs-on: ubuntu-24.04
 
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v6

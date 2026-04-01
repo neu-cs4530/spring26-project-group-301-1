@@ -1,12 +1,23 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, beforeEach, afterAll } from "vitest";
 import supertest, { type Response } from "supertest";
 import { app } from "../src/app.ts";
+import { resetEverythingToDefaults } from "../src/initRepository.ts";
+import { FriendRepo, FriendRequestRepo } from "../src/repository.ts";
 
 let response: Response;
 
 const auth0 = { username: "user0", password: "pwd0000" };
 const auth1 = { username: "user1", password: "pwd1111" };
 const authBad = { username: "user0", password: "wrongpassword" };
+
+beforeEach(async () => {
+  await FriendRepo.clear();
+  await FriendRequestRepo.clear();
+});
+
+afterAll(async () => {
+  await resetEverythingToDefaults();
+});
 
 describe("POST /api/friends/request", () => {
   it("should return 400 on ill-formed payload", async () => {

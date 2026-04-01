@@ -29,11 +29,13 @@ export interface AuthRecord {
  * - `messages`: the ordered list of messages in the chat
  * - `moveLog`: the ordered list of move log entries for this chat
  * - `createdAt`: when the chat was created
+ * - `chatFiltered`: whether the chat should be filtered for content violations
  */
 export interface ChatRecord {
   messages: RecordId[]; // References Message models
   moveLog: MoveLogEntry[];
   createdAt: DateISO;
+  chatFiltered: boolean;
 }
 
 /**
@@ -127,6 +129,7 @@ export interface ThreadRecord {
   createdAt: DateISO;
   createdBy: RecordId; // References User records
   comments: RecordId[]; // References Comment records
+  filtered: boolean;
 }
 
 /**
@@ -135,6 +138,7 @@ export interface ThreadRecord {
  * - `display`: A display name
  * - `createdAt`: when this user registered.
  * - `hideUsername`: privacy preference for user, will hide username if true
+ * - `privateProfile`: privacy preference for user, will hide profile from non-friends if true
  */
 export interface UserRecord {
   username: string; // References Auth records
@@ -142,6 +146,7 @@ export interface UserRecord {
   createdAt: DateISO;
   customBackground?: string;
   hideUsername: boolean;
+  privateProfile: boolean;
 }
 
 /**

@@ -31,12 +31,14 @@ export interface MoveLogInfo {
  * - `messages`: the ordered list of messages in the chat
  * - `moveLog`: the ordered list of game move descriptions in the chat
  * - `createdAt`: when the chat was created
+ * - `chatFiltered`: whether the chat should be filtered for content violations
  */
 export interface ChatInfo {
   chatId: string;
   messages: MessageInfo[];
   moveLog: MoveLogInfo[];
   createdAt: Date;
+  chatFiltered: boolean;
 }
 
 /*** TYPES USED IN THE CHAT API ***/

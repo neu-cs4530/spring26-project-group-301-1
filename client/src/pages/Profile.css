@@ -1,0 +1,726 @@
+.friendRequestDisplayName {
+  margin-right: 0.5em;
+}
+/* Larger font for friend request meta */
+.friendRequestMetaLarge {
+  font-size: 1.1rem;
+}
+/* Friend request accept/decline buttons */
+.friendRequestAcceptButton {
+  background: #e6fae6;
+  color: #217a2c;
+  border: 2px solid #5ec96e;
+  font-weight: 700;
+  font-size: 1.05rem;
+  border-radius: 10px;
+  padding: 0.38rem 1.1rem;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border 0.15s;
+  outline: none;
+}
+.friendRequestAcceptButton:hover,
+.friendRequestAcceptButton:focus {
+  background: #d2f5d2;
+  border-color: #34b233;
+  color: #217a2c;
+}
+
+.friendRequestDeclineButton {
+  background: #feeaea;
+  color: #b91c1c;
+  border: 2px solid #fca5a5;
+  font-weight: 700;
+  font-size: 1.05rem;
+  border-radius: 10px;
+  padding: 0.38rem 1.1rem;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border 0.15s;
+  outline: none;
+}
+.friendRequestDeclineButton:hover,
+.friendRequestDeclineButton:focus {
+  background: #fddede;
+  border-color: #ef4444;
+  color: #991b1b;
+}
+/* Profile identity card styles */
+.profileIdentityCard {
+  background: #f7fafd;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+  padding: 0.5rem 0.7rem 0.5rem 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.3rem;
+  min-height: 70px;
+}
+
+.profileIdentityMain {
+  display: flex;
+  align-items: center;
+}
+.profileIdentityName {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.25rem;
+}
+.profileIdentityMeta {
+  color: #64748b;
+  font-size: 1rem;
+  margin-bottom: 0.1rem;
+}
+.profileIdentityRight {
+  margin-left: auto;
+  gap: 16px;
+  align-items: center;
+  gap: 1rem;
+}
+/* Friend Requests tab: compact version */
+.profileFriendRequestsTab {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: #e6f0fe;
+  color: #174ea6;
+  border: 1.5px solid #90c2fd;
+  font-weight: 700;
+  font-size: 1.05rem;
+  border-radius: 10px;
+  padding: 0.38rem 1.1rem;
+  cursor: pointer;
+  box-shadow: none;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border 0.15s;
+  outline: none;
+}
+.profileFriendRequestsTab:hover,
+.profileFriendRequestsTab:focus {
+  background: #d2e7fc;
+  border-color: #60a5fa;
+  color: #174ea6;
+}
+.profileFriendRequestsTab.is-active {
+  background: #e6f0fe;
+  color: #174ea6;
+  border-color: #60a5fa;
+}
+.profileFriendRequestsTab svg {
+  margin-right: 0.5rem;
+  width: 1.25em;
+  height: 1.25em;
+  vertical-align: middle;
+}
+.privacyCard {
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  max-width: 600px;
+}
+
+.privacyRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+}
+
+.privacyRowText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.privacyRowLabel {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.privacyRowDescription {
+  font-size: 15px;
+  color: var(--color-text-secondary);
+  line-height: 1.35;
+}
+
+.privacyDivider {
+  height: 0.5px;
+  background: var(--color-border-tertiary);
+  margin: 0 1.25rem;
+}
+
+.toggleSwitch {
+  position: relative;
+  flex-shrink: 0;
+  width: 40px;
+  height: 22px;
+  cursor: pointer;
+}
+
+.toggleSwitch input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.toggleSlider {
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  background: #b4b2a9;
+  transition: background 1ms;
+}
+
+.toggleSlider::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: white;
+  transition: transform 0.2s;
+}
+
+.toggleSwitch input:checked + .toggleSlider {
+  background: var(--color-primary, oklch(0.45 0.1 260));
+}
+
+.toggleSwitch input:checked + .toggleSlider::before {
+  transform: translateX(18px);
+}
+
+.toggleSwitch input:focus-visible + .toggleSlider {
+  box-shadow: 0 0 0 3px rgba(83, 74, 183, 0.3);
+}
+
+.profile-page {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.profile-card {
+  width: 100%;
+  max-width: none;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+  padding: 1.5rem;
+}
+
+.profile-card--public {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  overflow: hidden;
+}
+
+.profile-card h1,
+.profile-card h2,
+.profile-card h3 {
+  margin-top: 0;
+  color: #111827;
+}
+
+.profile-card h1 {
+  font-size: 2.25rem;
+  line-height: 1.15;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #111827;
+}
+
+.profile-card h2:first-of-type {
+  font-size: 2.25rem;
+  line-height: 1.15;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #111827;
+}
+
+.profile-card p,
+.profile-card label,
+.profile-card span {
+  color: #374151;
+}
+
+/* Form controls in update profile */
+.profile-card input,
+.profile-card textarea,
+.profile-card select {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 0.55rem 0.7rem;
+  background: #fff;
+}
+
+.profile-card input:focus,
+.profile-card textarea:focus,
+.profile-card select:focus {
+  outline: none;
+  border-color: #14b8a6;
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15);
+}
+
+.profile-card select.profile-bg-select {
+  width: auto;
+  min-width: 160px;
+  max-width: 220px;
+}
+
+.profile-card button {
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.profile-bg-color-picker {
+  width: 3.25rem;
+  height: 2.5rem;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.profile-card .spacedSection h3 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #111827;
+  margin: 0 0 0.55rem 0;
+}
+
+.profileForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.profileForm--publicBackground {
+  border-radius: 16px;
+  padding: 1rem;
+}
+
+.profileIdentityCard {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.profileIdentityCard .smallAndGray {
+  font-size: 1.08rem;
+  line-height: 1.4;
+}
+
+.profileIdentityName {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.profileLayout {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.profileCol {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.profileSectionCard {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  background: #fff;
+  padding: 0.95rem;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  min-width: 850px;
+}
+
+.profileSectionCard h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #1f2937;
+}
+
+.profileControlRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.profileBgPreview {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.friendRequestRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.4rem 0;
+}
+
+.friendRequestActions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.profileSubmitRow {
+  margin-top: 0.75rem;
+}
+
+.friendRequestsEmpty {
+  font-size: 1.08rem;
+  line-height: 1.4;
+}
+
+@media (max-width: 980px) {
+  .profileLayout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.gameBgCard__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.35rem;
+}
+
+.gameBgCard__help {
+  font-size: 1.08rem;
+  line-height: 1.4;
+  color: #667085;
+  margin: 0 0 0.65rem 0;
+}
+
+.gameBgCard__divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 0.35rem 0 0.9rem 0;
+}
+
+.gameBgCard__reset {
+  border: 1px solid #d9dee7;
+  background: #f8fafc;
+  color: #667085;
+  border-radius: 14px;
+  padding: 0.35rem 0.85rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.gameBgCard__images {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.gameBgTile {
+  position: relative;
+  border: 1px solid #dbe3ef;
+  border-radius: 12px;
+  overflow: hidden;
+  padding: 0;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+}
+
+.gameBgTile img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.gameBgTile.is-selected {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.45);
+}
+
+.gameBgTile__check {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.35);
+  color: #fff;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+}
+
+.gameBgTile__check.is-selected {
+  background: rgba(96, 165, 250, 0.95);
+  border-color: #fff;
+}
+
+.gameBgCustomColor {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 0.25rem;
+  padding: 0.3rem 0.55rem;
+  border: 1px solid #d0d5dd;
+  border-radius: 10px;
+  background: #f8fafc;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #475467;
+}
+
+.gameBgCustomColor input[type="color"] {
+  width: 56px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.gameBgTile--color {
+  position: relative;
+  cursor: pointer;
+  padding: 0;
+  overflow: hidden;
+}
+
+.gameBgTile__colorInput {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 3;
+  border: 0;
+  padding: 0;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.gameBgTile__colorInput::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+.gameBgTile__colorInput::-webkit-color-swatch {
+  border: 0;
+  border-radius: 0;
+}
+
+.gameBgTile__colorPreview {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.gameBgTile__label {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  z-index: 2;
+  padding: 0.22rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #111827;
+  background: rgba(255, 255, 255, 0.88);
+}
+
+/* Check icon stays above preview */
+.gameBgTile__check {
+  z-index: 2;
+}
+
+.profileInfoList {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: #374151;
+  line-height: 1.55;
+}
+
+.profileTopFriendsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  color: #374151;
+  line-height: 1.55;
+}
+
+.profileTopFriendCard {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+  padding: 0.7rem 0.85rem;
+}
+
+.profileTopFriendNameRow {
+  display: flex;
+  align-items: center;
+}
+
+.profileTopFriendName {
+  font-size: 1.05rem;
+  font-weight: 550;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.profileTopFriendUsername {
+  margin-top: 0.08rem;
+  color: #475569;
+  font-size: 0.95rem;
+}
+
+.profileTopFriendStatRow {
+  margin-top: 0.2rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #334155;
+  font-size: 0.96rem;
+}
+
+.profileTopFriendStatIcon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.profilePrivateControls {
+  margin-top: 0.65rem;
+}
+
+.profile-card .profileDangerButton {
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  border-radius: 10px;
+  padding: 0.45rem 0.75rem;
+  min-height: auto;
+}
+
+.profile-card .profileDangerButton:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+.profile-card .profilePrimaryButton {
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  border-radius: 10px;
+  padding: 0.45rem 0.75rem;
+  min-height: auto;
+}
+
+.profile-card .profilePrimaryButton:hover {
+  background: #dbeafe;
+  border-color: #93c5fd;
+}
+
+.profileIdentityMetaRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: #64748b;
+  font-size: 1rem;
+  margin-bottom: 0.1rem;
+}
+
+.profileIdentityMetaJoined {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.profileIdentityMetaIcon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.profileIdentityMetaDot {
+  color: #94a3b8;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.profileIdentityStatusPill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+  padding: 0.08rem 0.48rem;
+  font-weight: 700;
+  font-size: 0.84rem;
+}
+
+.profileIdentityCard--actionsTopRight {
+  position: relative;
+  align-items: flex-start;
+  padding-right: 12rem;
+}
+
+.profileIdentityRight--topRight {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.95rem;
+  margin-left: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  max-width: 12rem;
+  text-align: right;
+}
+
+@media (max-width: 760px) {
+  .profileIdentityCard--actionsTopRight {
+    padding-right: 0.95rem;
+  }
+
+  .profileIdentityRight--topRight {
+    position: static;
+    margin-left: auto;
+    max-width: none;
+    text-align: left;
+  }
+}
