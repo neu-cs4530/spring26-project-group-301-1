@@ -1,12 +1,17 @@
 import React from "react";
 import "./ProfileSidebar.css";
-import { Image, Lock, Shield, Heart } from "lucide-react";
+import { Image, Lock, Shield, Heart, User } from "lucide-react";
 
 const SECTIONS = [
   {
     id: "friends",
     label: "Friends",
     icon: Heart,
+  },
+  {
+    id: "account",
+    label: "Account",
+    icon: User,
   },
   {
     id: "game-background",

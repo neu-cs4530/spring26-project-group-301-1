@@ -119,3 +119,38 @@ test.describe("The private profile logic", () => {
     expect(await page2.getByText("Joined").count()).toBe(1);
   });
 });
+
+test.describe("Display name editing", () => {
+  test("should allow updating display name from profile page", async () => {
+    await page1.request.post("http://localhost:8000/api/user/user0", {
+      data: {
+        auth: { username: "user0", password: "pwd0000" },
+        payload: { display: "The Knight Of Games" },
+      },
+    });
+
+    await logInUser(page1, "user0", "pwd0000");
+
+    await page1.getByRole("link", { name: "View Profile" }).waitFor({ state: "visible" });
+    await page1.getByRole("link", { name: "View Profile" }).click();
+    await page1.waitForURL("/profile/user0");
+
+    await page1.getByRole("button", { name: "Account" }).click();
+    await page1.getByPlaceholder("Display name").fill("Display Name Updated");
+    await page1.getByRole("button", { name: "Submit profile edits" }).click();
+    await page1.waitForURL("/login");
+
+    await logInUser(page1, "user0", "pwd0000");
+    await expect(
+      page1.getByRole("heading", { name: "Welcome, Display Name Updated!" }),
+    ).toBeVisible();
+
+    // Clean up test state for any subsequent tests.
+    await page1.getByRole("link", { name: "View Profile" }).click();
+    await page1.waitForURL("/profile/user0");
+    await page1.getByRole("button", { name: "Account" }).click();
+    await page1.getByPlaceholder("Display name").fill("The Knight Of Games");
+    await page1.getByRole("button", { name: "Submit profile edits" }).click();
+    await page1.waitForURL("/login");
+  });
+});

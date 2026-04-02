@@ -42,6 +42,7 @@ export default function UpdateProfile() {
     confirm,
     setConfirm,
     display,
+    setDisplay,
     hideUsername,
     setHideUsername,
     privateProfile,
@@ -240,6 +241,22 @@ export default function UpdateProfile() {
           </div>
 
           <div className="profileCol">
+            {activeSection === "account" && (
+              <section className="profileSectionCard" id="account">
+                <h3>Display Name</h3>
+                <div className="profileControlRow">
+                  <input
+                    type="text"
+                    className="widefill notTooWide"
+                    placeholder="Display name"
+                    value={display}
+                    onChange={(e) => setDisplay(e.target.value)}
+                  />
+                </div>
+                <p className="smallAndGray">This is the name shown to other users.</p>
+                {err && <p className="error-message">{err}</p>}
+              </section>
+            )}
             {activeSection === "game-background" && (
               <section className="profileSectionCard gameBgCard" id="game-background">
                 <div className="gameBgCard__header">
