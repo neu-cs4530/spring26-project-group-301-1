@@ -256,6 +256,20 @@ hr {
   text-align: center;
 }
 
+.newGameCard__warning {
+  color: #dc2626 !important;
+  font-size: 0.85rem;
+  margin: 0;
+  text-align: center;
+}
+
+.newThread__warning {
+  color: #dc2626 !important;
+  font-size: 0.85rem;
+  margin: 0;
+  text-align: left;
+}
+
 @media (max-width: 680px) {
   .newGameCard {
     width: 100%;

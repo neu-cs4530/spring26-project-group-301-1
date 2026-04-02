@@ -50,6 +50,12 @@
   flex-shrink: 0;
 }
 
+.gameSummary__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
 @media (max-width: 900px) {
   .gameSummary__header {
     flex-direction: column;
