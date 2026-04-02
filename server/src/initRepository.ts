@@ -38,6 +38,7 @@ async function resetStoredGames() {
       players: [user2id, user3id],
       createdAt: new Date("2025-04-21").toISOString(),
       createdBy: user2id,
+      isPrivate: false,
     },
     [randomUUID().toString()]: {
       type: "guess",
@@ -47,6 +48,7 @@ async function resetStoredGames() {
       players: [user1id, user0id, user3id, user2id],
       createdAt: recently.toISOString(),
       createdBy: user1id,
+      isPrivate: false,
     },
     [randomUUID().toString()]: {
       type: "nim",
@@ -55,6 +57,7 @@ async function resetStoredGames() {
       players: [user1id],
       createdAt: new Date().toISOString(),
       createdBy: user1id,
+      isPrivate: false,
     },
   };
 
