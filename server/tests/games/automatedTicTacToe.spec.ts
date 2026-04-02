@@ -951,6 +951,7 @@ describe(`Automated Tic Tac Toe's tagView() logic`, () => {
           [2, 0],
         ],
         forfeited: false,
+        opponentTypeSelected: true,
       }),
     ).toStrictEqual({
       type: "automatedTicTacToe",
@@ -967,6 +968,7 @@ describe(`Automated Tic Tac Toe's tagView() logic`, () => {
           [2, 0],
         ],
         forfeited: false,
+        opponentTypeSelected: true,
       },
     });
   });

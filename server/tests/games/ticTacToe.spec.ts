@@ -1169,7 +1169,7 @@ describe(`Tic Tac Toe's describeMove() logic`, () => {
           nextPlayer: 0,
           forfeited: false,
         },
-        { type: "move", difficulty: "easy" },
+        { type: "move", difficulty: "minimax" },
         1,
       ),
     ).toBe(" made an illegal move");
@@ -1354,6 +1354,7 @@ describe(`Tic Tac Toe's tagView() logic`, () => {
           [2, 0],
         ],
         forfeited: false,
+        opponentTypeSelected: true,
       }),
     ).toStrictEqual({
       type: "tictactoe",
@@ -1370,6 +1371,7 @@ describe(`Tic Tac Toe's tagView() logic`, () => {
           [2, 0],
         ],
         forfeited: false,
+        opponentTypeSelected: true,
       },
     });
   });

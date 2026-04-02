@@ -171,16 +171,14 @@ export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, Automat
     const move = zTicTacToeMove.safeParse(payload);
     if (move.error) return null;
 
-    const moveData = move.data;
-
     // difficulty selection
-    if ("difficulty" in moveData) {
+    if ("difficulty" in move.data) {
       if (state.opponentTypeSelected === true) return null;
 
       return {
         ...state,
         opponentTypeSelected: true,
-        opponentType: moveData.difficulty,
+        opponentType: move.data.difficulty,
       };
     }
 
@@ -196,8 +194,7 @@ export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, Automat
       };
     }
 
-    const coordMove: TicTacToeGameMove = moveData;
-    const { coord } = coordMove;
+    const { coord } = move.data;
     if (!coord) return null;
     const [i, j] = coord;
     if (state.board[i][j] !== null) return null;
