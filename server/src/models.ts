@@ -72,6 +72,7 @@ export interface CommentRecord {
  * - `players`: active players for the game
  * - `createdAt`: when the game was created
  * - `createdBy`: username of the person who created the game
+ * - `isPrivate`: whether the game is visible to non-friends of the creator
  */
 export interface GameRecord {
   type: GameKey;
@@ -81,6 +82,7 @@ export interface GameRecord {
   players: RecordId[]; // References User records
   createdAt: DateISO;
   createdBy: RecordId; // References User records
+  isPrivate: boolean;
 }
 
 /**

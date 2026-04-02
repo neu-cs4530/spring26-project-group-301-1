@@ -26,7 +26,7 @@ app.use(
       express
         .Router() //
         .post("/create", game.postCreate)
-        .get("/list", game.getList)
+        .post("/list", game.getList)
         .get("/:id", game.getById),
     )
     .use(
