@@ -6,6 +6,7 @@ import type { GameInfo } from "@gamenite/shared";
 import ChatPanel from "../components/ChatPanel.tsx";
 import GamePanel from "../components/GamePanel.tsx";
 import useLoginContext from "../hooks/useLoginContext.ts";
+import useAuth from "../hooks/useAuth.ts";
 
 function hexToRgb(hex: string): [number, number, number] {
   const normalized = hex.slice(1);
@@ -34,6 +35,7 @@ export default function Game() {
   const { gameId } = useParams();
   const [game, setGame] = useState<GameInfo | null>(null);
   const { user } = useLoginContext();
+  const auth = useAuth();
   const customBackground = (user.customBackground || "").trim();
 
   const gameBgStyle = useMemo<CSSProperties>(() => {
@@ -63,14 +65,14 @@ export default function Game() {
     (async () => {
       // non-nullish assertion is ok here given that Game is only called in a
       // route with `:gameId`
-      const game = await getGameById(gameId!);
+      const game = await getGameById(gameId!, auth);
       if (ignore || "error" in game) return;
       setGame(game);
     })();
     return () => {
       ignore = true;
     };
-  }, [gameId]);
+  }, [gameId, auth]);
 
   return (
     game && (
