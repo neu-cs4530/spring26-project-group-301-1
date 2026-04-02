@@ -2,6 +2,7 @@ import type { ErrorMsg, GameInfo, FriendInfo, SafeUserInfo } from "@gamenite/sha
 import { useEffect, useState } from "react";
 import { getFriends } from "../services/friendsService";
 import { gameList } from "../services/gameService";
+import useAuth from "./useAuth";
 
 /**
  * Custom hook to get a list of the most-played with friends for a given user.
@@ -13,6 +14,7 @@ import { gameList } from "../services/gameService";
 export default function useTopFriendsList(username: string) {
   const [games, setGames] = useState<GameInfo[] | ErrorMsg | null>(null);
   const [friends, setFriends] = useState<FriendInfo[] | ErrorMsg | null>(null);
+  const auth = useAuth();
 
   /**
    * Helper function to convert a list of games to a list of lists of players
@@ -88,8 +90,8 @@ export default function useTopFriendsList(username: string) {
   }
 
   useEffect(() => {
-    gameList().then(setGames);
-  }, []);
+    gameList(auth).then(setGames);
+  }, [auth]);
 
   useEffect(() => {
     getFriends(username).then(setFriends);
