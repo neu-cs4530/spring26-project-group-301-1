@@ -3,6 +3,7 @@ import { NavLink, type NavLinkRenderProps } from "react-router-dom";
 import { House, Gamepad2, MessageCircle, User, Mail } from "lucide-react";
 import useAuth from "../hooks/useAuth.ts";
 import useFriendRequestCount from "../hooks/useFriendRequestCount";
+import useDmContext from "../hooks/useDmContext.ts";
 
 /**
  * The SideBarNav component contains the primary naviagation menu. It
@@ -12,6 +13,7 @@ import useFriendRequestCount from "../hooks/useFriendRequestCount";
 export default function SideBarNav() {
   const { username } = useAuth();
   const friendRequestCount = useFriendRequestCount();
+  const { totalUnread } = useDmContext();
 
   const navClass = ({ isActive }: NavLinkRenderProps) =>
     `menu_button ${isActive ? "menu_selected" : ""}`;
@@ -32,9 +34,10 @@ export default function SideBarNav() {
         <MessageCircle className="menu_icon" aria-hidden="true" />
         <span>Forum</span>
       </NavLink>
-      <NavLink to="/messages" className={navClass}>
+      <NavLink to="/messages" className={navClass} style={{ position: "relative" }}>
         <Mail className="menu_icon" aria-hidden="true" />
-        Messages
+        <span>Messages</span>
+        {totalUnread > 0 && <span className="sidebarAlertBadge">{totalUnread}</span>}
       </NavLink>
 
       <NavLink

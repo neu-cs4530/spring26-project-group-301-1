@@ -1,17 +1,13 @@
 import "./DirectMessage.css";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 import type { DirectMessageInfo } from "@gamenite/shared";
 import useLoginContext from "../hooks/useLoginContext.ts";
 import { getDirectMessages } from "../services/dmService.ts";
 import useDmContext from "../hooks/useDmContext.ts";
 
-/**
- * The page for viewing the list of direct messages the user is a part of.
- */
 export default function DirectMessageList() {
   const { user } = useLoginContext();
-  const navigate = useNavigate();
   const [dms, setDms] = useState<DirectMessageInfo[] | null>(null);
   const { unreadCounts } = useDmContext();
 
@@ -23,36 +19,41 @@ export default function DirectMessageList() {
   }, [user.username]);
 
   return (
-    <div className="content">
-      <div className="spacedSection">
-        <h2>Messages</h2>
+    <div className="dm-layout">
+      <div className="dm-sidebar">
+        <h3 className="dm-sidebar-title">Direct Messages</h3>
         {dms === null ? (
-          <p>Loading...</p>
+          <p className="dm-sidebar-empty">Loading...</p>
         ) : dms.length === 0 ? (
-          <p>No messages yet.</p>
+          <p className="dm-sidebar-empty">No messages yet.</p>
         ) : (
-          <div className="dottedList">
+          <div className="dm-list">
             {dms.map((dm) => {
               const lastMessage = dm.messages.at(-1);
               const liveUnread = unreadCounts[dm.dmId] ?? dm.unreadCount;
               return (
-                <div
+                <NavLink
                   key={dm.dmId}
-                  className="clickable"
-                  onClick={() => void navigate(`/messages/${dm.dmId}`)}
+                  to={`/messages/${dm.dmId}`}
+                  className={({ isActive }) =>
+                    `dm-list-item ${isActive ? "dm-list-item--active" : ""}`
+                  }
                 >
                   <strong>{dm.otherUser.display}</strong>
-                  {liveUnread > 0 && <span className="dmBadge">{}</span>}
+                  {liveUnread > 0 && <span className="dmAlert">{liveUnread}</span>}
                   {lastMessage && (
                     <p className="smallAndGray">
                       {lastMessage.deleted ? "[deleted]" : lastMessage.text}
                     </p>
                   )}
-                </div>
+                </NavLink>
               );
             })}
           </div>
         )}
+      </div>
+      <div className="dm-main">
+        <Outlet />
       </div>
     </div>
   );

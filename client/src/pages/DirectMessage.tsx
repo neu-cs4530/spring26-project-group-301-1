@@ -5,10 +5,6 @@ import useLoginContext from "../hooks/useLoginContext.ts";
 import { getDirectMessages } from "../services/dmService.ts";
 import DirectMessagePanel from "../components/DirectMessagePanel.tsx";
 
-/**
- * Page for viewing a direct message thread
- * @returns The HTML for the direct message thread that uses DirectMessagePanel
- */
 export default function DirectMessage() {
   const { dmId } = useParams<{ dmId: string }>();
   const { user } = useLoginContext();
@@ -22,18 +18,12 @@ export default function DirectMessage() {
     });
   }, [dmId, user.username]);
 
-  return (
-    <div className="content">
-      <div className="spacedSection">
-        {dm ? (
-          <>
-            <h2>{dm.otherUser.display}</h2>
-            <DirectMessagePanel dm={dm} />
-          </>
-        ) : (
-          <p>Loading...</p>
-        )}
-      </div>
-    </div>
+  return dm ? (
+    <>
+      <h2>{dm.otherUser.display}</h2>
+      <DirectMessagePanel dm={dm} />
+    </>
+  ) : (
+    <p>Loading...</p>
   );
 }

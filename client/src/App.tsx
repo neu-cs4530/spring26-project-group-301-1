@@ -76,8 +76,9 @@ export default function App() {
               <Route path="/game/new" element={<NewGame />} />
               <Route path="/game/:gameId" element={<Game />} />
               <Route path="/profile/:username" element={<Profile />} />
-              <Route path="/messages" element={<DirectMessageList />} />
-              <Route path="/messages/:dmId" element={<DirectMessage />} />
+              <Route path="/messages" element={<DirectMessageList />}>
+                <Route path=":dmId" element={<DirectMessage />} />
+              </Route>
               <Route path="/*" element={<NoSuchRoute />} />
             </Route>
           </Routes>
