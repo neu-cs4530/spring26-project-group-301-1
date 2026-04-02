@@ -2,6 +2,7 @@ import "./ChatPanel.css";
 import MessageCreation from "./MessageCreation.tsx";
 import MessageList from "./MessageList.tsx";
 import useSocketsForChat from "../hooks/useSocketsForChat.ts";
+import { ShieldCheck, ShieldOff } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 interface ChatProps {
@@ -27,8 +28,14 @@ function readHiddenMessageIds(storageKey: string): Set<string> {
  * A chat panel allows viewing and updating messages in live chat
  */
 export default function ChatPanel({ chatId, lightText = false }: ChatProps) {
-  const { messages, handleMessageCreation, handleMessageDeletion, cooldownUntil, cooldownMessage } =
-    useSocketsForChat(chatId);
+  const {
+    messages,
+    handleMessageCreation,
+    handleMessageDeletion,
+    cooldownUntil,
+    cooldownMessage,
+    chatFilter,
+  } = useSocketsForChat(chatId);
   const hiddenStorageKey = useMemo(() => `hidden-game-chat-messages:${chatId}`, [chatId]);
   const [hiddenMessageIdsByChat, setHiddenMessageIdsByChat] = useState<Record<string, Set<string>>>(
     () => ({ [chatId]: readHiddenMessageIds(hiddenStorageKey) }),
@@ -66,7 +73,18 @@ export default function ChatPanel({ chatId, lightText = false }: ChatProps) {
     messages && (
       <div className={lightText ? "chatContainer chatContainer--lightText" : "chatContainer"}>
         <div className="chatHeader">
-          <h3 className="chatHeader__title">Game Chat</h3>
+          <h3 className="chatHeader__title">
+            Game Chat{" "}
+            {chatFilter ? (
+              <span title="Chat filter on">
+                <ShieldCheck size={20} />
+              </span>
+            ) : (
+              <span title="Chat filter off">
+                <ShieldOff size={20} />
+              </span>
+            )}
+          </h3>
         </div>
         <MessageList
           messages={messages}

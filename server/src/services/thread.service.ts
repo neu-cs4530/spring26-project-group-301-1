@@ -19,6 +19,7 @@ async function populateThreadInfo(threadId: string): Promise<ThreadInfo> {
     createdBy: await populateSafeUserInfo(thread.createdBy),
     createdAt: new Date(thread.createdAt),
     comments: await Promise.all(thread.comments.map(populateCommentInfo)),
+    filtered: thread.filtered,
   };
 }
 
@@ -36,6 +37,7 @@ async function populateThreadSummary(threadId: string): Promise<ThreadSummary> {
     createdBy: await populateSafeUserInfo(thread.createdBy),
     createdAt: new Date(thread.createdAt),
     comments: thread.comments.length,
+    filtered: thread.filtered,
   };
 }
 
@@ -49,7 +51,7 @@ async function populateThreadSummary(threadId: string): Promise<ThreadSummary> {
  */
 export async function createThread(
   user: UserWithId,
-  { title, text }: CreateThreadMessage,
+  { title, text, filtered }: CreateThreadMessage,
   createdAt: Date,
 ): Promise<ThreadInfo> {
   const id = await ThreadRepo.add({
@@ -58,6 +60,7 @@ export async function createThread(
     createdAt: createdAt.toISOString(),
     createdBy: user.userId,
     comments: [],
+    filtered: filtered ?? true,
   });
   return populateThreadInfo(id);
 }

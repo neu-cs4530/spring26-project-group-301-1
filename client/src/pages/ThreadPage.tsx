@@ -5,6 +5,7 @@ import NewForumComment from "../components/NewForumComment.tsx";
 import useTimeSince from "../hooks/useTimeSince.ts";
 import UserLink from "../components/UserLink.tsx";
 import useLoginContext from "../hooks/useLoginContext.ts";
+import { ShieldCheck, ShieldOff } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 function readHiddenCommentIds(storageKey: string): Set<string> {
@@ -123,7 +124,12 @@ export default function ThreadPage() {
               </div>
 
               <div className="threadCard__commentsHeader">
-                <h3 className="threadCard__commentsTitle">Comments</h3>
+                <h2 className="threadCard__commentsTitle">
+                  Comments
+                  <span title={threadInfo.filtered ? "Filter on" : "Filter off"}>
+                    {threadInfo.filtered ? <ShieldCheck size={18} /> : <ShieldOff size={18} />}
+                  </span>
+                </h2>
                 <div className="threadCard__commentCount">
                   {threadInfo.comments.length}{" "}
                   {threadInfo.comments.length === 1 ? "Comment" : "Comments"}

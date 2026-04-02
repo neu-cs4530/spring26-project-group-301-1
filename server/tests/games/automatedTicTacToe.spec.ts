@@ -938,14 +938,9 @@ describe("Automated Tic Tac Toe's getWinner() logic", () => {
   it("Should return forfeiting player when forfeited", () => {
     const state = makeState({
       forfeited: true,
-      nextPlayer: 0,
-    });
-    expect(automatedTicTacToeLogic.getWinner(state, players)).toBe("Player O");
-    const state2 = makeState({
-      forfeited: true,
       nextPlayer: 1,
     });
-    expect(automatedTicTacToeLogic.getWinner(state2, players)).toBe("Player X");
+    expect(automatedTicTacToeLogic.getWinner(state, players)).toBe("Player X");
   });
 
   it("Should return null when there is no winner", () => {

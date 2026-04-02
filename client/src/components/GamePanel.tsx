@@ -1,6 +1,7 @@
 import "./GamePanel.css";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { GameInfo } from "@gamenite/shared";
+import { getCurrentPlayer } from "@gamenite/shared";
 import { gameNames } from "../util/consts.ts";
 import useLoginContext from "../hooks/useLoginContext.ts";
 import useAuth from "../hooks/useAuth.ts";
@@ -8,6 +9,7 @@ import GameDispatch from "../games/GameDispatch.tsx";
 import useSocketsForGame from "../hooks/useSocketsForGame.ts";
 import useTimeSince from "../hooks/useTimeSince.ts";
 import UserLink from "./UserLink.tsx";
+import useInactivityForfeit from "../hooks/useInactivityForfeit.ts";
 
 /**
  * A game panel allows viewing the status and players of a live game
@@ -19,7 +21,6 @@ export default function GamePanel({
   createdAt,
   minPlayers,
 }: GameInfo) {
-  // Display title without the "vs Automated Opponent" suffix for the game page
   const displayTitle = gameNames[type].replace(" vs Automated Opponent", "");
   const isAutomatedTicTacToe = type === "automatedTicTacToe";
   const { user, socket } = useLoginContext();
@@ -32,6 +33,24 @@ export default function GamePanel({
 
   const displayedPlayerCount = isAutomatedTicTacToe ? Math.max(players.length, 2) : players.length;
 
+  const forfeitGame = useCallback(() => {
+    socket.emit("gameMakeMove", { auth, payload: { gameId, move: { type: "forfeit" } } });
+  }, [socket, auth, gameId]);
+
+  const currentTurnPlayerIndex = view ? getCurrentPlayer(view) : null;
+
+  const isActivePlayer =
+    userPlayerIndex >= 0 &&
+    !!view &&
+    (currentTurnPlayerIndex === -1 || currentTurnPlayerIndex === userPlayerIndex);
+
+  const {
+    showWarning,
+    secondsLeft,
+    reset: resetInactivityTimer,
+  } = useInactivityForfeit(isActivePlayer, forfeitGame);
+
+  // AI thinking event
   useEffect(() => {
     const handleThinkingEvent = (event: Event) => {
       const customEvent = event as CustomEvent<{ gameId?: string; thinking?: boolean }>;
@@ -50,29 +69,6 @@ export default function GamePanel({
     if (type !== "tictactoe" && type !== "automatedTicTacToe") return "";
     return index === 0 ? " (O)" : " (X)";
   };
-
-  const forfeitGame = () => {
-    socket.emit("gameMakeMove", { auth, payload: { gameId, move: { type: "forfeit" } } });
-  };
-
-  const currentTurnPlayerIndex = (() => {
-    if (!view) return null;
-
-    if (view.type === "tictactoe" || view.type === "automatedTicTacToe") {
-      const tttView = view.view;
-      const boardFull = tttView.board.every((row) => row.every((entry) => entry !== null));
-      if (tttView.winningEntry || tttView.forfeited || boardFull) return null;
-      return tttView.nextPlayer;
-    }
-
-    if (view.type === "nim") {
-      const nimView = view.view;
-      if (nimView.forfeited || nimView.remaining <= 0) return null;
-      return nimView.nextPlayer;
-    }
-
-    return null;
-  })();
 
   const renderPlayerCard = (player: (typeof players)[number], index: number, isTurn = false) => (
     <div
@@ -110,88 +106,92 @@ export default function GamePanel({
   );
 
   return hasWatched ? (
-    <div className="gamePanel">
-      <div className="gameRoster">
-        <div className="gameRoster__header">
-          <div>
-            <div className="gameRoster__titleRow">
-              <h2 className="gameRoster__title">{displayTitle}</h2>
-              <span className="gameRoster__titleTime">{timeSince(createdAt)}</span>
+    <>
+      {showWarning && secondsLeft > 1 && (
+        <div className="gamePanel__inactivityWarning" role="alert">
+          <span>
+            You've been inactive. You will forfeit in <strong>{secondsLeft}s</strong> unless you
+            interact with the page.
+          </span>
+          <button className="primary narrow" onClick={resetInactivityTimer}>
+            I'm still here
+          </button>
+        </div>
+      )}
+      <div className="gamePanel">
+        <div className="gameRoster">
+          <div className="gameRoster__header">
+            <div>
+              <div className="gameRoster__titleRow">
+                <h2 className="gameRoster__title">{displayTitle}</h2>
+                <span className="gameRoster__titleTime">{timeSince(createdAt)}</span>
+              </div>
+              <div className="gameRoster__meta">
+                <span>Players: {displayedPlayerCount}</span>
+                <span>Viewers: {viewers}</span>
+              </div>
             </div>
-            <div className="gameRoster__meta">
-              <span>Players: {displayedPlayerCount}</span>
-              <span>Viewers: {viewers}</span>
-            </div>
-          </div>
-          {
-            // If the game hasn't started and user hasn't joined, they can join
-            userPlayerIndex < 0 && !view && (
+            {userPlayerIndex < 0 && !view && (
               <button
                 className="primary narrow gameRoster__action gameRoster__action--join"
                 onClick={joinGame}
               >
                 Join Game
               </button>
-            )
-          }
-          {
-            // If the game hasn't started and the user has joined, they can start the game if a minimum number of players are present
-            userPlayerIndex >= 0 && !view && players.length >= minPlayers && (
+            )}
+            {userPlayerIndex >= 0 && !view && players.length >= minPlayers && (
               <button
                 className="primary narrow gameRoster__action gameRoster__action--start"
                 onClick={startGame}
               >
                 Start Game
               </button>
-            )
-          }
-          {
-            // If the game is active and user is a player, they can forfeit from the header
-            userPlayerIndex >= 0 && view && (
+            )}
+            {userPlayerIndex >= 0 && view && (
               <button
                 className="gameRoster__action gameRoster__action--forfeit"
                 onClick={forfeitGame}
               >
                 Forfeit Game
               </button>
-            )
-          }
-        </div>
-        {isAutomatedTicTacToe && players.length === 1 ? (
-          <div className="gameRoster__duel" role="list">
-            {renderPlayerCard(players[0], 0, aiThinking ? false : currentTurnPlayerIndex === 0)}
-            <div className="gameRoster__versus">vs</div>
-            {renderAutomatedOpponentCard(currentTurnPlayerIndex === 1 || aiThinking)}
+            )}
           </div>
-        ) : players.length === 2 ? (
-          <div className="gameRoster__duel" role="list">
-            {renderPlayerCard(players[0], 0, currentTurnPlayerIndex === 0)}
-            <div className="gameRoster__versus">vs</div>
-            {renderPlayerCard(players[1], 1, currentTurnPlayerIndex === 1)}
+          {isAutomatedTicTacToe && players.length === 1 ? (
+            <div className="gameRoster__duel" role="list">
+              {renderPlayerCard(players[0], 0, aiThinking ? false : currentTurnPlayerIndex === 0)}
+              <div className="gameRoster__versus">vs</div>
+              {renderAutomatedOpponentCard(currentTurnPlayerIndex === 1 || aiThinking)}
+            </div>
+          ) : players.length === 2 ? (
+            <div className="gameRoster__duel" role="list">
+              {renderPlayerCard(players[0], 0, currentTurnPlayerIndex === 0)}
+              <div className="gameRoster__versus">vs</div>
+              {renderPlayerCard(players[1], 1, currentTurnPlayerIndex === 1)}
+            </div>
+          ) : (
+            <div className="gameRoster__list" role="list">
+              {players.map((player, index) =>
+                renderPlayerCard(player, index, currentTurnPlayerIndex === index),
+              )}
+            </div>
+          )}
+        </div>
+        {view ? (
+          <div className="gameFrame">
+            <GameDispatch
+              gameId={gameId}
+              userPlayerIndex={userPlayerIndex}
+              players={players}
+              view={view}
+            />
           </div>
         ) : (
-          <div className="gameRoster__list" role="list">
-            {players.map((player, index) =>
-              renderPlayerCard(player, index, currentTurnPlayerIndex === index),
-            )}
+          <div className="gameFrame gameFrame--waiting">
+            <div className="gameFrame__waitingText">Waiting for game to begin</div>
           </div>
         )}
       </div>
-      {view ? (
-        <div className="gameFrame">
-          <GameDispatch
-            gameId={gameId}
-            userPlayerIndex={userPlayerIndex}
-            players={players}
-            view={view}
-          />
-        </div>
-      ) : (
-        <div className="gameFrame gameFrame--waiting">
-          <div className="gameFrame__waitingText">Waiting for game to begin</div>
-        </div>
-      )}
-    </div>
+    </>
   ) : (
     <div></div>
   );
