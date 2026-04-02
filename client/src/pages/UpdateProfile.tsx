@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { initiateOAuth } from "../services/oauthService";
 import type {
   FriendRequestInfo,
+  SocialProfileLink,
   SocialProfilePlatform,
   SocialProfileReqType,
 } from "@gamenite/shared";
@@ -97,7 +98,7 @@ export default function UpdateProfile() {
           setRequestsErr(res.error);
           setRequests([]);
         }
-      }
+      },
     );
   }, [user.username, pass]);
 
@@ -108,12 +109,24 @@ export default function UpdateProfile() {
     const res = await resolveRequest(
       { username: user.username, password: pass },
       requestId,
-      action
+      action,
     );
     if ("error" in res) {
       setResolveErrors((prev: Record<string, string>) => ({ ...prev, [requestId]: res.error }));
     } else {
       setRequests((prev: FriendRequestInfo[]) => prev.filter((r) => r.requestId !== requestId));
+    }
+  }
+
+  /**
+   * Handle verification requests for linked social media accounts. Note that this will re-direct the
+   * user upon verification.
+   * @param link the social media linked account
+   */
+  async function handleVerify(link: SocialProfileLink) {
+    const result = await initiateOAuth(link.type, user.username, pass, link.link);
+    if ("url" in result) {
+      window.location.replace(result.url);
     }
   }
 
@@ -416,40 +429,30 @@ export default function UpdateProfile() {
             {activeSection === "social-media" && (
               <section className="profileSectionCard" id="social-media">
                 <h3>Social Media</h3>
-                <div>
-                  <p>Linked accounts: </p>
+                <div style={{ paddingBottom: 6 }}>
+                  <p style={{ fontWeight: "bold" }}>Linked accounts: </p>
+                  <p className="smallAndGray">
+                    Note: verifying an account will re-direct you away from GameNite Connect!
+                  </p>
                   {user.profileLinks.length === 0 ? (
                     <p>You have no linked accounts</p>
                   ) : (
                     user.profileLinks.map((l) => (
-                      <li key={l.link}>
+                      <div key={l.link}>
                         {l.type}: {l.link}{" "}
                         {l.verified ? (
                           "✓ Verified"
                         ) : (
-                          <button
-                            type="button"
-                            onClick={async () => {
-                              const result = await initiateOAuth(
-                                l.type,
-                                user.username,
-                                pass,
-                                l.link
-                              );
-                              if ("url" in result) {
-                                window.location.href = result.url;
-                              }
-                            }}
-                          >
+                          <button type="button" onClick={() => handleVerify(l)}>
                             Verify
                           </button>
                         )}
-                      </li>
+                      </div>
                     ))
                   )}
                 </div>
                 <div>
-                  <p>Modify linked account:</p>
+                  <p style={{ fontWeight: "bold" }}>Modify linked account:</p>
                   <input
                     type="text"
                     placeholder="Social Profile URL"

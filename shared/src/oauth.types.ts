@@ -10,3 +10,9 @@ export type VerifySocialProfilePayload = z.infer<typeof zVerifySocialProfilePayl
 export const zVerifySocialProfilePayload = z.object({
   link: z.string(),
 });
+
+export const zSocialPlatformState = z.object({
+  username: z.string(),
+  link: z.string(),
+  type: zSocialProfilePlatformWithAuth,
+});

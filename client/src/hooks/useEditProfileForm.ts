@@ -61,7 +61,7 @@ export default function useEditProfileForm() {
   const isColor = isPreset || isHexColor(initialBg);
   const isPresetImg = isPresetImage(initialBg);
   const [backgroundType, setBackgroundType] = useState(
-    isColor ? "color" : isPresetImg ? "preset" : initialBg ? "image" : "color"
+    isColor ? "color" : isPresetImg ? "preset" : initialBg ? "image" : "color",
   );
   const [color, setColor] = useState(isColor ? initialBg : presetColors[0]);
   const [imageUrl, setImageUrl] = useState(isPresetImg || !isColor ? initialBg : "");

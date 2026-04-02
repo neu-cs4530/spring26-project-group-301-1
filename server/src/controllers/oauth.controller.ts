@@ -1,7 +1,9 @@
 import {
   withAuth,
   zVerifySocialProfilePayload,
+  zSocialPlatformState,
   type SocialProfilePlatform,
+  type SocialProfilePlatformWithAuth,
 } from "@gamenite/shared";
 import { checkAuth, getUserByUsername } from "../services/auth.service.ts";
 import { type RestAPI } from "../types.ts";
@@ -10,11 +12,17 @@ import { UserRepo } from "../repository.ts";
 
 const CLIENT_URL = "http://localhost:4530";
 
-// TODO: make service util function so this is not needed here?
+/**
+ * Helper function to validate user-provided credentials by platform
+ * @param platform the platform to check validation
+ * @param link the link provided by the user
+ * @param login the login context returned by the OAuth flow
+ * @returns true if valid, false if not
+ */
 function validateAuthByPlatform(
   platform: SocialProfilePlatform,
   link: string,
-  login: string
+  login: string,
 ): boolean {
   if (platform === "twitch") {
     const linkedUsername = link.match(/twitch\.tv\/([^/?#]+)/i)?.[1]?.toLowerCase();
@@ -28,13 +36,36 @@ function validateAuthByPlatform(
 }
 
 /**
+ * Helper function to check for supported authentication platforms.
+ * @param platform the social media platform
+ * @returns the platform with auth if supported, otherwise null
+ */
+function convertSocialPlatformToSupported(
+  platform: SocialProfilePlatform,
+): SocialProfilePlatformWithAuth | null {
+  if (platform === "twitch") {
+    return "twitch";
+  }
+  if (platform === "youtube") {
+    return "youtube";
+  }
+  return null;
+}
+
+/**
  * Initiates the OAuth flow for the given platform.
  * Validates credentials and returns the platform's auth URL.
  */
-export const getAuthByPlatform: RestAPI<{ url: string }, { platform: string }> = async (
-  req,
-  res
-) => {
+export const getAuthByPlatform: RestAPI<
+  { url: string },
+  { platform: SocialProfilePlatform }
+> = async (req, res) => {
+  const supportedPlatform = convertSocialPlatformToSupported(req.params.platform);
+  if (supportedPlatform === null) {
+    res.status(400).send({ error: "Unsupported platform for authentication" });
+    return;
+  }
+
   const body = withAuth(zVerifySocialProfilePayload).safeParse(req.body);
   if (!body.success) {
     res.status(400).send({ error: "Poorly-formed request" });
@@ -46,13 +77,7 @@ export const getAuthByPlatform: RestAPI<{ url: string }, { platform: string }> =
     res.status(400).send({ error: "Invalid user request" });
     return;
   }
-  res.send(
-    await initOAuthFlow(
-      req.params.platform as SocialProfilePlatform,
-      user.username,
-      body.data.payload.link
-    )
-  );
+  res.send(initOAuthFlow(supportedPlatform, user.username, body.data.payload.link));
 };
 
 /**
@@ -61,7 +86,7 @@ export const getAuthByPlatform: RestAPI<{ url: string }, { platform: string }> =
  */
 export const getCallbackByPlatform: RestAPI<never, { platform: SocialProfilePlatform }> = async (
   req,
-  res
+  res,
 ) => {
   const { code, state, error } = req.query as { code?: string; state?: string; error?: string };
 
@@ -75,15 +100,15 @@ export const getCallbackByPlatform: RestAPI<never, { platform: SocialProfilePlat
   }
 
   // this is the 'state' maintained
-  let username: string;
-  let link: string;
-  let type: SocialProfilePlatform;
-  try {
-    ({ username, link, type } = JSON.parse(Buffer.from(state, "base64").toString("utf8")));
-  } catch {
+  const result = zSocialPlatformState.safeParse(Buffer.from(state, "base64").toString("utf8"));
+  if ("error" in result) {
     res.status(400).send({ error: "Invalid state parameter" });
     return;
   }
+
+  const username = result.data.username;
+  const link = result.data.link;
+  const type = result.data.type;
 
   const user = await getUserByUsername(username);
   if (!user) {
@@ -96,14 +121,14 @@ export const getCallbackByPlatform: RestAPI<never, { platform: SocialProfilePlat
 
   if (validateAuthByPlatform(type, link, login) === false) {
     res.redirect(
-      `${CLIENT_URL}/?oauth_error=${encodeURIComponent("Account does not match linked profile")}`
+      `${CLIENT_URL}/?oauth_error=${encodeURIComponent("Account does not match linked profile")}`,
     );
     return;
   }
 
   const record = await UserRepo.get(user.userId);
   record.profileLinks = record.profileLinks.map((p) =>
-    p.link === link && p.type === type ? { ...p, verified: true } : p
+    p.link === link && p.type === type ? { ...p, verified: true } : p,
   );
   await UserRepo.set(user.userId, record);
 

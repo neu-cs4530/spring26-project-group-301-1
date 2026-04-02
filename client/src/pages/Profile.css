@@ -412,12 +412,18 @@
 .profileSocialLink {
   border: 1px solid #e5e7eb;
   border-radius: 14px;
+  padding: 4px;
   background: #fff;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  justify-content: space-between;
   gap: 0.35rem;
   color: var(--gray-foreground);
   width: 100%;
+}
+
+.profileSocialLink:hover {
+  cursor: pointer;
+  
 }
 
 @media (max-width: 980px) {

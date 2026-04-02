@@ -266,13 +266,33 @@ export default function ViewProfile({ username }: ViewProfileProps) {
   // TOOD: cleaner way to do this
   function getIconByPlatform(platform: SocialProfilePlatform) {
     if (platform === "youtube") {
-      return <SquarePlay color="red" />;
+      return (
+        <div style={{ display: "flex", flexDirection: "row", padding: "2px" }}>
+          <SquarePlay color="red" />
+          <p style={{ paddingLeft: "6px" }}>YouTube</p>
+        </div>
+      );
     } else if (platform === "twitter") {
-      return <Bird color="blue" />;
+      return (
+        <div style={{ display: "flex", flexDirection: "row", padding: "2px" }}>
+          <Bird color="blue" />
+          <p style={{ paddingLeft: "6px" }}>Twitter</p>
+        </div>
+      );
     } else if (platform === "instagram") {
-      return <Camera color="pink" />;
+      return (
+        <div style={{ display: "flex", flexDirection: "row", padding: "2px" }}>
+          <Camera color="pink" />
+          <p style={{ paddingLeft: "6px" }}>Instagram</p>
+        </div>
+      );
     } else if (platform === "twitch") {
-      return <MessageSquareQuote color="purple" />;
+      return (
+        <div style={{ display: "flex", flexDirection: "row", padding: "2px" }}>
+          <MessageSquareQuote color="purple" />
+          <p style={{ paddingLeft: "6px" }}>Twitch</p>
+        </div>
+      );
     }
 
     return <></>;
@@ -323,29 +343,30 @@ export default function ViewProfile({ username }: ViewProfileProps) {
                       <div className="profileIdentityMeta">Games Lost: {getLosses()}</div>
                     )}
                     <div>
-                      <h3>Social Profiles</h3>
+                      <h3 style={{ fontSize: "2xl", fontWeight: "bold", paddingTop: 4 }}>
+                        Social Profiles
+                      </h3>
                       {componentState.user.profileLinks.length === 0 ? (
                         <span className="smallAndGray">
-                          This user has no linked social accounts
+                          This user has no linked social profiles
                         </span>
                       ) : (
                         componentState.user.profileLinks.map((p) => {
                           return (
-                            <div className="profileSocialLink">
-                              {getIconByPlatform(p.type)}
-                              <a href={p.link} target="_blank">
-                                {p.type}
-                              </a>
-                              {p.verified === true ? (
-                                <p>
-                                  <CircleCheck color="green" />
-                                </p>
-                              ) : (
-                                <p>
-                                  <CircleAlert color="orange" />
-                                </p>
-                              )}
-                            </div>
+                            <a href={p.link} target="_blank">
+                              <div className="profileSocialLink">
+                                {getIconByPlatform(p.type)}
+                                {p.verified === true ? (
+                                  <p>
+                                    <CircleCheck color="green" />
+                                  </p>
+                                ) : (
+                                  <p>
+                                    <CircleAlert color="orange" />
+                                  </p>
+                                )}
+                              </div>
+                            </a>
                           );
                         })
                       )}
