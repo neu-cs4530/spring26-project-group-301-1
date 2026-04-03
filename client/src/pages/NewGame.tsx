@@ -88,7 +88,7 @@ export default function NewGame() {
             <p className="newGameCard__helpText">
               Only you and your friends can see or join this game.
               {gameKey === "guess" &&
-                " For Guess games, each player must be friends with someone already in the game."}
+                " For Number Guesser, each player must be friends with someone already in the game."}
             </p>
           )}
 
