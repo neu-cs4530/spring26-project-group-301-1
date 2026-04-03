@@ -11,6 +11,7 @@ import {
   gameServices,
   getGameById,
   getGames,
+  getGamesByUsername,
   joinGame,
   startGame,
   updateGame,
@@ -102,6 +103,26 @@ export const getList: RestAPI<GameInfo[]> = async (req, res) => {
   }
 
   res.send(await getGames(user));
+};
+
+export const getListByUsername: RestAPI<GameInfo[], { username: string }> = async (req, res) => {
+  const body = z.object({ auth: zUserAuth }).safeParse(req.body);
+  if (body.error) {
+    res.status(400).send({ error: "Poorly-formed request" });
+    return;
+  }
+
+  const user = await checkAuth(body.data.auth);
+  if (!user) {
+    res.status(403).send({ error: "Invalid credentials" });
+    return;
+  }
+
+  try {
+    res.send(await getGamesByUsername(req.params.username));
+  } catch (err) {
+    res.status(404).send({ error: "User not found" });
+  }
 };
 
 /**

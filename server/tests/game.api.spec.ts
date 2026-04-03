@@ -171,4 +171,19 @@ describe("POST /api/game/list", () => {
       },
     ]);
   });
+
+  it("should include private games for target user list endpoint even for non-friends", async () => {
+    const createResp = await supertest(app)
+      .post(`/api/game/create`)
+      .send({
+        auth: { username: "user1", password: "pwd1111" },
+        payload: { gameKey: "nim", isPrivate: true },
+      });
+    expect(createResp.status).toBe(200);
+
+    const listResp = await supertest(app).post(`/api/game/list/user1`).send({ auth: auth3 });
+    expect(listResp.status).toBe(200);
+    const ratedGames = listResp.body as Array<{ gameId: string }>;
+    expect(ratedGames.some((game) => game.gameId === createResp.body.gameId)).toBe(true);
+  });
 });

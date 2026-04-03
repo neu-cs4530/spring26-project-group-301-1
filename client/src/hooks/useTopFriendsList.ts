@@ -1,7 +1,7 @@
 import type { ErrorMsg, GameInfo, FriendInfo, SafeUserInfo } from "@gamenite/shared";
 import { useEffect, useState } from "react";
 import { getFriends } from "../services/friendsService";
-import { gameList } from "../services/gameService";
+import { gameList, gameListForUser } from "../services/gameService";
 import useAuth from "./useAuth";
 
 /**
@@ -15,6 +15,22 @@ export default function useTopFriendsList(username: string) {
   const [games, setGames] = useState<GameInfo[] | ErrorMsg | null>(null);
   const [friends, setFriends] = useState<FriendInfo[] | ErrorMsg | null>(null);
   const auth = useAuth();
+
+  function isErrorMsg(value: unknown): value is ErrorMsg {
+    return (
+      typeof value === "object" &&
+      value !== null &&
+      "error" in value &&
+      typeof (value as { error: unknown }).error === "string"
+    );
+  }
+
+  function isGameInfoArray(value: unknown): value is GameInfo[] {
+    return (
+      Array.isArray(value) &&
+      value.every((item) => item && typeof item === "object" && "gameId" in item)
+    );
+  }
 
   /**
    * Helper function to convert a list of games to a list of lists of players
@@ -61,7 +77,8 @@ export default function useTopFriendsList(username: string) {
    * @returns the count of games the friend has been in (-1 for an error)
    */
   function getFriendGameCount(friend: FriendInfo) {
-    if (games === null || "error" in games) return -1;
+    if (!isGameInfoArray(games)) return -1;
+
     const gamesWithPlayer = games.filter((game) =>
       game.players.some((player) => player.username === username),
     );
@@ -73,7 +90,7 @@ export default function useTopFriendsList(username: string) {
    * @returns a list of FriendInfo, corresponding to most played with friends
    */
   function getTopFriends(numberToReturn = 5): FriendInfo[] {
-    if (games === null || "error" in games || friends === null || "error" in friends) return [];
+    if (!isGameInfoArray(games) || friends === null || "error" in friends) return [];
 
     const gamesWithPlayer = games.filter((game) =>
       game.players.some((player) => player.username === username),
@@ -90,11 +107,48 @@ export default function useTopFriendsList(username: string) {
   }
 
   useEffect(() => {
-    gameList(auth).then(setGames);
-  }, [auth]);
+    let canceled = false;
+
+    async function fetchGames() {
+      let data: GameInfo[] | ErrorMsg;
+
+      if (auth.username === username) {
+        data = await gameList(auth);
+      } else {
+        data = await gameListForUser(auth, username);
+      }
+
+      if (!canceled) {
+        if (isGameInfoArray(data)) {
+          setGames(data);
+        } else if (isErrorMsg(data)) {
+          setGames(data);
+        } else {
+          setGames({ error: "Unexpected response" });
+        }
+      }
+    }
+
+    void fetchGames();
+
+    return () => {
+      canceled = true;
+    };
+  }, [auth, username]);
 
   useEffect(() => {
-    getFriends(username).then(setFriends);
+    let canceled = false;
+
+    async function fetchFriends() {
+      const data = await getFriends(username);
+      if (!canceled) setFriends(data);
+    }
+
+    void fetchFriends();
+
+    return () => {
+      canceled = true;
+    };
   }, [username]);
 
   return {

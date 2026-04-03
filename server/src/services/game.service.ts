@@ -10,6 +10,7 @@ import { type GameViewUpdates, type UserWithId } from "../types.ts";
 import { ChatRepo, GameRepo } from "../repository.ts";
 import { areFriends } from "./friends.service.ts";
 import { type GameRecord } from "../models.ts";
+import { getUserByUsername } from "./auth.service.ts";
 
 /**
  * Returns whether a user can see a private game.
@@ -239,6 +240,31 @@ export async function getGames(user: UserWithId): Promise<GameInfo[]> {
   const unsorted = await Promise.all(filteredKeys.map(populateGameInfo));
 
   return unsorted.toSorted((game1, game2) => game2.createdAt.getTime() - game1.createdAt.getTime());
+}
+
+/**
+ * Get games for a specified user (all games this user has played in, including private).
+ * This is used for profile-scoped stats counting and does not enforce the same
+ * viewer-facing privacy filtering as `getGames`.
+ */
+export async function getGamesByUsername(username: string): Promise<GameInfo[]> {
+  const user = await getUserByUsername(username);
+  if (!user) throw new Error(`No user ${username}`);
+
+  const keys = await GameRepo.getAllKeys();
+  const candidateGameIds: string[] = [];
+
+  for (const gameId of keys) {
+    const game = await GameRepo.get(gameId);
+    if (game && game.players.includes(user.userId)) {
+      candidateGameIds.push(gameId);
+    }
+  }
+
+  const gamesForUser = await Promise.all(candidateGameIds.map(populateGameInfo));
+  return gamesForUser.toSorted(
+    (game1, game2) => game2.createdAt.getTime() - game1.createdAt.getTime(),
+  );
 }
 
 /**

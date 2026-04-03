@@ -41,9 +41,23 @@ export const getGameById = async (gameId: string, auth: UserAuth): APIResponse<G
 /**
  * Sends a POST request for all games visible to the authenticated user
  */
-export const gameList = async (auth: UserAuth): APIResponse<GameInfo[]> => {
+export const gameList = async (auth: UserAuth): Promise<GameInfo[] | ErrorMsg> => {
   try {
     const res = await api.post<GameInfo[] | ErrorMsg>(`${GAME_API_URL}/list`, {
+      auth,
+    });
+    return res.data;
+  } catch (error) {
+    return exceptionToErrorMsg(error);
+  }
+};
+
+export const gameListForUser = async (
+  auth: UserAuth,
+  username: string,
+): Promise<GameInfo[] | ErrorMsg> => {
+  try {
+    const res = await api.post<GameInfo[] | ErrorMsg>(`${GAME_API_URL}/list/${username}`, {
       auth,
     });
     return res.data;

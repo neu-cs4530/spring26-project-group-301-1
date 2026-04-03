@@ -27,6 +27,7 @@ app.use(
         .Router() //
         .post("/create", game.postCreate)
         .post("/list", game.getList)
+        .post("/list/:username", game.getListByUsername)
         .get("/:id", game.getById),
     )
     .use(
