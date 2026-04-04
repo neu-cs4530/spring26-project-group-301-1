@@ -100,8 +100,15 @@ export const getCallbackByPlatform: RestAPI<never, { platform: SocialProfilePlat
   }
 
   // this is the 'state' maintained
-  const result = zSocialPlatformState.safeParse(Buffer.from(state, "base64").toString("utf8"));
-  if ("error" in result) {
+  let decoded: string;
+  try {
+    decoded = Buffer.from(state, "base64").toString("utf8");
+  } catch (error) {
+    res.status(400).send({ error: "Error decoding OAuth state" });
+    return;
+  }
+  const result = zSocialPlatformState.safeParse(JSON.parse(decoded));
+  if (result.error) {
     res.status(400).send({ error: "Invalid state parameter" });
     return;
   }

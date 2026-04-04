@@ -30,7 +30,9 @@ export function getTwitchAuthUrl(
   link: string,
   type: SocialProfilePlatformWithAuth,
 ): string {
-  const state = Buffer.from(JSON.stringify({ username, link, type })).toString("base64");
+  const state = Buffer.from(
+    JSON.stringify({ username: username, link: link, type: type }),
+  ).toString("base64");
   const query = `client_id=${TWITCH_CLIENT_ID}&redirect_uri=${encodeURIComponent(
     TWITCH_REDIRECT_URI,
   )}&response_type=code&scope=user%3Aread%3Aemail&state=${encodeURIComponent(state)}`;
@@ -51,7 +53,9 @@ export function getYoutubeAuthUrl(
   type: SocialProfilePlatformWithAuth,
 ): string {
   // https://www.googleapis.com/auth/youtube
-  const state = Buffer.from(JSON.stringify({ username, link, type })).toString("base64");
+  const state = Buffer.from(
+    JSON.stringify({ username: username, link: link, type: type }),
+  ).toString("base64");
   const query = `client_id=${YOUTUBE_CLIENT_ID}&redirect_uri=${encodeURIComponent(
     YOUTUBE_REDIRECT_URI,
   )}&response_type=code&&scope=${encodeURIComponent(

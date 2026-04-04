@@ -33,10 +33,10 @@ export interface SafeUserInfo {
 
 /*** TYPES USED IN THE USER API ***/
 
-// export const zSocialProfilePlatform = z.enum(["twitter", "instagram", "twitch", "youtube"]);
-
+/**
+ * Represents a type of Social Media profile that can be linked to by a user.
+ */
 export type SocialProfileReqType = "add" | "delete" | "verify";
-
 export const zSocialProfileReqType = z.enum(["add", "delete", "verify"]);
 
 /**
