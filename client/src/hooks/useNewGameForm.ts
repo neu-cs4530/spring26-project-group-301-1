@@ -71,7 +71,7 @@ export default function useNewGameForm(): UseNewGameFormResult {
     }
 
     const finalGameKey = resolveGameKey(gameKey, opponentType);
-    const game = await createGame(auth, finalGameKey, isPrivate, filtered);
+    const game = await createGame(auth, finalGameKey, filtered, isPrivate);
 
     if ("error" in game) {
       setErr(game.error);
