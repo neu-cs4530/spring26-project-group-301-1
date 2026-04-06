@@ -4,7 +4,9 @@ import {
   resolveRequest,
   getFriends,
   getPendingRequests,
+  getFriendStatus,
   areFriends,
+  removeFriend,
 } from "../../src/services/friends.service.ts";
 import { createUser } from "../../src/services/user.service.ts";
 import { FriendRepo, FriendRequestRepo, UserRepo, AuthRepo } from "../../src/repository.ts";
@@ -156,5 +158,44 @@ describe("areFriends", () => {
     await resolveRequest(req.requestId, "user2", "accept");
     expect(await areFriends("user1", "user2")).toBe(true);
     expect(await areFriends("user2", "user1")).toBe(true);
+  });
+});
+
+describe("removeFriend", () => {
+  it("removes an existing friendship", async () => {
+    await sendFriendRequest("user1", "user2");
+    const [req] = await getPendingRequests("user2");
+    await resolveRequest(req.requestId, "user2", "accept");
+
+    await removeFriend("user1", "user2");
+    expect(await areFriends("user1", "user2")).toBe(false);
+  });
+
+  it("throws if the users are not friends", async () => {
+    await expect(removeFriend("user1", "user2")).rejects.toThrow("Not friends");
+  });
+});
+
+describe("getFriendStatus", () => {
+  it("returns 'not-friends' for strangers", async () => {
+    expect(await getFriendStatus("user1", "user2")).toBe("not-friends");
+  });
+
+  it("returns 'request-sent' for pending outgoing requests", async () => {
+    await sendFriendRequest("user1", "user2");
+    expect(await getFriendStatus("user1", "user2")).toBe("request-sent");
+  });
+
+  it("returns 'request-received' for pending incoming requests", async () => {
+    await sendFriendRequest("user1", "user2");
+    expect(await getFriendStatus("user2", "user1")).toBe("request-received");
+  });
+
+  it("returns 'friends' for accepted requests", async () => {
+    await sendFriendRequest("user1", "user2");
+    const [req] = await getPendingRequests("user2");
+    await resolveRequest(req.requestId, "user2", "accept");
+    expect(await getFriendStatus("user1", "user2")).toBe("friends");
+    expect(await getFriendStatus("user2", "user1")).toBe("friends");
   });
 });
