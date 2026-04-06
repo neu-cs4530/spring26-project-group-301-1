@@ -1,16 +1,11 @@
 import React from "react";
 import "./ProfileSidebar.css";
-import { Image, Lock, Shield, Heart, User } from "lucide-react";
+import { Image, Lock, Shield, User, type LucideIcon } from "lucide-react";
 
-const SECTIONS = [
+const SETTINGS = [
   {
-    id: "friends",
-    label: "Friends",
-    icon: Heart,
-  },
-  {
-    id: "account",
-    label: "Account",
+    id: "display-name",
+    label: "Display Name",
     icon: User,
   },
   {
@@ -43,27 +38,32 @@ export default function ProfileSidebar({
   isDirty,
   onSubmit,
 }: ProfileSidebarProps) {
+  const renderSectionButton = (section: { id: string; label: string; icon: LucideIcon }) => (
+    <li key={section.id}>
+      <button
+        className={section.id === activeSection ? "sidebarLink is-active" : "sidebarLink"}
+        type="button"
+        onClick={() => onSelect(section.id)}
+      >
+        <span className="sidebarIcon">
+          <section.icon className="profileSidebarMenuIcon" aria-hidden={true} />
+        </span>
+        {section.label}
+      </button>
+    </li>
+  );
+
   return (
     <nav
       className="profileSidebar"
       style={{ display: "flex", flexDirection: "column", height: "100%" }}
     >
-      <ul style={{ flex: 1 }}>
-        {SECTIONS.map((section) => (
-          <li key={section.id}>
-            <button
-              className={section.id === activeSection ? "sidebarLink is-active" : "sidebarLink"}
-              type="button"
-              onClick={() => onSelect(section.id)}
-            >
-              <span className="sidebarIcon">
-                <section.icon className="profileSidebarMenuIcon" aria-hidden="true" />
-              </span>
-              {section.label}
-            </button>
-          </li>
-        ))}
-      </ul>
+      <div className="profileSidebar__sections" style={{ flex: 1 }}>
+        <section className="profileSidebar__group" aria-label="Settings section">
+          <h2 className="profileSidebar__groupHeading">Settings</h2>
+          <ul>{SETTINGS.map((section) => renderSectionButton(section))}</ul>
+        </section>
+      </div>
       {typeof isDirty === "boolean" && isDirty && (
         <div style={{ marginTop: "auto" }}>
           <button

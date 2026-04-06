@@ -8,7 +8,7 @@ import useEditProfileForm from "../hooks/useEditProfileForm";
 import { getPendingRequests, resolveRequest } from "../services/friendsService";
 import ProfileSidebar from "../components/ProfileSidebar";
 import UserLink from "../components/UserLink";
-import { Gamepad2 } from "lucide-react";
+import { Gamepad2, Users } from "lucide-react";
 
 const PRESET_BACKGROUNDS: { label: string; url: string }[] = [
   { label: "Stripes", url: "/backgrounds/stripes.jpeg" },
@@ -152,6 +152,37 @@ export default function UpdateProfile() {
             <button
               type="button"
               className={
+                activeSection === "friends"
+                  ? "profileFriendRequestsTab is-active"
+                  : "profileFriendRequestsTab"
+              }
+              onClick={() => setActiveSection("friends")}
+            >
+              <Users aria-hidden="true" />
+              Friends
+              <span
+                style={{
+                  background: "#1d4ed8",
+                  color: "#fff",
+                  borderRadius: "999px",
+                  minWidth: 22,
+                  height: 22,
+                  padding: "0 7px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "0.95rem",
+                  fontWeight: 700,
+                  boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
+                }}
+              >
+                {topFriends.length}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              className={
                 activeSection === "friend-requests"
                   ? "profileFriendRequestsTab is-active"
                   : "profileFriendRequestsTab"
@@ -241,8 +272,8 @@ export default function UpdateProfile() {
           </div>
 
           <div className="profileCol">
-            {activeSection === "account" && (
-              <section className="profileSectionCard" id="account">
+            {activeSection === "display-name" && (
+              <section className="profileSectionCard" id="display-name">
                 <h3>Display Name</h3>
                 <div className="profileControlRow">
                   <input

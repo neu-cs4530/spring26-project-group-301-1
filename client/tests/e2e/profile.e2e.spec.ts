@@ -135,7 +135,7 @@ test.describe("Display name editing", () => {
     await page1.getByRole("link", { name: "View Profile" }).click();
     await page1.waitForURL("/profile/user0");
 
-    await page1.getByRole("button", { name: "Account" }).click();
+    await page1.getByRole("button", { name: "Display Name" }).click();
     await page1.getByPlaceholder("Display name").fill("Display Name Updated");
     await page1.getByRole("button", { name: "Submit profile edits" }).click();
     await page1.waitForURL("/login");
@@ -148,9 +148,107 @@ test.describe("Display name editing", () => {
     // Clean up test state for any subsequent tests.
     await page1.getByRole("link", { name: "View Profile" }).click();
     await page1.waitForURL("/profile/user0");
-    await page1.getByRole("button", { name: "Account" }).click();
+    await page1.getByRole("button", { name: "Display Name" }).click();
     await page1.getByPlaceholder("Display name").fill("The Knight Of Games");
     await page1.getByRole("button", { name: "Submit profile edits" }).click();
     await page1.waitForURL("/login");
+  });
+});
+
+test.describe("Friends count badge", () => {
+  test("should update after accepting and removing a friend", async () => {
+    const user0 = "user0";
+    const user1 = "user1";
+
+    // Check initial friend count for user0 is 2
+    await logInUser(page1, user0, "pwd0000");
+    await page1.getByRole("link", { name: "View Profile" }).waitFor({ state: "visible" });
+    await page1.getByRole("link", { name: "View Profile" }).click();
+    await page1.waitForURL("/profile/user0");
+    await page1.waitForTimeout(1000); // Wait 1 second for content to render
+    const friendsButtonOnA = page1.getByRole("button", { name: "Friends" });
+    await expect(friendsButtonOnA).toContainText("2");
+
+    // -------- Remove user0 as a friend on user1's profile --------
+    await page2.goto("/");
+    await page2.waitForURL("/");
+    await logInUser(page2, user1, "pwd1111");
+
+    //Check initial friend count for user1 is 2
+    await page2.getByRole("link", { name: "View Profile" }).waitFor({ state: "visible" });
+    await page2.getByRole("link", { name: "View Profile" }).click();
+    await page2.waitForURL("/profile/user1");
+    await page2.waitForTimeout(1000); // Wait 1 second for content to render
+    const friendsButtonOnB = page2.getByRole("button", { name: "Friends" });
+    await expect(friendsButtonOnB).toContainText("2");
+
+    // Remove user0 as a friend
+    await page2.getByRole("link", { name: "Home" }).click();
+    await page2.waitForURL("/");
+    await page2.getByRole("link", { name: "The Knight Of Games" }).click();
+    await page2.waitForURL("/profile/user0");
+    await page2.getByRole("button", { name: "Remove Friend" }).click();
+    await expect(page2.getByText("Add Friend")).toBeVisible();
+
+    // Check that user1's friend count has decreased to 1
+    await page2.getByRole("link", { name: "View Profile" }).waitFor({ state: "visible" });
+    await page2.getByRole("link", { name: "View Profile" }).click();
+    await page2.waitForURL("/profile/user1");
+    await page2.waitForTimeout(1000); // Wait 1 second for content to render
+    const friendsButtonOnC = page2.getByRole("button", { name: "Friends" });
+    await expect(friendsButtonOnC).toContainText("1");
+
+    // Check that user0's friend count has decreased to 1
+    await logInUser(page1, user0, "pwd0000");
+
+    await page1.getByRole("link", { name: "View Profile" }).waitFor({ state: "visible" });
+    await page1.getByRole("link", { name: "View Profile" }).click();
+    await page1.waitForURL("/profile/user0");
+    await page1.waitForTimeout(1000); // Wait 1 second for content to render
+    const friendsButtonOnD = page1.getByRole("button", { name: "Friends" });
+    await expect(friendsButtonOnD).toContainText("1");
+
+    // -------- Add user1 as a friend again on user0's profile --------
+    await page1.getByRole("link", { name: "Home" }).click();
+    await page1.waitForURL("/");
+    await page1.waitForTimeout(1000); // Wait 1 second for content to render
+    await page1.getByRole("link", { name: "Yāo" }).first().click();
+    await page1.waitForURL("/profile/user1");
+    await page1.getByRole("button", { name: "Add Friend" }).click();
+    await expect(page1.getByText("Friend Request Sent")).toBeVisible();
+
+    // Accept the friend request on user1's profile
+    await page2.goto("/");
+    await page2.waitForURL("/");
+    await logInUser(page2, user1, "pwd1111");
+
+    await page2.getByRole("link", { name: "View Profile" }).waitFor({ state: "visible" });
+    await page2.getByRole("link", { name: "View Profile" }).click();
+    await page2.waitForURL("/profile/user1");
+    await page2.waitForTimeout(1000); // Wait 1 second for content to render
+    await page2.getByRole("button", { name: "Friend Requests" }).click();
+    await page2.getByRole("button", { name: "Accept" }).click();
+
+    // Check that user1's friend count has increased back to 2
+    await page2.goto("/");
+    await page2.waitForURL("/");
+    await logInUser(page2, user1, "pwd1111");
+    await page2.getByRole("link", { name: "View Profile" }).waitFor({ state: "visible" });
+    await page2.getByRole("link", { name: "View Profile" }).click();
+    await page2.waitForURL("/profile/user1");
+    await page2.waitForTimeout(1000); // Wait 1 second for content to render
+    const friendsButtonOnF = page2.getByRole("button", { name: "Friends" });
+    await expect(friendsButtonOnF).toContainText("2");
+
+    // Check that user0's friend count has increased back to 2
+    await page2.goto("/");
+    await page2.waitForURL("/");
+    await logInUser(page1, user0, "pwd0000");
+    await page1.getByRole("link", { name: "View Profile" }).waitFor({ state: "visible" });
+    await page1.getByRole("link", { name: "View Profile" }).click();
+    await page1.waitForURL("/profile/user0");
+    await page1.waitForTimeout(1000); // Wait 1 second for content to render
+    const friendsButtonOnG = page1.getByRole("button", { name: "Friends" });
+    await expect(friendsButtonOnG).toContainText("2");
   });
 });

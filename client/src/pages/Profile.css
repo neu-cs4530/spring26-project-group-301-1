@@ -78,8 +78,9 @@
   margin-bottom: 0.1rem;
 }
 .profileIdentityRight {
+  display: flex;
+  flex-wrap: wrap;
   margin-left: auto;
-  gap: 16px;
   align-items: center;
   gap: 1rem;
 }
@@ -250,7 +251,7 @@
 }
 
 .profile-card h2:first-of-type {
-  font-size: 2.25rem;
+  font-size: 1.6rem;
   line-height: 1.15;
   font-weight: 700;
   margin-top: 0;
