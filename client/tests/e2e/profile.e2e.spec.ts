@@ -160,14 +160,14 @@ test.describe("Friends count badge", () => {
     const user0 = "user0";
     const user1 = "user1";
 
-    // Check initial friend count for user0 is 2
+    // Check initial friend count for user0 is 3
     await logInUser(page1, user0, "pwd0000");
     await page1.getByRole("link", { name: "View Profile" }).waitFor({ state: "visible" });
     await page1.getByRole("link", { name: "View Profile" }).click();
     await page1.waitForURL("/profile/user0");
     await page1.waitForTimeout(1000); // Wait 1 second for content to render
     const friendsButtonOnA = page1.getByRole("button", { name: "Friends" });
-    await expect(friendsButtonOnA).toContainText("2");
+    await expect(friendsButtonOnA).toContainText("3");
 
     // -------- Remove user0 as a friend on user1's profile --------
     await page2.goto("/");
@@ -198,7 +198,7 @@ test.describe("Friends count badge", () => {
     const friendsButtonOnC = page2.getByRole("button", { name: "Friends" });
     await expect(friendsButtonOnC).toContainText("1");
 
-    // Check that user0's friend count has decreased to 1
+    // Check that user0's friend count has decreased to 2
     await logInUser(page1, user0, "pwd0000");
 
     await page1.getByRole("link", { name: "View Profile" }).waitFor({ state: "visible" });
@@ -206,7 +206,7 @@ test.describe("Friends count badge", () => {
     await page1.waitForURL("/profile/user0");
     await page1.waitForTimeout(1000); // Wait 1 second for content to render
     const friendsButtonOnD = page1.getByRole("button", { name: "Friends" });
-    await expect(friendsButtonOnD).toContainText("1");
+    await expect(friendsButtonOnD).toContainText("2");
 
     // -------- Add user1 as a friend again on user0's profile --------
     await page1.getByRole("link", { name: "Home" }).click();
@@ -240,7 +240,7 @@ test.describe("Friends count badge", () => {
     const friendsButtonOnF = page2.getByRole("button", { name: "Friends" });
     await expect(friendsButtonOnF).toContainText("2");
 
-    // Check that user0's friend count has increased back to 2
+    // Check that user0's friend count has increased back to 3
     await page1.goto("/");
     await page1.waitForURL("/");
     await logInUser(page1, user0, "pwd0000");
@@ -249,6 +249,6 @@ test.describe("Friends count badge", () => {
     await page1.waitForURL("/profile/user0");
     await page1.waitForTimeout(1000); // Wait 1 second for content to render
     const friendsButtonOnG = page1.getByRole("button", { name: "Friends" });
-    await expect(friendsButtonOnG).toContainText("2");
+    await expect(friendsButtonOnG).toContainText("3");
   });
 });
