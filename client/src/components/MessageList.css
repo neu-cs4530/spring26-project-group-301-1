@@ -87,6 +87,13 @@ div.chatScroller .chatMe .chatContent {
   background-color: rgba(220, 53, 69, 0.9);
 }
 
+.chatDeleteIcon {
+  width: 10px;
+  height: 10px;
+  stroke: currentColor;
+  fill: none;
+}
+
 .chatDeletable:hover .chatDeleteBtn {
   display: flex;
   align-items: center;
@@ -98,6 +105,34 @@ div.chatScroller .chatMe .chatContent {
   font-style: italic;
 }
 
+.chatHiddenMessage {
+  color: #666;
+  font-style: italic;
+}
+
+.chatInlineAction {
+  display: block;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  margin-top: 0.3rem;
+}
+
+.chatInlineAction:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.chatMe .chatInlineAction {
+  margin-left: auto;
+}
+
 div.chatContainer--lightText div.chatScroller .chatMeta {
   color: #f8fafc;
   font-weight: 700;
@@ -107,4 +142,14 @@ div.chatContainer--lightText div.chatScroller .chatSender,
 div.chatContainer--lightText div.chatScroller .chatMe .chatSender {
   color: #f8fafc;
   font-weight: 700;
+}
+
+div.chatContainer--lightText .chatInlineAction {
+  background-color: rgba(15, 23, 42, 0.35);
+  color: #f8fafc;
+  border-color: rgba(248, 250, 252, 0.7);
+}
+
+div.chatContainer--lightText .chatInlineAction:hover {
+  background-color: rgba(15, 23, 42, 0.5);
 }

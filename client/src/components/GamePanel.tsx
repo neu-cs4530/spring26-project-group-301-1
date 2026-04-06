@@ -140,12 +140,18 @@ export default function GamePanel({
               </div>
             </div>
             {userPlayerIndex < 0 && !view && (
-              <button className="primary narrow gameRoster__action" onClick={joinGame}>
+              <button
+                className="primary narrow gameRoster__action gameRoster__action--join"
+                onClick={joinGame}
+              >
                 Join Game
               </button>
             )}
             {userPlayerIndex >= 0 && !view && players.length >= minPlayers && (
-              <button className="primary narrow gameRoster__action" onClick={startGame}>
+              <button
+                className="primary narrow gameRoster__action gameRoster__action--start"
+                onClick={startGame}
+              >
                 Start Game
               </button>
             )}

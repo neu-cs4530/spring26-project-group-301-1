@@ -5,6 +5,7 @@ import NewForumComment from "../components/NewForumComment.tsx";
 import useTimeSince from "../hooks/useTimeSince.ts";
 import UserLink from "../components/UserLink.tsx";
 import useLoginContext from "../hooks/useLoginContext.ts";
+import useHiddenIds from "../hooks/useHiddenIds.ts";
 import { ShieldCheck, ShieldOff } from "lucide-react";
 
 export default function ThreadPage() {
@@ -15,6 +16,15 @@ export default function ThreadPage() {
   // non-nullish assertion is okay here given that Thread is only called in a
   // route with `:threadId` on the path
   const { threadInfo, setThread } = useThreadInfo(threadId!);
+  const activeThreadId = threadId ?? "";
+  const {
+    hiddenIds: hiddenCommentIds,
+    hideItem: handleHideComment,
+    unhideItem: handleUnhideComment,
+  } = useHiddenIds({
+    storagePrefix: "hidden-forum-comments",
+    entityId: activeThreadId,
+  });
 
   // Only apply background if the current user is the author
   let forumBackgroundStyle = {};
@@ -83,27 +93,55 @@ export default function ThreadPage() {
                 {threadInfo.comments.length === 0 ? (
                   <div className="threadCard__emptyComments">Be the first to comment!</div>
                 ) : (
-                  threadInfo.comments.map(({ commentId, text, createdBy, createdAt, editedAt }) => (
-                    <div className="threadCard__comment" role="listitem" key={commentId}>
-                      <div className="threadCard__commentHeader">
-                        <div className="threadCard__commentAuthor">
-                          {createdBy.username === user.username ? (
-                            "You"
-                          ) : (
-                            <UserLink user={createdBy} />
-                          )}
-                          {createdBy.username === threadInfo.createdBy.username && (
-                            <span className="opBlue"> OP</span>
-                          )}
+                  threadInfo.comments.map(({ commentId, text, createdBy, createdAt, editedAt }) => {
+                    const isHidden = hiddenCommentIds.has(commentId);
+
+                    return (
+                      <div className="threadCard__comment" role="listitem" key={commentId}>
+                        <div className="threadCard__commentHeader">
+                          <div className="threadCard__commentAuthor">
+                            {createdBy.username === user.username ? (
+                              "You"
+                            ) : (
+                              <UserLink user={createdBy} />
+                            )}
+                            {createdBy.username === threadInfo.createdBy.username && (
+                              <span className="opBlue"> OP</span>
+                            )}
+                          </div>
+                          <div className="threadCard__commentTime">
+                            {formatTimeSince(createdAt)}
+                            {editedAt && ` (edited ${formatTimeSince(editedAt)})`}
+                          </div>
                         </div>
-                        <div className="threadCard__commentTime">
-                          {formatTimeSince(createdAt)}
-                          {editedAt && ` (edited ${formatTimeSince(editedAt)})`}
-                        </div>
+                        {isHidden ? (
+                          <>
+                            <div className="threadCard__commentText threadCard__commentHidden">
+                              Comment hidden
+                            </div>
+                            <button
+                              type="button"
+                              className="threadCard__commentAction"
+                              onClick={() => handleUnhideComment(commentId)}
+                            >
+                              Unhide
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <div className="threadCard__commentText">{text}</div>
+                            <button
+                              type="button"
+                              className="threadCard__commentAction"
+                              onClick={() => handleHideComment(commentId)}
+                            >
+                              Hide
+                            </button>
+                          </>
+                        )}
                       </div>
-                      <div className="threadCard__commentText">{text}</div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
 
