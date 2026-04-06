@@ -8,7 +8,7 @@ import useEditProfileForm from "../hooks/useEditProfileForm";
 import { getPendingRequests, resolveRequest } from "../services/friendsService";
 import ProfileSidebar from "../components/ProfileSidebar";
 import UserLink from "../components/UserLink";
-import { Gamepad2 } from "lucide-react";
+import { Gamepad2, Users } from "lucide-react";
 
 const PRESET_BACKGROUNDS: { label: string; url: string }[] = [
   { label: "Stripes", url: "/backgrounds/stripes.jpeg" },
@@ -42,6 +42,7 @@ export default function UpdateProfile() {
     confirm,
     setConfirm,
     display,
+    setDisplay,
     hideUsername,
     setHideUsername,
     privateProfile,
@@ -151,6 +152,37 @@ export default function UpdateProfile() {
             <button
               type="button"
               className={
+                activeSection === "friends"
+                  ? "profileFriendRequestsTab is-active"
+                  : "profileFriendRequestsTab"
+              }
+              onClick={() => setActiveSection("friends")}
+            >
+              <Users aria-hidden="true" />
+              Friends
+              <span
+                style={{
+                  background: "#1d4ed8",
+                  color: "#fff",
+                  borderRadius: "999px",
+                  minWidth: 22,
+                  height: 22,
+                  padding: "0 7px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "0.95rem",
+                  fontWeight: 700,
+                  boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
+                }}
+              >
+                {topFriends.length}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              className={
                 activeSection === "friend-requests"
                   ? "profileFriendRequestsTab is-active"
                   : "profileFriendRequestsTab"
@@ -240,6 +272,22 @@ export default function UpdateProfile() {
           </div>
 
           <div className="profileCol">
+            {activeSection === "display-name" && (
+              <section className="profileSectionCard" id="display-name">
+                <h3>Display Name</h3>
+                <div className="profileControlRow">
+                  <input
+                    type="text"
+                    className="widefill notTooWide"
+                    placeholder="Display name"
+                    value={display}
+                    onChange={(e) => setDisplay(e.target.value)}
+                  />
+                </div>
+                <p className="smallAndGray">This is the name shown to other users.</p>
+                {err && <p className="error-message">{err}</p>}
+              </section>
+            )}
             {activeSection === "game-background" && (
               <section className="profileSectionCard gameBgCard" id="game-background">
                 <div className="gameBgCard__header">
@@ -334,7 +382,7 @@ export default function UpdateProfile() {
                   />
                   <button
                     type="button"
-                    className="secondary narrow"
+                    className="secondary narrow profilePasswordRevealButton"
                     onClick={() => setShowPass((v: boolean) => !v)}
                   >
                     {showPass ? "Hide" : "Reveal"}
