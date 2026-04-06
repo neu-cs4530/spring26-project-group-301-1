@@ -1,12 +1,7 @@
 import "./Profile.css";
 import { useState, useEffect, useMemo } from "react";
 import { initiateOAuth } from "../services/oauthService";
-import type {
-  FriendRequestInfo,
-  SocialProfileLink,
-  SocialProfilePlatform,
-  SocialProfileReqType,
-} from "@gamenite/shared";
+import type { FriendRequestInfo, SocialProfileLink, SocialProfilePlatform } from "@gamenite/shared";
 import useLoginContext from "../hooks/useLoginContext";
 import useTimeSince from "../hooks/useTimeSince";
 import useTopFriendsList from "../hooks/useTopFriendsList";
@@ -14,7 +9,8 @@ import useEditProfileForm from "../hooks/useEditProfileForm";
 import { getPendingRequests, resolveRequest } from "../services/friendsService";
 import ProfileSidebar from "../components/ProfileSidebar";
 import UserLink from "../components/UserLink";
-import { Gamepad2 } from "lucide-react";
+import { Gamepad2, InfoIcon } from "lucide-react";
+import SocialPlatformLink, { getIconByPlatform } from "../components/SocialPlatformLink";
 
 const PRESET_BACKGROUNDS: { label: string; url: string }[] = [
   { label: "Stripes", url: "/backgrounds/stripes.jpeg" },
@@ -30,6 +26,7 @@ export default function UpdateProfile() {
   const [showPass, setShowPass] = useState(false);
   const [hideSelectionCheck, setHideSelectionCheck] = useState(false); // add
   const [customColor, setCustomColor] = useState("#3b82f6");
+  const [socialProfileErr, setSocialProfileErr] = useState<string | null>(null);
 
   const [requests, setRequests] = useState<FriendRequestInfo[]>([]);
   const [requestsErr, setRequestsErr] = useState<string | null>(null);
@@ -56,8 +53,10 @@ export default function UpdateProfile() {
     setSocialLink,
     socialLinkType,
     setSocialLinkType,
-    socialReqType,
-    setSocialReqType,
+    profilesToAdd,
+    setProfilesToAdd,
+    profilesToDelete,
+    setProfilesToDelete,
     err,
     handleSubmit,
   } = useEditProfileForm();
@@ -71,7 +70,8 @@ export default function UpdateProfile() {
       (user.customBackground || "") !== (backgroundType === "color" ? color : imageUrl) ||
       user.hideUsername !== hideUsername ||
       user.privateProfile !== privateProfile ||
-      (socialLink !== "" && socialLinkType !== null && socialReqType !== null)
+      profilesToAdd.length > 0 ||
+      profilesToDelete.length > 0
     );
   }, [
     password,
@@ -82,9 +82,8 @@ export default function UpdateProfile() {
     imageUrl,
     hideUsername,
     privateProfile,
-    socialLink,
-    socialLinkType,
-    socialReqType,
+    profilesToAdd,
+    profilesToDelete,
     user,
   ]);
 
@@ -125,9 +124,30 @@ export default function UpdateProfile() {
    */
   async function handleVerify(link: SocialProfileLink) {
     const result = await initiateOAuth(link.type, user.username, pass, link.link);
+    if ("error" in result) {
+      setSocialProfileErr(result.error);
+    }
     if ("url" in result) {
+      setSocialProfileErr(null);
       window.location.replace(result.url);
     }
+  }
+
+  function handleDelete(link: SocialProfileLink) {
+    setProfilesToDelete((prev) => {
+      if (prev.some((p) => p.link === link.link && p.type === link.type)) return prev;
+      return [...prev, link];
+    });
+  }
+
+  function queueProfileToAdd() {
+    if (socialLink === "" || socialLinkType === null) return;
+    setProfilesToAdd((prev) => {
+      if (prev.some((p) => p.link === socialLink && p.type === socialLinkType)) return prev;
+      return [...prev, { link: socialLink, type: socialLinkType, verified: false }];
+    });
+    setSocialLink("");
+    setSocialLinkType(null);
   }
 
   const { getTopFriends, getFriendGameCount } = useTopFriendsList(user.username);
@@ -430,56 +450,85 @@ export default function UpdateProfile() {
               <section className="profileSectionCard" id="social-media">
                 <h3>Social Media</h3>
                 <div style={{ paddingBottom: 6 }}>
-                  <p style={{ fontWeight: "bold" }}>Linked accounts: </p>
-                  <p className="smallAndGray">
-                    Note: verifying an account will re-direct you away from GameNite Connect!
+                  <p style={{ fontWeight: "bold", fontSize: "1.25em" }}>Linked accounts: </p>
+                  <p className="smallAndGray" style={{ display: "flex", flexDirection: "row" }}>
+                    <span style={{ paddingRight: "3px" }}>
+                      <InfoIcon size={15} />
+                    </span>{" "}
+                    verifying an account will re-direct you away from GameNite Connect!
                   </p>
+                  {socialProfileErr !== null && <p className="smallAndGray">{socialProfileErr}</p>}
                   {user.profileLinks.length === 0 ? (
                     <p>You have no linked accounts</p>
                   ) : (
-                    user.profileLinks.map((l) => (
-                      <div key={l.link}>
-                        {l.type}: {l.link}{" "}
-                        {l.verified ? (
-                          "✓ Verified"
-                        ) : (
-                          <button type="button" onClick={() => handleVerify(l)}>
-                            Verify
-                          </button>
-                        )}
-                      </div>
-                    ))
+                    user.profileLinks.map((l, i) => {
+                      const queued = profilesToDelete.some(
+                        (p) => p.link === l.link && p.type === l.type,
+                      );
+                      return (
+                        <div key={i}>
+                          <SocialPlatformLink
+                            link={l}
+                            verifyPlatform={handleVerify}
+                            deletePlatform={handleDelete}
+                            modifyable={true}
+                            queued={queued}
+                          />
+                        </div>
+                      );
+                    })
                   )}
                 </div>
                 <div>
-                  <p style={{ fontWeight: "bold" }}>Modify linked account:</p>
+                  <p style={{ fontWeight: "bold", fontSize: "1.25em" }}>Add Social Profile Links</p>
                   <input
                     type="text"
-                    placeholder="Social Profile URL"
+                    placeholder="https://platform/yourhandle"
+                    value={socialLink}
                     onChange={(e) => setSocialLink(e.target.value)}
                   />
+                  <p>Select the profile name:</p>
                   <select
+                    value={socialLinkType ?? ""}
                     onChange={(e) => setSocialLinkType(e.target.value as SocialProfilePlatform)}
                   >
-                    <option value="" selected disabled hidden>
-                      -- Select the Social Media Platform --
-                    </option>
-                    <option value="twitter">Twitter</option>
+                    <option value="" disabled hidden></option>
+                    <option value="twitter">Twitter/X</option>
                     <option value="instagram">Instagram</option>
                     <option value="twitch">Twitch</option>
                     <option value="youtube">YouTube</option>
                   </select>
-                  <select
-                    onChange={(e) => setSocialReqType(e.target.value as SocialProfileReqType)}
+                  <button
+                    className="profilePrimaryButton"
+                    style={{ marginTop: "10px" }}
+                    type="button"
+                    onClick={queueProfileToAdd}
                   >
-                    <option value="" selected disabled hidden>
-                      -- Select the action --
-                    </option>
-                    <option value="add">Add</option>
-                    <option value="delete">Delete</option>
-                  </select>
+                    Add Profile
+                  </button>
+                  {profilesToAdd.length > 0 && (
+                    <div>
+                      {profilesToAdd.map((p, i) => (
+                        <div key={i} className="linkedSocialMediaCard">
+                          <a href={p.link} target="_blank">
+                            {getIconByPlatform(p)}
+                          </a>
+                          <p className="smallAndGray">Queued for adding to profile</p>
+                          <button
+                            className="profileDangerButton"
+                            type="button"
+                            onClick={() =>
+                              setProfilesToAdd((prev) => prev.filter((_, idx) => idx !== i))
+                            }
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <div></div>
+                {err && <p className="error-message">{err}</p>}
               </section>
             )}
           </div>

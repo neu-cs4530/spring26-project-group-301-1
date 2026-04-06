@@ -1,16 +1,7 @@
-import { type SafeUserInfo, type GameInfo, type SocialProfilePlatform } from "@gamenite/shared";
+import { type SafeUserInfo, type GameInfo } from "@gamenite/shared";
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { Box } from "@chakra-ui/react";
-import {
-  CalendarDays,
-  Gamepad2,
-  CircleAlert,
-  CircleCheck,
-  SquarePlay,
-  Bird,
-  Camera,
-  MessageSquareQuote,
-} from "lucide-react";
+import { CalendarDays, Gamepad2, CircleAlert, CircleCheck } from "lucide-react";
 import useTimeSince from "../hooks/useTimeSince";
 import useLoginContext from "../hooks/useLoginContext";
 import { getUserById } from "../services/userService";
@@ -19,6 +10,7 @@ import useTopFriendsList from "../hooks/useTopFriendsList";
 import usePlayersStatsInfo from "../hooks/usePlayerStatsInfo";
 import GameSummaryView from "../components/GameSummaryView";
 import UserLink from "../components/UserLink";
+import { getIconByPlatform } from "../components/SocialPlatformLink";
 
 type FriendStatus =
   | "loading"
@@ -263,41 +255,6 @@ export default function ViewProfile({ username }: ViewProfileProps) {
     );
   }
 
-  // TOOD: cleaner way to do this
-  function getIconByPlatform(platform: SocialProfilePlatform) {
-    if (platform === "youtube") {
-      return (
-        <div style={{ display: "flex", flexDirection: "row", padding: "2px" }}>
-          <SquarePlay color="red" />
-          <p style={{ paddingLeft: "6px" }}>YouTube</p>
-        </div>
-      );
-    } else if (platform === "twitter") {
-      return (
-        <div style={{ display: "flex", flexDirection: "row", padding: "2px" }}>
-          <Bird color="blue" />
-          <p style={{ paddingLeft: "6px" }}>Twitter</p>
-        </div>
-      );
-    } else if (platform === "instagram") {
-      return (
-        <div style={{ display: "flex", flexDirection: "row", padding: "2px" }}>
-          <Camera color="pink" />
-          <p style={{ paddingLeft: "6px" }}>Instagram</p>
-        </div>
-      );
-    } else if (platform === "twitch") {
-      return (
-        <div style={{ display: "flex", flexDirection: "row", padding: "2px" }}>
-          <MessageSquareQuote color="purple" />
-          <p style={{ paddingLeft: "6px" }}>Twitch</p>
-        </div>
-      );
-    }
-
-    return <></>;
-  }
-
   switch (componentState.type) {
     case "error":
       return <div style={{ color: "#f00" }}>{componentState.msg}</div>;
@@ -329,7 +286,7 @@ export default function ViewProfile({ username }: ViewProfileProps) {
                           <span className="profileIdentityMetaDot" aria-hidden="true">
                             •
                           </span>
-                          <span className="profileIdentityStatusPill">{friendStatusLabel()}</span>
+                          <span className="profileIdtoentityStatusPill">{friendStatusLabel()}</span>
                         </>
                       )}
                     </div>
@@ -354,14 +311,20 @@ export default function ViewProfile({ username }: ViewProfileProps) {
                         componentState.user.profileLinks.map((p) => {
                           return (
                             <a href={p.link} target="_blank">
-                              <div className="profileSocialLink">
-                                {getIconByPlatform(p.type)}
+                              <div
+                                className="linkedSocialMediaCard"
+                                style={{
+                                  display: "grid",
+                                  gridTemplateColumns: "repeat(2, minmax(0, 0.5fr))",
+                                }}
+                              >
+                                {getIconByPlatform(p)}
                                 {p.verified === true ? (
-                                  <p>
+                                  <p title="This profile is verified.">
                                     <CircleCheck color="green" />
                                   </p>
                                 ) : (
-                                  <p>
+                                  <p title="Warning! This profile is unverified. Verification is supported for Twitch and YouTube accounts.">
                                     <CircleAlert color="orange" />
                                   </p>
                                 )}

@@ -13,6 +13,12 @@ export interface SocialProfileLink {
   verified: boolean;
 }
 
+export const zSocialProfileLink = z.object({
+  link: z.string(),
+  type: zSocialProfilePlatform,
+  verified: z.boolean(),
+});
+
 /**
  * Represents a "safe" user object that excludes sensitive information like
  * the password, suitable for exposing to clients,
@@ -49,7 +55,6 @@ export const zUserUpdateRequest = z.object({
   customBackground: z.string().optional(),
   hideUsername: z.boolean().optional(),
   privateProfile: z.boolean().optional(),
-  profileLink: z.string().optional(),
-  profileLinkType: zSocialProfilePlatform.optional(),
-  profileLinkReqType: zSocialProfileReqType.optional(),
+  profilesToAdd: z.array(zSocialProfileLink).optional(),
+  profilesToDelete: z.array(zSocialProfileLink).optional(),
 });

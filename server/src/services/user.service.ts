@@ -101,7 +101,13 @@ export async function safeUserFromUsername(username: string): Promise<SafeUserIn
  */
 function validateProfileURL(link: string, type: SocialProfilePlatform): boolean {
   if (type === "twitter") {
-    return is.twitter.profile(link);
+    // twitter requires also matching the 'x' domain
+    return (
+      is.twitter.profile(link) ||
+      link.match(
+        /^https?:\/\/(?:www\.)?(?:x)\.com\/(?!home|share|i\/flow|search|hashtag|explore)([a-zA-Z0-9_]{1,15})\/?$/,
+      )?.[1] !== null
+    );
   } else if (type === "instagram") {
     return is.instagram.url(link);
   } else if (type === "twitch") {
@@ -128,11 +134,10 @@ export async function updateUser(
     customBackground,
     hideUsername,
     privateProfile,
-    profileLink,
-    profileLinkType,
-    profileLinkReqType,
+    profilesToAdd,
+    profilesToDelete,
   }: UserUpdateRequest,
-): Promise<SafeUserInfo> {
+): Promise<SafeUserInfo | { error: string }> {
   const user = await getUserByUsername(username);
   if (!user) throw new Error(`No user ${username}`);
   if (password !== undefined) await updateAuth(username, password, user.userId);
@@ -142,27 +147,29 @@ export async function updateUser(
   if (hideUsername !== undefined) newUser.hideUsername = hideUsername;
   if (privateProfile !== undefined) newUser.privateProfile = privateProfile;
 
-  if (profileLink !== undefined) {
-    if (profileLinkType === undefined || profileLinkReqType === undefined)
-      throw new Error("Must specify account type and request type when uploading a profile link!");
-
-    if (validateProfileURL(profileLink, profileLinkType) === false) {
-      throw new Error("Invalid URL specified for credentials!");
-    }
-    if (profileLinkReqType === "add") {
-      if (newUser.profileLinks.filter((p) => p.type === profileLinkType).length > 0) {
-        throw new Error("Already linked to this account type!");
+  if (profilesToAdd !== undefined) {
+    for (const profile of profilesToAdd) {
+      if (validateProfileURL(profile.link, profile.type) === false) {
+        return { error: "Invalid URL for platform type!" };
+      }
+      if (newUser.profileLinks.filter((p) => p.type === profile.type).length > 0) {
+        return { error: "Platform type is already linked-to!" };
       }
       newUser.profileLinks = [
-        { link: profileLink, type: profileLinkType, verified: false },
+        { link: profile.link, type: profile.type, verified: false },
         ...newUser.profileLinks,
       ];
-    } else {
+    }
+  }
+
+  if (profilesToDelete !== undefined) {
+    for (const profile of profilesToDelete) {
       newUser.profileLinks = newUser.profileLinks.filter((p) => {
-        return !(p.link === profileLink && p.type === profileLinkType);
+        return !(p.link === profile.link && p.type === profile.type);
       });
     }
   }
+
   await UserRepo.set(user.userId, newUser);
   return populateSafeUserInfo(user.userId);
 }

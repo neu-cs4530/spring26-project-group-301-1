@@ -215,18 +215,14 @@ describe("GET /api/oauth/:platform/callback", () => {
     beforeEach(async () => {
       // Add a twitch profile link to user0 so it can be marked verified
       await updateUser("user0", {
-        profileLink: twitchLink,
-        profileLinkType: "twitch",
-        profileLinkReqType: "add",
+        profilesToAdd: [{ link: twitchLink, type: "twitch", verified: false }],
       });
     });
 
     afterEach(async () => {
       // Remove the profile link after each test to keep state clean
       await updateUser("user0", {
-        profileLink: twitchLink,
-        profileLinkType: "twitch",
-        profileLinkReqType: "delete",
+        profilesToDelete: [{ link: twitchLink, type: "twitch", verified: false }],
       });
     });
 

@@ -4,8 +4,8 @@ import useAuth from "./useAuth.ts";
 import { updateUser } from "../services/userService.ts";
 import {
   type UserUpdateRequest,
+  type SocialProfileLink,
   type SocialProfilePlatform,
-  type SocialProfileReqType,
 } from "@gamenite/shared";
 
 /**
@@ -68,9 +68,10 @@ export default function useEditProfileForm() {
   const [password, setPassword] = useState("");
   const [hideUsername, setHideUsername] = useState<boolean>(user.hideUsername);
   const [privateProfile, setPrivateProfile] = useState<boolean>(user.privateProfile);
-  const [socialLink, setSocialLink] = useState<string>("");
+  const [profilesToDelete, setProfilesToDelete] = useState<SocialProfileLink[]>([]);
+  const [profilesToAdd, setProfilesToAdd] = useState<SocialProfileLink[]>([]);
+  const [socialLink, setSocialLink] = useState("");
   const [socialLinkType, setSocialLinkType] = useState<SocialProfilePlatform | null>(null);
-  const [socialReqType, setSocialReqType] = useState<SocialProfileReqType | null>(null);
   const [confirm, setConfirm] = useState("");
   const [err, setErr] = useState<null | string>(null);
   const auth = useAuth();
@@ -89,9 +90,8 @@ export default function useEditProfileForm() {
       password === "" &&
       user.hideUsername === hideUsername &&
       user.privateProfile === privateProfile &&
-      socialLink === "" &&
-      socialLinkType === null &&
-      socialReqType === null
+      profilesToAdd.length === 0 &&
+      profilesToDelete.length === 0
     ) {
       setErr("No changes to submit");
       return;
@@ -123,11 +123,9 @@ export default function useEditProfileForm() {
     if (password !== "") updates.password = password;
     if (user.hideUsername !== hideUsername) updates.hideUsername = hideUsername;
     if (user.privateProfile !== privateProfile) updates.privateProfile = privateProfile;
-    if (socialLink !== "" && socialLinkType !== null && socialReqType !== null) {
-      updates.profileLink = socialLink;
-      updates.profileLinkType = socialLinkType;
-      updates.profileLinkReqType = socialReqType;
-    }
+    if (profilesToAdd.length > 0) updates.profilesToAdd = profilesToAdd;
+    if (profilesToDelete.length > 0) updates.profilesToDelete = profilesToDelete;
+
     const response = await updateUser(auth, updates);
     if ("error" in response) {
       setErr(response.error);
@@ -156,12 +154,14 @@ export default function useEditProfileForm() {
     setHideUsername,
     privateProfile,
     setPrivateProfile,
+    profilesToAdd,
+    setProfilesToAdd,
+    profilesToDelete,
+    setProfilesToDelete,
     socialLink,
     setSocialLink,
     socialLinkType,
     setSocialLinkType,
-    socialReqType,
-    setSocialReqType,
     err,
     setErr,
     handleSubmit,
