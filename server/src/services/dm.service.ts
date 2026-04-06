@@ -53,8 +53,11 @@ export async function getDirectMessageInfo(
   const messages = await getMessagesById(directMessage.messages);
   const lastRead = directMessage.lastReadAt[loggedInUser];
   const unreadCount = lastRead
-    ? messages.filter((msg) => new Date(msg.createdAt) > new Date(lastRead)).length
-    : messages.length;
+    ? messages.filter(
+        (msg) =>
+          new Date(msg.createdAt) > new Date(lastRead) && msg.createdBy.username !== loggedInUser,
+      ).length
+    : messages.filter((msg) => msg.createdBy.username !== loggedInUser).length;
   return {
     dmId,
     otherUser: await safeUserFromUsername(friendUsername),

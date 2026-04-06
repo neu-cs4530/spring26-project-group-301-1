@@ -7,7 +7,7 @@ import { getDirectMessages } from "../services/dmService.ts";
 import useDmContext from "../hooks/useDmContext.ts";
 
 export default function DirectMessageList() {
-  const { user } = useLoginContext();
+  const { user, socket } = useLoginContext();
   const [dms, setDms] = useState<DirectMessageInfo[] | null>(null);
   const { unreadCounts } = useDmContext();
 
@@ -17,6 +17,24 @@ export default function DirectMessageList() {
       setDms(result);
     });
   }, [user.username]);
+
+  useEffect(() => {
+    function handleNew({ dmId }: { dmId: string }) {
+      setDms((prev) => {
+        if (prev === null || prev.some((dm) => dm.dmId === dmId)) return prev;
+
+        void getDirectMessages(user.username).then((result) => {
+          if ("error" in result) return;
+          setDms(result);
+        });
+        return prev;
+      });
+    }
+    socket.on("directMessageNew", handleNew);
+    return () => {
+      socket.off("directMessageNew", handleNew);
+    };
+  }, [socket, user.username]);
 
   return (
     <div className="dm-layout">
@@ -29,7 +47,6 @@ export default function DirectMessageList() {
         ) : (
           <div className="dm-list">
             {dms.map((dm) => {
-              const lastMessage = dm.messages.at(-1);
               const liveUnread = unreadCounts[dm.dmId] ?? dm.unreadCount;
               return (
                 <NavLink
@@ -41,11 +58,6 @@ export default function DirectMessageList() {
                 >
                   <strong>{dm.otherUser.display}</strong>
                   {liveUnread > 0 && <span className="dmAlert">{liveUnread}</span>}
-                  {lastMessage && (
-                    <p className="smallAndGray">
-                      {lastMessage.deleted ? "[deleted]" : lastMessage.text}
-                    </p>
-                  )}
                 </NavLink>
               );
             })}

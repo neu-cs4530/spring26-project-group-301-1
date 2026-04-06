@@ -21,7 +21,7 @@ export default function DirectMessage() {
   return dm ? (
     <>
       <h2>{dm.otherUser.display}</h2>
-      <DirectMessagePanel dm={dm} />
+      <DirectMessagePanel key={dm.dmId} dm={dm} />
     </>
   ) : (
     <p>Loading...</p>

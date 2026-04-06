@@ -15,17 +15,21 @@ import "../components/ChatPanel.css";
  */
 export default function DirectMessagePanel({ dm }: { dm: DirectMessageInfo }) {
   const auth = useAuth();
-  const { setUnreadCount } = useDmContext();
+  const { setUnreadCount, setActiveDmId } = useDmContext();
   const { messages, handleMessageCreation, handleMessageDeletion } = useSocketsForDirectMessage(
     dm.dmId,
     dm.messages,
   );
 
   useEffect(() => {
+    setActiveDmId(dm.dmId);
     void markDirectMessageAsRead(auth, dm.dmId);
     setUnreadCount(dm.dmId, 0);
-    return () => setUnreadCount(dm.dmId, 0);
-  }, [auth, dm.dmId, setUnreadCount]);
+    return () => {
+      setActiveDmId(null);
+      setUnreadCount(dm.dmId, 0);
+    };
+  }, [auth, dm.dmId, setUnreadCount, setActiveDmId]);
 
   return (
     <>

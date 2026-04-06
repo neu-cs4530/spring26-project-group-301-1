@@ -97,7 +97,7 @@ export const socketDirectMessageNew: SocketAPI = (socket, io) => async (body) =>
       payload: { dmId, text },
     } = withAuth(z.object({ dmId: z.string(), text: z.string() })).parse(body);
     const user = await enforceAuth(auth);
-    const message = await createMessage(user, text, new Date());
+    const message = await createMessage(user, text, new Date(), true);
 
     await addMessageToDirectMessage(dmId, message.messageId);
     const otherUsername = await getOtherDirectMessageUser(dmId, user.username);
