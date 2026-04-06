@@ -5,22 +5,8 @@ import NewForumComment from "../components/NewForumComment.tsx";
 import useTimeSince from "../hooks/useTimeSince.ts";
 import UserLink from "../components/UserLink.tsx";
 import useLoginContext from "../hooks/useLoginContext.ts";
+import useHiddenIds from "../hooks/useHiddenIds.ts";
 import { ShieldCheck, ShieldOff } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-
-function readHiddenCommentIds(storageKey: string): Set<string> {
-  try {
-    const raw = window.localStorage.getItem(storageKey);
-    if (!raw) return new Set();
-
-    const parsed: unknown = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return new Set();
-
-    return new Set(parsed.filter((value): value is string => typeof value === "string"));
-  } catch {
-    return new Set();
-  }
-}
 
 export default function ThreadPage() {
   const formatTimeSince = useTimeSince();
@@ -31,47 +17,14 @@ export default function ThreadPage() {
   // route with `:threadId` on the path
   const { threadInfo, setThread } = useThreadInfo(threadId!);
   const activeThreadId = threadId ?? "";
-  const hiddenStorageKey = useMemo(
-    () => `hidden-forum-comments:${activeThreadId}`,
-    [activeThreadId],
-  );
-  const [hiddenCommentIdsByThread, setHiddenCommentIdsByThread] = useState<
-    Record<string, Set<string>>
-  >(() => ({ [activeThreadId]: readHiddenCommentIds(hiddenStorageKey) }));
-  const hiddenCommentIds = useMemo(
-    () => hiddenCommentIdsByThread[activeThreadId] ?? readHiddenCommentIds(hiddenStorageKey),
-    [activeThreadId, hiddenCommentIdsByThread, hiddenStorageKey],
-  );
-
-  useEffect(() => {
-    if (!activeThreadId) return;
-
-    try {
-      window.localStorage.setItem(hiddenStorageKey, JSON.stringify(Array.from(hiddenCommentIds)));
-    } catch {
-      // Ignore storage failures and keep UI functional.
-    }
-  }, [activeThreadId, hiddenCommentIds, hiddenStorageKey]);
-
-  function handleHideComment(commentId: string): void {
-    if (!activeThreadId) return;
-
-    setHiddenCommentIdsByThread((existing) => {
-      const next = new Set(existing[activeThreadId] ?? hiddenCommentIds);
-      next.add(commentId);
-      return { ...existing, [activeThreadId]: next };
-    });
-  }
-
-  function handleUnhideComment(commentId: string): void {
-    if (!activeThreadId) return;
-
-    setHiddenCommentIdsByThread((existing) => {
-      const next = new Set(existing[activeThreadId] ?? hiddenCommentIds);
-      next.delete(commentId);
-      return { ...existing, [activeThreadId]: next };
-    });
-  }
+  const {
+    hiddenIds: hiddenCommentIds,
+    hideItem: handleHideComment,
+    unhideItem: handleUnhideComment,
+  } = useHiddenIds({
+    storagePrefix: "hidden-forum-comments",
+    entityId: activeThreadId,
+  });
 
   // Only apply background if the current user is the author
   let forumBackgroundStyle = {};
