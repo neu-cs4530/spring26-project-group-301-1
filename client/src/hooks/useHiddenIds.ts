@@ -17,13 +17,17 @@ function readHiddenIds(storageKey: string): Set<string> {
 interface UseHiddenIdsOptions {
   storagePrefix: string;
   entityId: string;
+  scopeId?: string;
 }
 
 /**
  * Keeps a per-entity set of hidden item IDs persisted in localStorage.
  */
-export default function useHiddenIds({ storagePrefix, entityId }: UseHiddenIdsOptions) {
-  const storageKey = useMemo(() => `${storagePrefix}:${entityId}`, [storagePrefix, entityId]);
+export default function useHiddenIds({ storagePrefix, entityId, scopeId }: UseHiddenIdsOptions) {
+  const storageKey = useMemo(() => {
+    const scopeSegment = scopeId ? `${scopeId}:` : "";
+    return `${storagePrefix}:${scopeSegment}${entityId}`;
+  }, [storagePrefix, scopeId, entityId]);
   const [hiddenIdsByEntity, setHiddenIdsByEntity] = useState<Record<string, Set<string>>>(() => ({
     [entityId]: entityId ? readHiddenIds(storageKey) : new Set(),
   }));
