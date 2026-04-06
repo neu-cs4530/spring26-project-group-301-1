@@ -95,7 +95,7 @@ function isFull(board: TicTacToeState["board"]): boolean {
 function legalMoves(board: TicTacToeState["board"]): TicTacToeMove[] {
   const all: TicTacToeMove[] = [];
   for (const move of PREFERRED_MOVES) {
-    if (!move.coord) continue;
+    if (!("coord" in move) || !move.coord) continue;
     const [r, c] = move.coord;
     if (board[r][c] === null) all.push(move);
   }
@@ -103,7 +103,7 @@ function legalMoves(board: TicTacToeState["board"]): TicTacToeMove[] {
 }
 
 function applyMove(state: TicTacToeState, move: TicTacToeMove): TicTacToeState {
-  if (!move.coord) throw new Error("Invalid move: missing coord");
+  if (!("coord" in move) || !move.coord) throw new Error("Invalid move: missing coord");
   const [r, c] = move.coord;
   const next = cloneBoard(state.board);
   next[r][c] = markForPlayer(state.nextPlayer);

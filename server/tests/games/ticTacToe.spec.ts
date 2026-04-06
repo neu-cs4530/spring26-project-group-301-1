@@ -67,6 +67,40 @@ describe(`Tic Tac Toe's update() logic`, () => {
     ).toStrictEqual(null);
   });
 
+  it("Should reject difficulty selection moves", () => {
+    expect(
+      ticTacToeLogic.update(
+        {
+          board: [
+            [null, null, null],
+            [null, null, null],
+            [null, null, null],
+          ],
+          nextPlayer: 1,
+          forfeited: false,
+        },
+        { type: "move", difficulty: "easy" },
+        1,
+      ),
+    ).toStrictEqual(null);
+
+    expect(
+      ticTacToeLogic.update(
+        {
+          board: [
+            [null, null, "X"],
+            [null, null, null],
+            [null, null, null],
+          ],
+          nextPlayer: 0,
+          forfeited: false,
+        },
+        { type: "move", difficulty: "hard" },
+        1,
+      ),
+    ).toStrictEqual(null);
+  });
+
   it("Should reject a move with out-of-bounds coordinates", () => {
     expect(
       ticTacToeLogic.update(
@@ -847,6 +881,7 @@ describe(`Tic Tac Toe's viewAs() logic`, () => {
       nextPlayer: 1,
       winningEntry: null,
       forfeited: false,
+      opponentTypeSelected: true,
     });
 
     expect(
@@ -871,6 +906,7 @@ describe(`Tic Tac Toe's viewAs() logic`, () => {
       nextPlayer: 1,
       winningEntry: null,
       forfeited: false,
+      opponentTypeSelected: true,
     });
   });
 
@@ -897,6 +933,7 @@ describe(`Tic Tac Toe's viewAs() logic`, () => {
       nextPlayer: 1,
       winningEntry: null,
       forfeited: false,
+      opponentTypeSelected: true,
     });
   });
 
@@ -1111,6 +1148,33 @@ describe(`Tic Tac Toe's describeMove() logic`, () => {
     ).toBe(" moved at (0, 1)");
   });
 
+  it("Should describe a difficulty selection move as invalid", () => {
+    expect(
+      ticTacToeLogic.describeMove(
+        {
+          board: [
+            ["X", "X", null],
+            ["O", "O", null],
+            [null, null, null],
+          ],
+          nextPlayer: 1,
+          forfeited: false,
+        },
+        {
+          board: [
+            ["X", "X", "X"],
+            ["O", "O", null],
+            [null, null, null],
+          ],
+          nextPlayer: 0,
+          forfeited: false,
+        },
+        { type: "move", difficulty: "minimax" },
+        1,
+      ),
+    ).toBe(" made an illegal move");
+  });
+
   it("Should describe a winning row move", () => {
     expect(
       ticTacToeLogic.describeMove(
@@ -1290,6 +1354,7 @@ describe(`Tic Tac Toe's tagView() logic`, () => {
           [2, 0],
         ],
         forfeited: false,
+        opponentTypeSelected: true,
       }),
     ).toStrictEqual({
       type: "tictactoe",
@@ -1306,6 +1371,7 @@ describe(`Tic Tac Toe's tagView() logic`, () => {
           [2, 0],
         ],
         forfeited: false,
+        opponentTypeSelected: true,
       },
     });
   });

@@ -42,6 +42,11 @@ export const ticTacToeLogic: GameLogic<TicTacToeState, TicTacToeView> = {
       };
     }
 
+    if ("difficulty" in move.data) {
+      // difficult selection not supported for player v player tic tac toe
+      return null;
+    }
+
     if (move.data.coord === undefined) return null;
 
     const [i, j] = move.data.coord;
@@ -68,6 +73,7 @@ export const ticTacToeLogic: GameLogic<TicTacToeState, TicTacToeView> = {
       nextPlayer: state.nextPlayer,
       winningEntry: getWinningEntry(state.board),
       forfeited: state.forfeited,
+      opponentTypeSelected: true,
     };
     return stateView;
   },
@@ -76,6 +82,9 @@ export const ticTacToeLogic: GameLogic<TicTacToeState, TicTacToeView> = {
     const move = zTicTacToeMove.parse(payload);
     if (move.type === "forfeit") {
       return ` forfeited the game`;
+    }
+    if ("difficulty" in move) {
+      return ` made an illegal move`; // not allowed for regular tic tac toe
     }
     if (move.coord === undefined) {
       return ` made an invalid move`;

@@ -64,6 +64,7 @@ export interface TicTacToeView {
   nextPlayer: number;
   winningEntry: null | [[number, number], [number, number], [number, number]];
   forfeited: boolean;
+  opponentTypeSelected: boolean; // TODO docs!
 }
 
 /**
@@ -102,12 +103,33 @@ export interface TicTacToeView {
  *
  */
 
-export interface TicTacToeMove extends GameMove {
+export interface TicTacToeGameMove extends GameMove {
   coord?: [number, number];
 }
 
+/**
+ * Specifies difficulty for an automated tic tac toe opponent. Must be set
+ * before game commences.
+ */
+export interface TicTacToeDifficultySelection extends GameMove {
+  difficulty: "minimax" | "random";
+}
+
+/**
+ * A Tic Tac Toe move is either a game move or a difficulty selection, in the case of
+ * an automated opponent.
+ */
+export type TicTacToeMove = TicTacToeGameMove | TicTacToeDifficultySelection;
+
+export const zTicTacToeDifficultySelection = z.object({
+  type: z.enum(["move", "forfeit"]),
+  difficulty: z.enum(["minimax", "random"]),
+});
+
 const tttPos = z.int().gte(0).lt(3);
-export const zTicTacToeMove = z.object({
+export const zTicTacToeGameMove = z.object({
   type: z.enum(["move", "forfeit"]),
   coord: z.tuple([tttPos, tttPos]).optional(),
 });
+
+export const zTicTacToeMove = z.union([zTicTacToeDifficultySelection, zTicTacToeGameMove]);
