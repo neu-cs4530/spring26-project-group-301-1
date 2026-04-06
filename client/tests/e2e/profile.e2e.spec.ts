@@ -241,8 +241,8 @@ test.describe("Friends count badge", () => {
     await expect(friendsButtonOnF).toContainText("2");
 
     // Check that user0's friend count has increased back to 2
-    await page2.goto("/");
-    await page2.waitForURL("/");
+    await page1.goto("/");
+    await page1.waitForURL("/");
     await logInUser(page1, user0, "pwd0000");
     await page1.getByRole("link", { name: "View Profile" }).waitFor({ state: "visible" });
     await page1.getByRole("link", { name: "View Profile" }).click();
