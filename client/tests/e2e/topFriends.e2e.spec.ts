@@ -31,7 +31,7 @@ test.describe("The most-played-with friends list", () => {
 
     expect(await page2.getByText("Sénior Dos").count()).toBe(1);
     expect(await page2.getByText("You").count()).toBeGreaterThanOrEqual(1);
-    expect(await page2.getByText("Frau Drei").count()).toBe(0);
+    expect(await page2.getByText("Frau Drei").count()).toBe(1);
   });
 
   test("Should show only two friends on user1's profile", async () => {

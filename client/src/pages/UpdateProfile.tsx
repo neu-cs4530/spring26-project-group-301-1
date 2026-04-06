@@ -382,7 +382,7 @@ export default function UpdateProfile() {
                   />
                   <button
                     type="button"
-                    className="secondary narrow"
+                    className="secondary narrow profilePasswordRevealButton"
                     onClick={() => setShowPass((v: boolean) => !v)}
                   >
                     {showPass ? "Hide" : "Reveal"}
