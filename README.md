@@ -72,11 +72,12 @@ endpoints in `server/src/app.ts`.
 
 #### `/api/game`
 
-| Endpoint  | Method | Description                           |
+| Endpoint| Method | Description                           |
 | --------- | ------ | ------------------------------------- |
 | `/create` | POST   | Create new game                       |
-| `/list`   | GET    | List all games                        |
-| `/:id`    | GET    | Get information about a specific game |
+| `/list` | POST   | List all games                        |
+| `/list/:username` | POST   | List all games by username            |
+| `/:id`   | GET    | Get information about a specific game |
 
 #### `/api/thread`
 
@@ -84,7 +85,7 @@ endpoints in `server/src/app.ts`.
 | -------------- | ------ | --------------------------------- |
 | `/create`      | POST   | Create new forum post             |
 | `/list`        | GET    | List all forum posts              |
-| `/:id`         | GET    | Get information about a form post |
+| `/:id`         | GET    | Get information about a forum post |
 | `/:id/comment` | POST   | Add a comment to a forum post     |
 
 #### `/api/user`
@@ -97,6 +98,23 @@ endpoints in `server/src/app.ts`.
 | `/:username` | POST   | Update user's displayname or password |
 | `/:username` | GET    | Get information about a user          |
 
+#### `/api/stats`
+
+| Endpoint      | Method | Description                  |
+| ------------- | ------ | ---------------------------- |
+| `/leaderboard` | GET   | Get the leaderboard          |
+| `/:username`  | GET    | Get stats for a specific user |
+
+#### `/api/friends`
+
+| Endpoint                    | Method | Description                        |
+| ---------- | ------ | ---------------------------------- |
+| `/:username/requests`| POST   | Get friend requests for a user     |
+| `/:username`| GET    | Get friends for a user             |
+| `/request`                  | POST   | Send a friend request|
+| `/request/:requestId/resolve` | POST | Resolve a friend request           |
+| `/:username/status`| POST   | Get friendship status with a user  |
+| `/remove`| POST   | Remove a friend|
 ### Websockets
 
 The Socket.io API for event-driven communication between clients and the
