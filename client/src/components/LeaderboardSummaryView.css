@@ -63,9 +63,9 @@
 .leaderboard-summary-table thead th {
   text-align: left;
   font-weight: 600;
-  color: var(--gray-foreground);
+  color: rgba(255, 255, 255, 0.7);
   padding: 0.25rem 0.5rem;
-  border-bottom: 1px dashed black;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
   font-size: 1rem;
 }
 
@@ -74,7 +74,7 @@
 }
 
 .leaderboard-summary-row {
-  border-top: 1px dashed black;
+  border-top: 1px dashed rgba(255, 255, 255, 0.2);
   cursor: pointer;
   transition: background 0.1s;
 }
@@ -93,7 +93,7 @@
   text-align: center;
   width: 2rem;
   font-weight: 700;
-  color: var(--gray-foreground);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .leaderboard-summary-rank--gold {
@@ -121,7 +121,7 @@
 
 .leaderboard-summary-draws {
   text-align: center;
-  color: var(--gray-foreground);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .leaderboard-summary-unknown {
@@ -191,19 +191,21 @@
   margin-bottom: 0.2rem;
   font-weight: 700;
   font-size: 1rem;
+  color: #1a1a2e;
 }
 
 .leaderboard-summary-podium__medal {
   order: 2; /* rank/medal second */
   font-weight: 700;
   font-size: 0.9rem;
+  color: #1a1a2e;
 }
 
 .leaderboard-summary-podium__stats {
   order: 3; /* stats last */
   margin-top: 0.15rem;
   font-size: 0.82rem;
-  color: var(--gray-foreground);
+  color: #4a5568;
 }
 
 @media (max-width: 680px) {

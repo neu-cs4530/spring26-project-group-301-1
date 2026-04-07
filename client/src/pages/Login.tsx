@@ -28,9 +28,9 @@ export default function Login({ setAuth }: LoginProps) {
             textAlign: "center",
           }}
         >
-          GameNite Connect
+          PlaySpace
         </h1>
-        <h2 style={{ textAlign: "center" }}>Log into GameNite Connect</h2>
+        <h2 style={{ textAlign: "center" }}>Log into PlaySpace</h2>
         <input
           type="text"
           value={username}

@@ -5,8 +5,8 @@
   min-height: 3rem;
   width: 100%;
   padding: 0.75rem 1.25rem;
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+  background: #000001;
+  border-bottom: 1px solid #ffffff;
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
   grid-area: header;
 }
@@ -15,7 +15,7 @@
   font-size: 1.45rem;
   font-weight: 700;
   letter-spacing: 0.2px;
-  color: #111827;
+  color: #f0f0f0;
   text-decoration: none;
 }
 
@@ -56,14 +56,14 @@
 }
 
 .header__link--profile {
-  color: #334155;
-  border-color: #d1d5db;
-  background: #ffffff;
+  color: #e2e8f0;
+  border-color: #3b67a1;
+  background: #0d0020;
 }
 
 .header__link--profile:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: #193284;
+  border-color: #2d4f7b;
 }
 
 .header__link--logout {

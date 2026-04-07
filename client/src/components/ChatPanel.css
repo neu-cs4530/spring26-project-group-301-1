@@ -11,7 +11,7 @@ div.chatHeader {
   justify-content: space-between;
   align-items: center;
   padding: 0.95rem 1rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .chatHeader__title {
@@ -20,7 +20,7 @@ div.chatHeader {
   align-items: center;
   gap: 0.3rem;
   font-size: 1.65rem;
-  color: #0f172a;
+  color: white;
   font-weight: 800;
   line-height: 1.1;
 }

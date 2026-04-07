@@ -12,7 +12,7 @@ export default function Header() {
   return (
     <header id="header" className="header">
       <Link to="/" className="title">
-        GameNite Connect!
+        PlaySpace!
       </Link>
 
       <nav className="header__right" aria-label="Header actions">

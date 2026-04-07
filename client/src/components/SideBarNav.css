@@ -19,7 +19,7 @@
   flex-direction: column;
   width: 200px;
   gap: 0.65rem;
-  background-color: #f3f4f8;
+  background-color: #3f6ccc;
   grid-area: sidebar;
 }
 
@@ -30,7 +30,7 @@
   min-height: 3rem;
   padding: 0.7rem 0.9rem;
   border-radius: 12px;
-  color: #63708f;
+  color: #a0aec0;
   text-decoration: none;
   font-size: 1.1rem;
   font-weight: 500;
@@ -40,8 +40,8 @@
 }
 
 .menu_button:hover {
-  background: #e7ebf3;
-  color: #4d5c7e;
+  background: #1a0040;
+  color: #e2e8f0;
 }
 
 .menu_icon {
@@ -54,7 +54,7 @@
 }
 
 .menu_selected {
-  background: #dfe3ed;
-  color: #1f2d4d;
+  background: #1a0040;
+  color: #f0f0f0;
   font-weight: 700;
 }

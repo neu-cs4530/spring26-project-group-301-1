@@ -1,12 +1,20 @@
 .main {
   display: grid;
   grid-template-rows: 3rem 1fr;
-  grid-template-columns: 200px 1fr;
-  grid-template-areas: "header header" "sidebar main";
+  grid-template-columns: 1fr;
+  grid-template-areas: "header" "main";
   min-height: 100vh;
   --content-vh: calc(100vh - 3rem);
 }
 
 .right_main {
   grid-area: main;
+}
+
+.dock-wrapper {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
 }

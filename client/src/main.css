@@ -1,8 +1,12 @@
 /* Styles used across the site */
+body {
+  background-color: #000001;
+  color: #f0f0f0;
+}
 
 /** Core fonts **/
 * {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Courier New', Courier, monospace;
   --gray-background: #f7f7f7;
   --gray-foreground: #555;
 }
@@ -89,8 +93,9 @@ hr {
 
 /** Error reporting **/
 .error-message {
-  color: red;
-  font-size: 14px;
+  color: #ff6b6b;
+  font-size: 16px;
+  font-weight: bold;
 }
 
 /** Default content settings **/
@@ -149,171 +154,17 @@ hr {
   color: var(--gray-foreground);
 }
 
-.newGamePage {
-  min-height: var(--content-vh);
-  display: grid;
-  place-items: center;
-  padding: 1.1rem;
-  background: #ffffff;
-}
-
-.newGameCard {
-  width: min(560px, 100%);
-  margin-top: -18rem;
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.84);
-  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.08);
-  backdrop-filter: blur(2px);
-  padding: 1.2rem;
-  display: grid;
-  gap: 1rem;
-}
-
-.newGameCard__header {
-  text-align: center;
-}
-
-.newGameCard__title {
-  margin: 0;
-  font-size: 2rem;
-  color: #1e2a5a;
-  font-weight: 800;
-}
-
-.newGameCard__subtitle {
-  margin: 0.35rem 0 0;
-  color: #64748b;
-  font-size: 1.06rem;
-  font-weight: 600;
-}
-
-.newGameCard__formShell {
-  border: 1px solid #e2e8f0;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.65);
-  padding: 0.9rem;
-  display: grid;
-  gap: 0.82rem;
-}
-
-.newGameCard__selectRow {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  border: 1px solid #dbe3f3;
-  border-radius: 12px;
-  background: linear-gradient(180deg, #f8faff 0%, #eef2ff 100%);
-  padding: 0.56rem 0.7rem;
-}
-
-.newGameCard__checkboxRow {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  border: 1px solid #dbe3f3;
-  border-radius: 12px;
-  background: linear-gradient(180deg, #f8faff 0%, #eef2ff 100%);
-  padding: 0.56rem 0.7rem;
-}
-
-.newGameCard__checkbox {
-  width: 1.2rem;
-  height: 1.2rem;
-  accent-color: #3b82f6;
-  cursor: pointer;
-}
-
-.newGameCard__checkboxLabel {
-  color: #4b5a87;
-  font-size: 1.08rem;
-  font-weight: 700;
-  cursor: pointer;
-  user-select: none;
-}
-
-.newGameCard__helpText {
-  margin: 0.5rem 0 0 1.5rem;
-  font-size: 0.9rem;
-  color: #6b7280;
-  line-height: 1.4;
-}
-
-.newGameCard__icon {
-  width: 1.05rem;
-  height: 1.05rem;
-  color: #3b82f6;
-  flex-shrink: 0;
-}
-
-.newGameCard__select {
+.particles-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  border: none;
-  background: transparent;
-  color: #4b5a87;
-  font-size: 1.08rem;
-  font-weight: 700;
-  outline: none;
-  min-height: 2rem;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
 }
 
-.newGameCard__submit {
-  justify-self: center;
-  min-width: 240px;
-  min-height: 2.6rem;
-  border: 1px solid #93c5fd;
-  border-radius: 10px;
-  background: #dbeafe;
-  color: #1e3a8a;
-  font-size: 1.05rem;
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.45rem;
-}
-
-.newGameCard__submit:hover {
-  background: #bfdbfe;
-  border-color: #60a5fa;
-}
-
-.newGameCard__submitIcon {
-  width: 1.05rem;
-  height: 1.05rem;
-}
-
-.newGameCard__error {
-  margin: 0;
-  text-align: center;
-}
-
-.newGameCard__warning {
-  color: #dc2626 !important;
-  font-size: 0.85rem;
-  margin: 0;
-  text-align: center;
-}
-
-.newThread__warning {
-  color: #dc2626 !important;
-  font-size: 0.85rem;
-  margin: 0;
-  text-align: left;
-}
-
-@media (max-width: 680px) {
-  .newGameCard {
-    width: 100%;
-    padding: 1rem;
-  }
-
-  .newGameCard__title {
-    font-size: 1.6rem;
-  }
-
-  .newGameCard__submit {
-    width: 100%;
-    min-width: 0;
-  }
+.particles-bg .particles-container {
+  width: 100%;
+  height: 100%;
 }

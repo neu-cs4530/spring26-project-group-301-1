@@ -1,12 +1,174 @@
-/* ...existing code... */
+/* Override Chakra spacing that fights height constraints */
+
+/* Remove vertical padding from the page wrapper */
+.home-page {
+  padding-top: 0 !important;
+  padding-bottom: 140px !important;
+}
+
+/* Tighten the gap between welcome title and card grid */
+.home-page__content {
+  gap: 0.5rem !important;
+}
+
+/* Remove the my={4} margin Chakra adds to card bodies */
+.home-card__body {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* Remove the mb={4} on the welcome box */
+.home-page__welcome {
+  margin-bottom: 0 !important;
+}
+
+.home-page {
+  height: calc(100vh - 60px);
+  padding-bottom: 90px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.home-page__content {
+  overflow: hidden;
+  height: 100%;
+}
+
+.home-page .card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 1rem;
+  padding: 0;
+  max-width: 100%;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  align-items: stretch;
+}
+
+.home-page .magic-bento-card {
+  aspect-ratio: unset;
+  min-height: unset;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+}
+
+.home-card--active-games {
+  border: 3px solid rgba(106, 248, 158, 0.626) !important;
+}
+
+.home-card--leaderboard {
+  border: 3px solid rgba(116, 148, 235, 0.655) !important;
+}
+
+.home-card--recent-posts {
+  border: 3px solid rgba(253, 238, 101, 0.801) !important;
+}
+
+.home-card--active-games:hover {
+  box-shadow:
+    0 8px 60px rgba(106, 248, 158, 0.4),
+    0 0 100px rgba(106, 248, 158, 0.3);
+}
+
+.home-card--leaderboard:hover {
+  box-shadow:
+    0 8px 60px rgba(116, 148, 235, 0.4),
+    0 0 100px rgba(116, 148, 235, 0.3);
+}
+
+.home-card--recent-posts:hover {
+  box-shadow:
+    0 8px 60px rgba(253, 238, 101, 0.4),
+    0 0 100px rgba(253, 238, 101, 0.3);
+}
+
+.home-card.magic-bento-card--border-glow::after {
+  inset: -1px;
+}
+
+.home-card--active-games.magic-bento-card--border-glow::after {
+  background: radial-gradient(
+    var(--glow-radius) circle at var(--glow-x) var(--glow-y),
+    rgba(106, 248, 158, calc(var(--glow-intensity) * 0.8)) 0%,
+    rgba(106, 248, 158, calc(var(--glow-intensity) * 0.4)) 30%,
+    transparent 60%
+  );
+}
+
+.home-card--leaderboard.magic-bento-card--border-glow::after {
+  background: radial-gradient(
+    var(--glow-radius) circle at var(--glow-x) var(--glow-y),
+    rgba(116, 148, 235, calc(var(--glow-intensity) * 0.8)) 0%,
+    rgba(116, 148, 235, calc(var(--glow-intensity) * 0.4)) 30%,
+    transparent 60%
+  );
+}
+
+.home-card--recent-posts.magic-bento-card--border-glow::after {
+  background: radial-gradient(
+    var(--glow-radius) circle at var(--glow-x) var(--glow-y),
+    rgba(255, 240, 107, calc(var(--glow-intensity) * 0.8)) 0%,
+    rgba(255, 240, 107, calc(var(--glow-intensity) * 0.4)) 30%,
+    transparent 60%
+  );
+}
+
+.home-page .card-grid .magic-bento-card:nth-child(3) {
+  grid-column: auto !important;
+  grid-row: auto !important;
+}
+
+.home-page .card-grid .magic-bento-card:nth-child(4) {
+  grid-column: auto !important;
+  grid-row: auto !important;
+}
+
+.home-page .card-grid .magic-bento-card:nth-child(6) {
+  grid-column: auto !important;
+  grid-row: auto !important;
+}
+
+.home-page__welcome-title {
+  font-size: 3rem;
+  font-weight: bold;
+  color: white;
+}
+
+/* Card header and divider never shrink */
+.home-card__header {
+  flex-shrink: 0;
+}
+
+.home-card__divider {
+  flex-shrink: 0;
+}
+
+/* Card body fills remaining height and compresses content */
+.home-card__body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding-top: 0.5rem;
+}
 
 .home-game-list {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   align-items: stretch;
-  grid-auto-rows: 1fr; /* each row uses tallest card in that row */
+  gap: 0.5rem;
 }
 
 .home-game-list__item {
-  height: 100%;
+  flex: 1;
+  min-height: 0;
+  height: unset;
   display: flex;
 }
 
@@ -15,27 +177,43 @@
 }
 
 .home-game-list__item {
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
-  padding: 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 20px;
+  background: #000001;
+  color: white;
+  padding: 0.6rem 1rem;
   transition:
     transform 0.18s ease,
     box-shadow 0.18s ease,
     border-color 0.18s ease;
-  height: 100%;
 }
 
 .home-game-list__item:hover {
   transform: translateY(-2px);
-  border-color: #cbd5e1;
-  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+  border-color: rgba(106, 248, 158, 0.8);
+  box-shadow:
+    0 4px 30px rgba(106, 248, 158, 0.3),
+    0 0 60px rgba(106, 248, 158, 0.15);
 }
 
 .home-game-list__item:focus-within {
-  border-color: #14b8a6;
-  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.2);
+  border-color: rgba(106, 248, 158, 0.8);
+  box-shadow: 0 0 0 3px rgba(106, 248, 158, 0.2);
+}
+
+/* Thread list mirrors game list compression */
+.home-thread-list {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.home-thread-list > * {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 @media (max-width: 768px) {

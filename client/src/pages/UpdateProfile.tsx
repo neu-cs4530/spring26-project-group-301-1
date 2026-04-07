@@ -11,10 +11,10 @@ import UserLink from "../components/UserLink";
 import { Gamepad2, Users } from "lucide-react";
 
 const PRESET_BACKGROUNDS: { label: string; url: string }[] = [
-  { label: "Stripes", url: "/backgrounds/stripes.jpeg" },
-  { label: "Sky", url: "/backgrounds/sky.jpeg" },
-  { label: "Pastels", url: "/backgrounds/pastel.jpeg" },
-  { label: "Lake", url: "/backgrounds/lake.jpeg" },
+  { label: "Blue", url: "/backgrounds/blue.jpg" },
+  { label: "Green", url: "/backgrounds/green.jpg" },
+  { label: "Yellow", url: "/backgrounds/yellow.jpg" },
+  { label: "Star", url: "/backgrounds/star.jpg" },
 ];
 
 export default function UpdateProfile() {

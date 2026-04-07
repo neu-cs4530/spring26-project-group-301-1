@@ -1,5 +1,5 @@
 span.opBlue {
-  color: oklch(0.55 0.2 260);
+  color: rgba(253, 238, 101, 1);
   font-weight: 800;
 }
 
@@ -16,22 +16,45 @@ span.opBlue {
 .threadPage__backLink {
   display: inline-block;
   margin: 0 0 0.9rem;
-  color: #5f6f93;
-  font-size: 0.92rem;
+  color: rgba(253, 238, 101, 0.6);
+  font-size: 1.5rem;
   font-weight: 500;
   text-decoration: none;
 }
 
 .threadPage__backLink:hover {
+  color: rgba(253, 238, 101, 0.9);
   text-decoration: underline;
 }
 
 .threadCard {
   width: 100%;
-  border: 1px solid #dfe4ef;
+  border: 3px solid rgba(253, 238, 101, 0.6);
   border-radius: 18px;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 8px 40px rgba(253, 238, 101, 0.08);
   padding: 1.25rem;
+  background: #000001;
+  aspect-ratio: unset;
+  min-height: unset;
+  height: fit-content;
+}
+
+.threadCard.magic-bento-card--border-glow::after {
+  inset: -1px;
+  background: radial-gradient(
+    var(--glow-radius) circle at var(--glow-x) var(--glow-y),
+    rgba(253, 238, 101, calc(var(--glow-intensity) * 0.8)) 0%,
+    rgba(253, 238, 101, calc(var(--glow-intensity) * 0.4)) 30%,
+    transparent 60%
+  );
+}
+
+.threadCard.magic-bento-card--border-glow:hover {
+  box-shadow: 0 4px 20px rgba(253, 238, 101, 0.2), 0 0 30px rgba(253, 238, 101, 0.15) !important;
+}
+
+.threadCard.particle-container:hover {
+  box-shadow: 0 4px 20px rgba(253, 238, 101, 0.2), 0 0 30px rgba(253, 238, 101, 0.15) !important;
 }
 
 .threadCard__titleRow {
@@ -43,28 +66,29 @@ span.opBlue {
   margin: 0.48rem 0 0;
   font-size: 1.2rem;
   font-weight: 800;
-  color: #1d2947;
+  color: white;
   line-height: 1.35;
 }
 
 .threadCard__commentCount {
-  border: 1px solid #cfd7ea;
+  border: 1px solid rgba(253, 238, 101, 0.3);
   border-radius: 10px;
   padding: 0.28rem 0.7rem;
   font-size: 0.82rem;
-  color: #6a7798;
+  color: rgba(253, 238, 101, 0.7);
+  background: rgba(253, 238, 101, 0.06);
 }
 
 .threadCard__body {
-  border: 1px solid #d8deea;
+  border: 1px solid rgba(253, 238, 101, 0.2);
   border-radius: 14px;
   overflow: hidden;
-  background: #ffffff;
+  background: rgba(253, 238, 101, 0.03);
 }
 
 .threadCard__opCard {
   padding: 0.9rem;
-  border-bottom: 1px solid #dfe3ee;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .threadCard__opHeader {
@@ -82,19 +106,19 @@ span.opBlue {
 .threadCard__author {
   font-size: 1rem;
   font-weight: 600;
-  color: #3a4666;
+  color: white;
   line-height: 1;
 }
 
 .threadCard__meta {
-  color: #8a95af;
+  color: rgba(255, 255, 255, 0.45);
   font-size: 0.78rem;
 }
 
 .threadCard__text {
   margin: 0.35rem 0 0;
   margin-left: 0.55rem;
-  color: #1f2d4e;
+  color: rgba(255, 255, 255, 0.85);
   font-size: 1.1rem;
   font-weight: 500;
   line-height: 1.55;
@@ -103,7 +127,7 @@ span.opBlue {
 .threadCard__commentsTitle {
   margin: 0;
   padding: 0;
-  color: #1c2948;
+  color: white;
   font-size: 1.25rem;
   display: inline-flex;
   align-items: center;
@@ -116,6 +140,7 @@ span.opBlue {
   justify-content: space-between;
   gap: 0.75rem;
   padding: 0.8rem 0.9rem 0.45rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .threadCard__comments {
@@ -123,16 +148,16 @@ span.opBlue {
 }
 
 .threadCard__emptyComments {
-  color: #737f9e;
+  color: rgba(255, 255, 255, 0.4);
   text-align: center;
   font-size: 0.9rem;
   padding: 0.7rem 0 0.5rem;
-  border-bottom: 1px solid #e2e5ef;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .threadCard__comment {
   padding: 0.7rem 0;
-  border-bottom: 1px solid #e2e5ef;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .threadCard__commentHeader {
@@ -142,20 +167,20 @@ span.opBlue {
 }
 
 .threadCard__commentAuthor {
-  color: #1f2d4e;
+  color: white;
   font-size: 0.95rem;
   font-weight: 700;
 }
 
 .threadCard__commentTime {
-  color: #737f9e;
+  color: rgba(255, 255, 255, 0.4);
   font-size: 0.8rem;
 }
 
 .threadCard__commentText {
   margin-top: 0.36rem;
   margin-left: 0.55rem;
-  color: #2c3858;
+  color: rgba(255, 255, 255, 0.8);
   font-size: 1rem;
 }
 

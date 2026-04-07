@@ -206,12 +206,14 @@ export default function ViewProfile({ username }: ViewProfileProps) {
     return (
       <Box
         borderRadius="xl"
-        border="1px solid #E5E7EB"
-        bg="white"
+        border="1px solid rgba(255, 255, 255, 0.12)"
+        bg="rgba(255, 255, 255, 0.04)"
         p={5}
-        boxShadow="xs"
-        transition="box-shadow 0.2s"
-        _hover={{ boxShadow: "md" }}
+        transition="box-shadow 0.2s, border-color 0.2s"
+        _hover={{
+          borderColor: "rgba(116, 148, 235, 0.5)",
+          boxShadow: "0 4px 20px rgba(116, 148, 235, 0.15)",
+        }}
         className="home-game-list__item"
       >
         <div key={key}>

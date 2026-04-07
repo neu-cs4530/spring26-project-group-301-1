@@ -11,11 +11,11 @@
 .gameRoster {
   display: grid;
   gap: 0.7rem;
-  border: 1px solid #e5e7eb;
+  border: 1px solid rgba(106, 248, 158, 0.3);
   border-radius: 16px;
-  background: #ffffff;
+  background: #0d1a14;
   padding: 1rem;
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  box-shadow: none;
 }
 
 .gameRoster__header {
@@ -30,7 +30,7 @@
   font-size: 2rem;
   font-weight: 700;
   line-height: 1.2;
-  color: #0f172a;
+  color: white;
 }
 
 .gameRoster__titleRow {
@@ -43,7 +43,7 @@
 .gameRoster__titleTime {
   font-size: 1rem;
   font-weight: 600;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .gameRoster__meta {
@@ -52,7 +52,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.45rem 1.2rem;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .gameRoster__action {
@@ -74,59 +74,59 @@ button.gameRoster__action--start:hover {
 }
 
 .gameRoster__action--forfeit {
-  border: 1px solid #fca5a5;
+  border: 1px solid rgba(248, 113, 113, 0.4);
   border-radius: 10px;
   padding: 0.5rem 0.85rem;
-  background: #fff1f2;
-  color: #b91c1c;
+  background: rgba(248, 113, 113, 0.1);
+  color: #f87171;
   font-size: 0.95rem;
   font-weight: 700;
 }
 
 .gameRoster__action--forfeit:hover {
-  background: #fee2e2;
-  border-color: #fca5a5;
+  background: rgba(248, 113, 113, 0.2);
+  border-color: rgba(248, 113, 113, 0.65);
 }
 
 .gameRoster__list {
-  border: 1px solid #e5e7eb;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   overflow: hidden;
   display: grid;
   gap: 0.5rem;
   padding: 0.6rem;
-  background: #f8fafc;
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .gameRoster__playerCard {
-  border: 1px solid #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  background: #ffffff;
+  background: rgb(20, 47, 30);
   padding: 0.65rem 0.8rem;
 }
 
 .gameRoster__playerCard--activeTurn {
-  border-color: #60a5fa;
-  background: #eff6ff;
-  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.25);
+  border-color: rgba(106, 248, 158, 0.5);
+  background: rgba(106, 248, 158, 0.272);
+  box-shadow: 0 0 0 2px rgba(106, 248, 158, 0.15);
 }
 
 .gameRoster__itemName {
   font-size: 1.32rem;
   font-weight: 700;
-  color: #0f172a;
+  color: white;
   line-height: 1.15;
 }
 
 .gameRoster__itemName a {
-  color: #0f172a;
-  text-decoration-color: #bfdbfe;
+  color: white;
+  text-decoration-color: rgba(106, 248, 158, 0.5);
 }
 
 .gameRoster__itemRole {
   margin-top: 0.2rem;
   font-size: 1rem;
-  color: #475569;
+  color: rgba(255, 255, 255, 0.55);
   font-weight: 600;
 }
 
@@ -140,15 +140,15 @@ button.gameRoster__action--start:hover {
 .gameRoster__versus {
   font-size: 1.6rem;
   font-weight: 700;
-  color: #1e293b;
+  color: rgba(255, 255, 255, 0.7);
   text-transform: uppercase;
 }
 
 .gameFrame {
-  border: 1px solid #e5e7eb;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: none;
   min-height: 0;
   overflow-y: auto;
 }
@@ -156,13 +156,13 @@ button.gameRoster__action--start:hover {
 .gameFrame--waiting {
   display: grid;
   place-items: center;
-  background: #f8fafc;
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .gameFrame__waitingText {
   font-size: 1.05rem;
   font-weight: 600;
-  color: #475569;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .gamePanel__inactivityWarning {
@@ -171,8 +171,8 @@ button.gameRoster__action--start:hover {
   justify-content: space-between;
   gap: 1rem;
   padding: 0.5rem 1rem;
-  background: #fff3cd;
-  border: 1px solid #ffc107;
+  background: rgba(255, 195, 7, 0.15);
+  border: 1px solid rgba(255, 195, 7, 0.5);
   border-radius: 6px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   position: fixed;
@@ -191,23 +191,22 @@ button.gameRoster__action--start:hover {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-  color: #1e40af;
+  background: rgba(106, 248, 158, 0.1);
+  color: rgba(106, 248, 158, 0.9);
   padding: 0.25rem 0.6rem;
   border-radius: 999px;
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.03em;
   text-transform: uppercase;
-  border: 1px solid #93c5fd;
-  box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.25);
+  border: 1px solid rgba(106, 248, 158, 0.35);
   white-space: nowrap;
   user-select: none;
 }
 
 .gameRoster__privateBadge svg {
   flex-shrink: 0;
-  color: #2563eb;
+  color: rgba(106, 248, 158, 0.9);
 }
 
 @media (max-width: 820px) {

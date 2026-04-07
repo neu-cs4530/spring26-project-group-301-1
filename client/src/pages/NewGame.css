@@ -1,0 +1,167 @@
+.newGamePage {
+  min-height: var(--content-vh);
+  display: grid;
+  place-items: center;
+  padding: 1.1rem;
+}
+
+.newGameCard {
+  width: min(560px, 100%);
+  margin-top: -18rem;
+  border: 3px solid rgba(106, 248, 158, 0.6);
+  border-radius: 20px;
+  background: #071400;
+  padding: 1.2rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.newGameCard__header {
+  text-align: center;
+}
+
+.newGameCard__title {
+  margin: 0;
+  font-size: 2rem;
+  color: white;
+  font-weight: 800;
+}
+
+.newGameCard__subtitle {
+  margin: 0.35rem 0 0;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 1.06rem;
+  font-weight: 600;
+}
+
+.newGameCard__formShell {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.9rem;
+  display: grid;
+  gap: 0.82rem;
+}
+
+.newGameCard__selectRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid rgba(106, 248, 158, 0.25);
+  border-radius: 12px;
+  background: rgba(106, 248, 158, 0.05);
+  padding: 0.56rem 0.7rem;
+}
+
+.newGameCard__checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid rgba(106, 248, 158, 0.25);
+  border-radius: 12px;
+  background: rgba(106, 248, 158, 0.05);
+  padding: 0.56rem 0.7rem;
+}
+
+.newGameCard__checkbox {
+  width: 1.2rem;
+  height: 1.2rem;
+  accent-color: rgba(106, 248, 158, 0.9);
+  cursor: pointer;
+}
+
+.newGameCard__checkboxLabel {
+  color: rgba(106, 248, 158, 0.85);
+  font-size: 1.08rem;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+}
+
+.newGameCard__helpText {
+  margin: 0.5rem 0 0 1.5rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.4;
+}
+
+.newGameCard__icon {
+  width: 1.05rem;
+  height: 1.05rem;
+  color: rgba(106, 248, 158, 0.8);
+  flex-shrink: 0;
+}
+
+.newGameCard__select {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: white;
+  font-size: 1.08rem;
+  font-weight: 700;
+  outline: none;
+  min-height: 2rem;
+}
+
+.newGameCard__select option {
+  background: #000001;
+  color: white;
+}
+
+.newGameCard__submit {
+  justify-self: center;
+  min-width: 240px;
+  min-height: 2.6rem;
+  border: 1px solid rgba(106, 248, 158, 0.35);
+  border-radius: 10px;
+  background: rgba(106, 248, 158, 0.1);
+  color: rgba(106, 248, 158, 0.9);
+  font-size: 1.05rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.newGameCard__submit:hover {
+  background: rgba(106, 248, 158, 0.18);
+  border-color: rgba(106, 248, 158, 0.6);
+}
+
+.newGameCard__submitIcon {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.newGameCard__error {
+  margin: 0;
+  text-align: center;
+}
+
+.newGameCard__warning {
+  color: #f87171 !important;
+  font-size: 0.9rem;
+  margin: 0;
+  text-align: center;
+  font-weight: bold;
+}
+
+
+@media (max-width: 680px) {
+  .newGameCard {
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .newGameCard__title {
+    font-size: 1.6rem;
+  }
+
+  .newGameCard__submit {
+    width: 100%;
+    min-width: 0;
+  }
+}
