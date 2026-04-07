@@ -1,6 +1,13 @@
 ## Playspace
-Playspace is a social gaming platform where users can play games, build a gaming community, and compete with others.
-Beyond gameplay, users can send friend requests, invite friends to private games, and message other players directly. Profiles are customizable with game history, win/loss records, and UI preferences. A global leaderboard fosters competition and encourages players to keep improving their rank. Automated opponents let players practice at any time without waiting for others to be available. A built-in LLM-based chat filter keeps the environment safe and welcoming.
+
+Playspace is a social gaming platform where users can play games, build a
+gaming community, and compete with others. Beyond gameplay, users can send
+friend requests, invite friends to private games, and message other players
+directly. Profiles are customizable with game history, win/loss records, and
+UI preferences. A global leaderboard fosters competition and encourages
+players to keep improving their rank. Automated opponents let players practice
+at any time without waiting for others to be available. A built-in LLM-based
+chat filter keeps the environment safe and welcoming.
 
 ## Getting Started
 
@@ -64,21 +71,21 @@ endpoints in `server/src/app.ts`.
 
 #### `/api/game`
 
-| Endpoint| Method | Description                           |
-| --------- | ------ | ------------------------------------- |
-| `/create` | POST   | Create new game                       |
-| `/list` | POST   | List all games                        |
+| Endpoint          | Method | Description                           |
+| ----------------- | ------ | ------------------------------------- |
+| `/create`         | POST   | Create new game                       |
+| `/list`           | POST   | List all games                        |
 | `/list/:username` | POST   | List all games by username            |
-| `/:id`   | GET    | Get information about a specific game |
+| `/:id`            | GET    | Get information about a specific game |
 
 #### `/api/thread`
 
-| Endpoint       | Method | Description                       |
-| -------------- | ------ | --------------------------------- |
-| `/create`      | POST   | Create new forum post             |
-| `/list`        | GET    | List all forum posts              |
+| Endpoint       | Method | Description                        |
+| -------------- | ------ | ---------------------------------- |
+| `/create`      | POST   | Create new forum post              |
+| `/list`        | GET    | List all forum posts               |
 | `/:id`         | GET    | Get information about a forum post |
-| `/:id/comment` | POST   | Add a comment to a forum post     |
+| `/:id/comment` | POST   | Add a comment to a forum post      |
 
 #### `/api/user`
 
@@ -92,21 +99,22 @@ endpoints in `server/src/app.ts`.
 
 #### `/api/stats`
 
-| Endpoint      | Method | Description                  |
-| ------------- | ------ | ---------------------------- |
-| `/leaderboard` | GET   | Get the leaderboard          |
-| `/:username`  | GET    | Get stats for a specific user |
+| Endpoint       | Method | Description                   |
+| -------------- | ------ | ----------------------------- |
+| `/leaderboard` | GET    | Get the leaderboard           |
+| `/:username`   | GET    | Get stats for a specific user |
 
 #### `/api/friends`
 
-| Endpoint                    | Method | Description                        |
-| ---------- | ------ | ---------------------------------- |
-| `/:username/requests`| POST   | Get friend requests for a user     |
-| `/:username`| GET    | Get friends for a user             |
-| `/request`                  | POST   | Send a friend request|
-| `/request/:requestId/resolve` | POST | Resolve a friend request           |
-| `/:username/status`| POST   | Get friendship status with a user  |
-| `/remove`| POST   | Remove a friend|
+| Endpoint                      | Method | Description                       |
+| ----------------------------- | ------ | --------------------------------- |
+| `/:username/requests`         | POST   | Get friend requests for a user    |
+| `/:username`                  | GET    | Get friends for a user            |
+| `/request`                    | POST   | Send a friend request             |
+| `/request/:requestId/resolve` | POST   | Resolve a friend request          |
+| `/:username/status`           | POST   | Get friendship status with a user |
+| `/remove`                     | POST   | Remove a friend                   |
+
 ### Websockets
 
 The Socket.io API for event-driven communication between clients and the
@@ -212,6 +220,7 @@ erDiagram
     }
     UserStats ||--|| User: "UserStats.userId"
 ```
+
 ## Games
 
 To create a new game `example`, you need to take the following steps:
