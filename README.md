@@ -137,6 +137,9 @@ erDiagram
         userId userId "generated key"
         username username "unique"
         string display ""
+        string customBackground "optional"
+        boolean hideUsername ""
+        boolean privateProfile ""
         Date createdAt ""
     }
     User ||--|| Auth: "User.username"
@@ -146,6 +149,7 @@ erDiagram
         threadId threadId "generated key"
         string title ""
         string text ""
+        boolean filtered ""
         Date createdAt ""
         userId createdBy ""
         commentId[] comments ""
@@ -158,15 +162,17 @@ erDiagram
         string text ""
         userId createdBy ""
         Date createdAt ""
-        Date editedAt "can be null"
+        Date editedAt "optional"
     }
     Comment ||--|| User: "Comment.createdBy"
 
     Game {
         gameId gameId "generated key"
         GameKey type ""
-        unknown state ""
-        boolean done ""
+        string status "waiting/active/done"
+        boolean chatFiltered ""
+        boolean isPrivate ""
+        int minPlayers ""
         chatId chat ""
         userId[] players ""
         Date createdAt ""
@@ -186,11 +192,34 @@ erDiagram
     Message {
         messageId messageId "generated key"
         string text ""
+        boolean deleted ""
+        Date deletedAt "optional"
         Date createdAt ""
     }
     Message ||--|| User: "Message.createdBy"
-```
 
+    FriendRequest {
+        requestId requestId "generated key"
+        userId from ""
+        userId to ""
+        string status "pending/accepted/declined"
+        Date createdAt ""
+        Date resolvedAt "optional"
+    }
+    FriendRequest ||--|| User: "FriendRequest.from"
+    FriendRequest ||--|| User: "FriendRequest.to"
+
+    UserStats {
+        userId userId "foreign key"
+        GameKey gameType "optional"
+        int wins ""
+        int losses ""
+        int draws ""
+        int gamesPlayed ""
+        float winRate ""
+    }
+    UserStats ||--|| User: "UserStats.userId"
+```
 ## Games
 
 To create a new game `example`, you need to take the following steps:
