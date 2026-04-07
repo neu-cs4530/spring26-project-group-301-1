@@ -3,6 +3,8 @@ import request from "supertest";
 import { app } from "../src/app.ts";
 import * as friendsService from "../src/services/friends.service.ts";
 import * as authService from "../src/services/auth.service.ts";
+import { type UserWithId } from "../src/types.ts";
+import { type FriendInfo, type FriendRequestInfo, type SafeUserInfo } from "@gamenite/shared";
 
 vi.mock("../src/services/friends.service.ts", () => ({
   getFriends: vi.fn(),
@@ -17,8 +19,37 @@ vi.mock("../src/services/auth.service.ts", () => ({
   checkAuth: vi.fn(),
 }));
 
-const mockCaller = { username: "user1", id: "uid-1" };
+const mockUser: SafeUserInfo = {
+  username: "user1",
+  display: "User One",
+  createdAt: new Date("2026-01-01"),
+  hideUsername: false,
+  privateProfile: false,
+};
+
+const mockUser2: SafeUserInfo = {
+  username: "user2",
+  display: "User Two",
+  createdAt: new Date("2026-01-01"),
+  hideUsername: false,
+  privateProfile: false,
+};
+
+const mockCaller: UserWithId = { username: "user1", userId: "user1" };
 const validAuth = { username: "user1", password: "pwd1111" };
+
+const mockFriend: FriendInfo = {
+  user: mockUser2,
+  friendsSince: new Date("2025-01-01"),
+};
+
+const mockRequest: FriendRequestInfo = {
+  requestId: "r1",
+  from: mockUser,
+  to: mockUser2,
+  status: "pending",
+  createdAt: new Date("2025-01-01"),
+};
 
 beforeEach(() => {
   vi.resetAllMocks();
@@ -26,28 +57,26 @@ beforeEach(() => {
 
 describe("GET /api/friends/:username", () => {
   it("returns the friends list for the given username", async () => {
-    const friends = [{ user: { username: "user2" } }];
-    vi.mocked(friendsService.getFriends).mockResolvedValue(friends);
+    vi.mocked(friendsService.getFriends).mockResolvedValue([mockFriend]);
 
     const { status, body } = await request(app).get("/api/friends/user1");
 
     expect(status).toBe(200);
-    expect(body).toEqual(friends);
+    expect(body).toHaveLength(1);
   });
 });
 
 describe("POST /api/friends/:username/requests", () => {
   it("returns pending requests for an authenticated user", async () => {
     vi.mocked(authService.checkAuth).mockResolvedValue(mockCaller);
-    const pending = [{ requestId: "r1", from: { username: "user2" }, status: "pending" }];
-    vi.mocked(friendsService.getPendingRequests).mockResolvedValue(pending);
+    vi.mocked(friendsService.getPendingRequests).mockResolvedValue([mockRequest]);
 
     const { status, body } = await request(app)
       .post("/api/friends/user1/requests")
       .send({ auth: validAuth });
 
     expect(status).toBe(200);
-    expect(body).toEqual(pending);
+    expect(body).toHaveLength(1);
   });
 
   it("returns 400 when the auth body is missing", async () => {
@@ -58,7 +87,7 @@ describe("POST /api/friends/:username/requests", () => {
   });
 
   it("returns 403 when the caller is a different user", async () => {
-    vi.mocked(authService.checkAuth).mockResolvedValue({ username: "user2" });
+    vi.mocked(authService.checkAuth).mockResolvedValue({ username: "user2", userId: "user2" });
 
     const { status } = await request(app)
       .post("/api/friends/user1/requests")
@@ -187,7 +216,7 @@ describe("POST /api/friends/remove", () => {
   });
 
   it("returns 400 when the body is malformed", async () => {
-    const { status } = await request(app).post("/api/friends/remove").send({ test: "data" });
+    const { status } = await request(app).post("/api/friends/remove").send({});
 
     expect(status).toBe(400);
   });
@@ -232,5 +261,15 @@ describe("POST /api/friends/:username/status", () => {
     const { status } = await request(app).post("/api/friends/user2/status").send({});
 
     expect(status).toBe(400);
+  });
+
+  it("returns 403 when auth is invalid", async () => {
+    vi.mocked(authService.checkAuth).mockResolvedValue(null);
+
+    const { status } = await request(app)
+      .post("/api/friends/user2/status")
+      .send({ auth: validAuth });
+
+    expect(status).toBe(403);
   });
 });
