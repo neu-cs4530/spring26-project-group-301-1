@@ -1,14 +1,6 @@
-The individual and team project for this class are designed to mirror the
-experiences of a software engineer joining a new development team: you will be
-“onboarded” to our codebase, make several individual contributions, and then
-form a team to propose, develop and implement new features. The codebase that
-we'll be developing is GameNite, a website that answers the question "what if
-Twitch, but for correspondence chess?"
-
-You will get an opportunity to work with the starter code which provides basic
-skeleton for the app and then additional features will be proposed and
-implemented by you! All implementation will take place in the TypeScript
-programming language, using React for the user interface.
+## Playspace
+Playspace is a social gaming platform where users can play games, build a gaming community, and compete with others.
+Beyond gameplay, users can send friend requests, invite friends to private games, and message other players directly. Profiles are customizable with game history, win/loss records, and UI preferences. A global leaderboard fosters competition and encourages players to keep improving their rank. Automated opponents let players practice at any time without waiting for others to be available. A built-in LLM-based chat filter keeps the environment safe and welcoming.
 
 ## Getting Started
 
