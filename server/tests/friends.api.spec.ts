@@ -24,6 +24,7 @@ const mockUser: SafeUserInfo = {
   display: "User One",
   createdAt: new Date("2026-01-01"),
   hideUsername: false,
+  profileLinks: [],
   privateProfile: false,
 };
 
@@ -32,6 +33,7 @@ const mockUser2: SafeUserInfo = {
   display: "User Two",
   createdAt: new Date("2026-01-01"),
   hideUsername: false,
+  profileLinks: [],
   privateProfile: false,
 };
 
