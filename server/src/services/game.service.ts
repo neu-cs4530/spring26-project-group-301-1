@@ -7,7 +7,52 @@ import { guessGameService } from "../games/guess.ts";
 import { automatedTicTacToeGameService } from "../games/automatedTicTacToe.ts";
 import { ticTacToeGameService } from "../games/ticTacToe.ts";
 import { type GameViewUpdates, type UserWithId } from "../types.ts";
-import { GameRepo } from "../repository.ts";
+import { ChatRepo, GameRepo } from "../repository.ts";
+import { areFriends } from "./friends.service.ts";
+import { type GameRecord } from "../models.ts";
+import { getUserByUsername } from "./auth.service.ts";
+
+/**
+ * Returns whether a user can see a private game.
+ * Assumes the game is already known to be private.
+ * @param game: the game record for the game in question
+ * @param user: the user in question
+ * @returns boolean, whether the user can see the game
+ */
+async function canViewPrivateGame(game: GameRecord, user: UserWithId): Promise<boolean> {
+  if (game.type === "guess") {
+    const players = await Promise.all(game.players.map(populateSafeUserInfo));
+    const friendChecks = await Promise.all(
+      players.map((p) => areFriends(user.username, p.username)),
+    );
+    return friendChecks.some(Boolean) || game.players.includes(user.userId);
+  }
+
+  const creator = await populateSafeUserInfo(game.createdBy);
+  return (await areFriends(user.username, creator.username)) || user.userId === game.createdBy;
+}
+
+/**
+ * Returns whether a user can join a private game.
+ * Assumes the game is already known to be private.
+ * Joining has stricter rules than viewing; being a player doesn't count,
+ * since you're not a player yet.
+ * @param game: the game record for the game in question
+ * @param user: the user in question
+ * @returns boolean, whether the user can join the game
+ */
+async function canJoinPrivateGame(game: GameRecord, user: UserWithId): Promise<boolean> {
+  if (game.type === "guess") {
+    const existingPlayers = await Promise.all(game.players.map(populateSafeUserInfo));
+    const friendChecks = await Promise.all(
+      existingPlayers.map((p) => areFriends(user.username, p.username)),
+    );
+    return friendChecks.some(Boolean);
+  }
+
+  const creator = await populateSafeUserInfo(game.createdBy);
+  return areFriends(user.username, creator.username);
+}
 
 /**
  * The service interface for individual games
@@ -36,6 +81,8 @@ async function populateGameInfo(gameId: string): Promise<GameInfo> {
     type: game.type,
     status: !game.state ? "waiting" : game.done ? "done" : "active",
     minPlayers: gameServices[game.type].minPlayers,
+    chatFiltered: (await ChatRepo.get(game.chat)).chatFiltered,
+    isPrivate: game.isPrivate ?? false,
   };
 }
 
@@ -45,14 +92,18 @@ async function populateGameInfo(gameId: string): Promise<GameInfo> {
  * @param user - Initial player in the game's waiting room
  * @param type - Game key
  * @param createdAt - Creation time for this game
+ * @param filtered - Whether the game should have its chat filtered for content violations
+ * @param isPrivate - Whether the game should be visible to non-friends of the creator
  * @returns the new game's info object
  */
 export async function createGame(
   user: UserWithId,
   type: GameKey,
   createdAt: Date,
+  filtered: boolean,
+  isPrivate: boolean,
 ): Promise<GameInfo> {
-  const chat = await createChat(createdAt);
+  const chat = await createChat(createdAt, filtered);
   const gameId = await GameRepo.add({
     type,
     done: false,
@@ -60,6 +111,7 @@ export async function createGame(
     createdAt: createdAt.toISOString(),
     createdBy: user.userId,
     players: [user.userId],
+    isPrivate: isPrivate,
   });
   return populateGameInfo(gameId);
 }
@@ -68,11 +120,22 @@ export async function createGame(
  * Retrieves a single game from the database. If you expect the id to be valid, use `forceGameById`.
  *
  * @param gameId - Ostensible game id
+ * @param user - Authenticated user
  * @returns the game's info object, or null
  */
-export async function getGameById(gameId: string): Promise<GameInfo | null> {
+export async function getGameById(gameId: string, user: UserWithId): Promise<GameInfo | null> {
   const game = await GameRepo.find(gameId);
   if (!game) return null;
+
+  const isPrivate = game.isPrivate ?? false;
+  if (!isPrivate) {
+    return populateGameInfo(gameId);
+  }
+
+  if (!(await canViewPrivateGame(game, user))) {
+    return null;
+  }
+
   return populateGameInfo(gameId);
 }
 
@@ -83,8 +146,8 @@ export async function getGameById(gameId: string): Promise<GameInfo | null> {
  * @param gameId - Ostensible game id
  * @param user - Authenticated user
  * @returns the game's info object, with the `user` listed among the players
- * @throws if the game id is not valid, if the game has started, or if the game cannot accept more
- * players
+ * @throws if the game id is not valid, if the game has started, if the game cannot accept more
+ * players, or if the user is not authorized to join a private game
  */
 export async function joinGame(gameId: string, user: UserWithId): Promise<GameInfo> {
   const game = await GameRepo.find(gameId);
@@ -97,6 +160,15 @@ export async function joinGame(gameId: string, user: UserWithId): Promise<GameIn
   }
   if (game.players.length === gameServices[game.type].maxPlayers) {
     throw new Error(`user ${user.username} joining full`);
+  }
+
+  if (game.isPrivate) {
+    if (!(await canJoinPrivateGame(game, user))) {
+      if (game.type === "guess") {
+        throw new Error(`user ${user.username} not authorized to join private guess game`);
+      }
+      throw new Error(`user ${user.username} not authorized to join private game`);
+    }
   }
 
   game.players = [...game.players, user.userId];
@@ -138,15 +210,61 @@ export async function startGame(gameId: string, user: UserWithId): Promise<GameV
 }
 
 /**
- * Get a list of all games
+ * Get a list of all games visible to the user
  *
- * @returns a list of game summaries, ordered reverse chronologically
+ * @param user - The authenticated user requesting the list
+ * @returns a list of game summaries visible to the user, ordered reverse chronologically
  */
-export async function getGames(): Promise<GameInfo[]> {
+export async function getGames(user: UserWithId): Promise<GameInfo[]> {
   const keys = await GameRepo.getAllKeys();
-  const unsorted = await Promise.all(keys.map(populateGameInfo));
+  const validGames = await Promise.all(
+    keys.map(async (gameId) => {
+      const game = await GameRepo.get(gameId);
+      return { gameId, game };
+    }),
+  );
+
+  const visibleGames = await Promise.all(
+    validGames.map(async ({ gameId, game }) => {
+      const isPrivate = game.isPrivate ?? false;
+
+      if (!isPrivate) {
+        return gameId; // Public games are visible to all
+      }
+
+      return (await canViewPrivateGame(game, user)) ? gameId : null;
+    }),
+  );
+
+  const filteredKeys = visibleGames.filter((key): key is string => key !== null);
+  const unsorted = await Promise.all(filteredKeys.map(populateGameInfo));
 
   return unsorted.toSorted((game1, game2) => game2.createdAt.getTime() - game1.createdAt.getTime());
+}
+
+/**
+ * Get games for a specified user (all games this user has played in, including private).
+ * This is used for profile-scoped stats counting and does not enforce the same
+ * viewer-facing privacy filtering as `getGames`.
+ */
+export async function getGamesByUsername(username: string): Promise<GameInfo[]> {
+  const user = await getUserByUsername(username);
+  if (!user) throw new Error(`No user ${username}`);
+
+  const keys = await GameRepo.getAllKeys();
+  const candidateGameIds: string[] = [];
+
+  for (const gameId of keys) {
+    const game = await GameRepo.get(gameId);
+    if (game && game.players.includes(user.userId)) {
+      candidateGameIds.push(gameId);
+    }
+  }
+
+  const gamesForUser = await Promise.all(candidateGameIds.map(populateGameInfo));
+  return gamesForUser.toSorted(
+    (game1, game2) => game2.createdAt.getTime() - game1.createdAt.getTime(),
+  );
 }
 
 /**
@@ -220,6 +338,12 @@ export async function updateGame(
 export async function viewGame(gameId: string, user: UserWithId) {
   const game = await GameRepo.find(gameId);
   if (!game) throw new Error(`user ${user.username} viewed an invalid game id`);
+
+  const isPrivate = game.isPrivate ?? false;
+  if (isPrivate && !(await canViewPrivateGame(game, user))) {
+    throw new Error(`user ${user.username} not authorized to view private game`);
+  }
+
   const playerIndex = game.players.findIndex((userId) => userId === user.userId);
   let view: TaggedGameView | null = null;
   if (game.state) {

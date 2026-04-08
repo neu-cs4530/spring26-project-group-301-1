@@ -1,9 +1,9 @@
 import {
   zTicTacToeMove,
   type TicTacEntry,
-  type TicTacToeMove,
   type TicTacToeState,
   type TicTacToeView,
+  type TicTacToeGameMove,
 } from "@gamenite/shared";
 import {
   type TicTacToeBoard,
@@ -19,6 +19,7 @@ import { GameService } from "./gameServiceManager.ts";
 type TicTacToeOpponentType = "human" | "random" | "minimax";
 
 export type AutomatedTicTacToeState = TicTacToeState & {
+  opponentTypeSelected: boolean;
   opponentType?: TicTacToeOpponentType;
   autoPlayer?: number;
   aiMoveTimestamp?: number;
@@ -42,8 +43,8 @@ function cloneBoard(board: TicTacToeBoard): TicTacToeBoard {
   ];
 }
 
-function getAvailableMoves(board: TicTacToeBoard): TicTacToeMove[] {
-  const out: TicTacToeMove[] = [];
+function getAvailableMoves(board: TicTacToeBoard): TicTacToeGameMove[] {
+  const out: TicTacToeGameMove[] = [];
   for (let r = 0; r < 3; r += 1) {
     for (let c = 0; c < 3; c += 1) {
       if (board[r][c] === null) out.push({ type: "move", coord: [r, c] });
@@ -66,7 +67,8 @@ function minimax(board: TicTacToeBoard, current: Mark, ai: Mark, depth: number):
   let best = isMax ? -Infinity : Infinity;
 
   for (const move of moves) {
-    const [r, c] = move.coord ? move.coord : [-1, -1];
+    const r: number = move.coord ? move.coord[0] : -1;
+    const c: number = move.coord ? move.coord[1] : -1;
     const next = cloneBoard(board);
     next[r][c] = current;
     const score = minimax(next, oppositeMark(current), ai, depth + 1);
@@ -76,7 +78,7 @@ function minimax(board: TicTacToeBoard, current: Mark, ai: Mark, depth: number):
   return best;
 }
 
-export function chooseAutomatedMove(state: AutomatedTicTacToeState): TicTacToeMove | null {
+export function chooseAutomatedMove(state: AutomatedTicTacToeState): TicTacToeGameMove | null {
   const difficulty: TicTacToeOpponentType = state.opponentType ? state.opponentType : "minimax";
   if (difficulty === "human") return null;
 
@@ -91,12 +93,13 @@ export function chooseAutomatedMove(state: AutomatedTicTacToeState): TicTacToeMo
   const autoSymbol = PLAYER_IDX_TO_ENTRY_MAP[autoPlayer] as Mark;
 
   let bestScore = -Infinity;
-  let bestMove: TicTacToeMove = moves[0];
+  let bestMove: TicTacToeGameMove = moves[0];
 
   for (const move of moves) {
-    const [r, c] = move.coord ? move.coord : [-1, -1];
+    const r: number = move.coord ? move.coord[0] : -1;
+    const c: number = move.coord ? move.coord[1] : -1;
     const next = cloneBoard(state.board as TicTacToeBoard);
-    next[r][c] = autoSymbol;
+    (next as TicTacEntry[][])[r][c] = autoSymbol;
     const score = minimax(next, oppositeMark(autoSymbol), autoSymbol, 0);
     if (score > bestScore) {
       bestScore = score;
@@ -139,7 +142,7 @@ export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, Automat
       return players[0];
     }
     if (state.forfeited === true) {
-      return players[state.nextPlayer];
+      return players[DEFAULT_AUTO_PLAYER_INDEX];
     }
     return null;
   },
@@ -153,7 +156,7 @@ export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, Automat
     ],
     // Human (player 0) moves first in this 1-player mode.
     nextPlayer: HUMAN_PLAYER_INDEX,
-    opponentType: "minimax",
+    opponentTypeSelected: false,
     autoPlayer: DEFAULT_AUTO_PLAYER_INDEX,
     forfeited: false,
   }),
@@ -167,6 +170,20 @@ export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, Automat
 
     const move = zTicTacToeMove.safeParse(payload);
     if (move.error) return null;
+
+    // difficulty selection
+    if ("difficulty" in move.data) {
+      if (state.opponentTypeSelected === true) return null;
+
+      return {
+        ...state,
+        opponentTypeSelected: true,
+        opponentType: move.data.difficulty,
+      };
+    }
+
+    // if this is not difficulty selection, and difficulty has not been selected yet, return
+    if (state.opponentTypeSelected === false) return null;
 
     // Handle forfeit move
     if (move.data.type === "forfeit") {
@@ -212,16 +229,21 @@ export const automatedTicTacToeLogic: GameLogic<AutomatedTicTacToeState, Automat
 
     return nextState;
   },
-  isDone: (state) => isGameDone(state.board as TicTacToeBoard),
+  isDone: (state) => isGameDone(state.board as TicTacToeBoard) || state.forfeited === true,
   viewAs: (state) => ({
     board: state.board,
     nextPlayer: state.nextPlayer,
     winningEntry: getWinningEntry(state.board as TicTacToeBoard),
     forfeited: state.forfeited ?? false,
+    opponentTypeSelected: state.opponentTypeSelected,
   }),
   tagView: (view) => ({ type: "automatedTicTacToe", view }),
   describeMove: (prevState, newState, payload) => {
     const move = zTicTacToeMove.parse(payload);
+    if ("difficulty" in move) {
+      return ` selected ${move.difficulty} automated player type`; // Difficulty selection
+    }
+
     // Forfeit message
     if (move.type === "forfeit") {
       return " forfeited the game";

@@ -23,6 +23,7 @@ describe("GET /api/thread/list", () => {
       comments: 0,
       createdAt: expect.anything(),
       title: "Nim?",
+      filtered: true,
       createdBy: {
         createdAt: expect.anything(),
         display: "Yāo",
@@ -48,6 +49,7 @@ describe("GET /api/thread/:id", () => {
       threadId: "deadbeefdeadbeefdeadbeef",
       title: "Hello game knights",
       text: "I'm a big Nim buff and am excited to join this community.",
+      filtered: true,
       comments: [],
       createdBy: {
         username: "user1",
@@ -73,7 +75,7 @@ describe("POST /api/thread/create", () => {
       .post(`/api/thread/create`)
       .send({
         auth: { ...auth1, password: "no" },
-        payload: { title: "Evil title", text: "Evil contents" },
+        payload: { title: "Evil title", text: "Evil contents", filtered: true },
       });
     expect(response.status).toBe(403);
   });
@@ -81,12 +83,13 @@ describe("POST /api/thread/create", () => {
   it("should succeed with correct information", async () => {
     response = await supertest(app)
       .post(`/api/thread/create`)
-      .send({ auth: auth2, payload: { title: "Title", text: "Text" } });
+      .send({ auth: auth2, payload: { title: "Title", text: "Text", filtered: true } });
     expect(response.status).toBe(200);
     expect(response.body).toStrictEqual({
       threadId: expect.anything(),
       title: "Title",
       text: "Text",
+      filtered: true,
       createdAt: expect.anything(),
       createdBy: {
         username: "user2",

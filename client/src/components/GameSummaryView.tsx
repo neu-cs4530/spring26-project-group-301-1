@@ -4,6 +4,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { gameNames } from "../util/consts.ts";
 import useTimeSince from "../hooks/useTimeSince.ts";
 import UserLink from "./UserLink.tsx";
+import { Lock, ShieldCheck, ShieldOff } from "lucide-react";
 
 /**
  * Summarizes information for a single game as part of a list of games
@@ -15,6 +16,8 @@ export default function GameSummaryView({
   players,
   createdAt,
   createdBy,
+  chatFiltered,
+  isPrivate,
 }: GameInfo) {
   const timeSince = useTimeSince();
   const navigate = useNavigate();
@@ -30,9 +33,17 @@ export default function GameSummaryView({
   return (
     <div className="gameSummary" role="listitem">
       <div className="gameSummary__header">
-        <NavLink to={`/game/${gameId}`} className="gameSummary__titleLink">
-          {gameNames[type]}
-        </NavLink>
+        <div className="gameSummary__titleContainer">
+          <NavLink to={`/game/${gameId}`} className="gameSummary__titleLink">
+            {gameNames[type]}
+          </NavLink>
+          {isPrivate && (
+            <div className="gameSummary__privateBadge">
+              <Lock size={14} />
+              <span>Private</span>
+            </div>
+          )}
+        </div>
 
         <div className="gameSummary__lastActivity">
           <UserLink user={createdBy} capitalize /> created {timeSince(createdAt)}
@@ -45,6 +56,15 @@ export default function GameSummaryView({
       >
         {status}
         {status !== "done" && `, ${numPlayers} player${numPlayers === 1 ? "" : "s"}`}
+        {chatFiltered ? (
+          <span title="Chat filter on">
+            <ShieldCheck size={14} />
+          </span>
+        ) : (
+          <span title="Chat filter off">
+            <ShieldOff size={14} />
+          </span>
+        )}
       </div>
     </div>
   );

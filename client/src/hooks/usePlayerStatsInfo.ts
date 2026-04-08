@@ -2,6 +2,7 @@ import { type ErrorMsg, type LeaderboardEntry, type GameInfo } from "@gamenite/s
 import { useEffect, useState } from "react";
 import { getUserStats } from "../services/statsService.ts";
 import { gameList } from "../services/gameService.ts";
+import useAuth from "./useAuth.ts";
 
 /**
  * Custom hook which returns information on gameplay for a given user.
@@ -14,6 +15,7 @@ export default function usePlayersStatsInfo(username: string) {
     null,
   );
   const [games, setGames] = useState<GameInfo[] | ErrorMsg | null>(null);
+  const auth = useAuth();
 
   /**
    * Gets the number of wins for a given user
@@ -104,8 +106,8 @@ export default function usePlayersStatsInfo(username: string) {
   }
 
   useEffect(() => {
-    gameList().then(setGames);
-  }, []);
+    gameList(auth).then(setGames);
+  }, [auth]);
 
   useEffect(() => {
     getUserStats(username).then(setLeaderboardEntry);

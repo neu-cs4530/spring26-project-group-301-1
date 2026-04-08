@@ -6,7 +6,6 @@
 export interface ErrorMsg {
   error: string;
 }
-
 export * from "./auth.types.ts";
 export * from "./oauth.types.ts";
 export * from "./chat.constants.ts";
@@ -19,3 +18,4 @@ export * from "./thread.types.ts";
 export * from "./user.types.ts";
 export * from "./friend.types.ts";
 export * from "./leaderboard.types.ts";
+export * from "./games/games.utils.ts";

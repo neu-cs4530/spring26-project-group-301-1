@@ -1,6 +1,7 @@
 import type { ErrorMsg, GameInfo } from "@gamenite/shared";
 import { useEffect, useState } from "react";
 import { gameList } from "../services/gameService.ts";
+import useAuth from "./useAuth.ts";
 
 /**
  * Custom hook to get the list of all thread summaries and decide on an
@@ -10,10 +11,11 @@ import { gameList } from "../services/gameService.ts";
  */
 export default function useGameList(maxGames?: number): { message: string } | GameInfo[] {
   const [games, setGames] = useState<GameInfo[] | ErrorMsg | null>(null);
+  const auth = useAuth();
 
   useEffect(() => {
-    gameList().then(setGames);
-  }, []);
+    gameList(auth).then(setGames);
+  }, [auth]);
 
   if (!games) return { message: "Loading..." };
   if ("error" in games) return { message: `Error: ${games.error}` };

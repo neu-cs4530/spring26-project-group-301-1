@@ -1,9 +1,10 @@
 import useNewGameForm from "../hooks/useNewGameForm.ts";
 import { gameNames } from "../util/consts.ts";
-import { Gamepad2, Users, Plus } from "lucide-react";
+import { Gamepad2, Users, Plus, ShieldCheck } from "lucide-react";
 
 export default function NewGame() {
-  const { gameKey, opponentType, handleInputChange, err, handleSubmit } = useNewGameForm();
+  const { gameKey, opponentType, isPrivate, filtered, handleInputChange, err, handleSubmit } =
+    useNewGameForm();
 
   return (
     <div className="newGamePage">
@@ -50,6 +51,45 @@ export default function NewGame() {
                 <option value="automated">Automated</option>
               </select>
             </label>
+          )}
+
+          <label className="newGameCard__selectRow" htmlFor="filtered-select">
+            <ShieldCheck className="newGameCard__icon" aria-hidden="true" />
+            <select
+              id="filtered-select"
+              name="filtered"
+              className="newGameCard__select"
+              value={String(filtered)}
+              aria-label="Chat filtering"
+              onChange={handleInputChange}
+            >
+              <option value="true">Chat Filter: On</option>
+              <option value="false">Chat Filter: Off</option>
+            </select>
+          </label>
+          {!filtered && (
+            <p className="newGameCard__warning">
+              Warning: Turning off chat filtering allows profanity and unsafe content into your
+              chat. Are you sure you want to do this?
+            </p>
+          )}
+          <label className="newGameCard__checkboxRow" htmlFor="private-checkbox">
+            <input
+              id="private-checkbox"
+              name="isPrivate"
+              type="checkbox"
+              checked={isPrivate}
+              onChange={handleInputChange}
+              className="newGameCard__checkbox"
+            />
+            <span className="newGameCard__checkboxLabel">Private Game</span>
+          </label>
+          {isPrivate && (
+            <p className="newGameCard__helpText">
+              Only you and your friends can see or join this game.
+              {gameKey === "guess" &&
+                " For Number Guesser, each player must be friends with someone already in the game."}
+            </p>
           )}
 
           <button className="newGameCard__submit" type="submit">

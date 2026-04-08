@@ -50,6 +50,7 @@ function makeState(overrides: Partial<AutomatedTicTacToeState> = {}): AutomatedT
     ],
     nextPlayer: 0,
     opponentType: "minimax",
+    opponentTypeSelected: true,
     autoPlayer: 1,
     forfeited: overrides.forfeited ?? false,
     ...overrides,
@@ -71,7 +72,7 @@ function coordInWinningEntry(
 }
 
 describe(`Automated Tic Tac Toe's start() logic`, () => {
-  it("Should always start with an empty board, human player first, and minimax enabled", () => {
+  it("Should always start with an empty board, human player first, and difficulty unselected", () => {
     expect(automatedTicTacToeLogic.start(1)).toStrictEqual({
       board: [
         [null, null, null],
@@ -79,14 +80,56 @@ describe(`Automated Tic Tac Toe's start() logic`, () => {
         [null, null, null],
       ],
       nextPlayer: 0,
-      opponentType: "minimax",
       autoPlayer: 1,
       forfeited: false,
+      opponentTypeSelected: false,
     });
   });
 });
 
 describe(`Automated Tic Tac Toe's update() logic`, () => {
+  it("Should allow for difficulty selection at right after game has started", () => {
+    const gameState = makeState({
+      board: [
+        [null, null, null],
+        [null, null, null],
+        [null, null, null],
+      ],
+    });
+    gameState.opponentTypeSelected = false;
+    expect(
+      automatedTicTacToeLogic.update(gameState, { type: "move", difficulty: "minimax" }, 0),
+    ).toStrictEqual({ ...gameState, opponentTypeSelected: true, opponentType: "minimax" });
+
+    const gameStateTwo = makeState({
+      board: [
+        [null, null, null],
+        [null, null, null],
+        [null, null, null],
+      ],
+    });
+    gameState.opponentTypeSelected = false;
+    expect(
+      automatedTicTacToeLogic.update(gameState, { type: "move", difficulty: "random" }, 0),
+    ).toStrictEqual({ ...gameStateTwo, opponentTypeSelected: true, opponentType: "random" });
+  });
+  it("Should not allow moves before difficulty is selected", () => {
+    const gameState = makeState({
+      board: [
+        [null, null, null],
+        [null, null, null],
+        [null, null, null],
+      ],
+    });
+    gameState.opponentTypeSelected = false;
+    expect(
+      automatedTicTacToeLogic.update(gameState, { type: "move", coord: [1, 0] }, 1),
+    ).toStrictEqual(null);
+    expect(automatedTicTacToeLogic.update(gameState, { type: "forfeit" }, 1)).toStrictEqual(null);
+    expect(
+      automatedTicTacToeLogic.update(gameState, { type: "move", coord: [1, 0] }, 0),
+    ).toStrictEqual(null);
+  });
   it("Should return null if move.coord is missing in update", () => {
     const state = makeState();
     // move without coord
@@ -290,6 +333,7 @@ describe(`Automated Tic Tac Toe's update() logic`, () => {
       opponentType: "human",
       autoPlayer: 1,
       forfeited: false,
+      opponentTypeSelected: true,
     });
   });
 
@@ -454,6 +498,7 @@ describe(`Automated Tic Tac Toe's viewAs() logic`, () => {
       nextPlayer: 0,
       winningEntry: null,
       forfeited: false,
+      opponentTypeSelected: true,
     });
 
     expect(
@@ -477,6 +522,7 @@ describe(`Automated Tic Tac Toe's viewAs() logic`, () => {
       nextPlayer: 0,
       winningEntry: null,
       forfeited: false,
+      opponentTypeSelected: true,
     });
   });
 
@@ -520,6 +566,7 @@ describe(`Automated Tic Tac Toe's viewAs() logic`, () => {
       nextPlayer: 0,
       winningEntry: null,
       forfeited: false,
+      opponentTypeSelected: true,
     });
   });
 
@@ -619,6 +666,21 @@ describe(`Automated Tic Tac Toe's describeMove() logic`, () => {
     const payload = { type: "forfeit" };
     expect(automatedTicTacToeLogic.describeMove(prevState, newState, payload, 0)).toBe(
       " forfeited the game",
+    );
+  });
+
+  it("Should describe a difficulty selection move", () => {
+    const prevState = makeState({ opponentTypeSelected: false });
+    const newState = makeState();
+    const payload = { type: "move", difficulty: "minimax" };
+    expect(automatedTicTacToeLogic.describeMove(prevState, newState, payload, 0)).toBe(
+      " selected minimax automated player type",
+    );
+    const prevStateTwo = makeState({ opponentTypeSelected: false });
+    const newStateTwo = makeState({ opponentType: "random" });
+    const payloadTwo = { type: "move", difficulty: "random" };
+    expect(automatedTicTacToeLogic.describeMove(prevStateTwo, newStateTwo, payloadTwo, 0)).toBe(
+      " selected random automated player type",
     );
   });
 
@@ -889,6 +951,7 @@ describe(`Automated Tic Tac Toe's tagView() logic`, () => {
           [2, 0],
         ],
         forfeited: false,
+        opponentTypeSelected: true,
       }),
     ).toStrictEqual({
       type: "automatedTicTacToe",
@@ -905,6 +968,7 @@ describe(`Automated Tic Tac Toe's tagView() logic`, () => {
           [2, 0],
         ],
         forfeited: false,
+        opponentTypeSelected: true,
       },
     });
   });
@@ -938,14 +1002,9 @@ describe("Automated Tic Tac Toe's getWinner() logic", () => {
   it("Should return forfeiting player when forfeited", () => {
     const state = makeState({
       forfeited: true,
-      nextPlayer: 0,
-    });
-    expect(automatedTicTacToeLogic.getWinner(state, players)).toBe("Player O");
-    const state2 = makeState({
-      forfeited: true,
       nextPlayer: 1,
     });
-    expect(automatedTicTacToeLogic.getWinner(state2, players)).toBe("Player X");
+    expect(automatedTicTacToeLogic.getWinner(state, players)).toBe("Player X");
   });
 
   it("Should return null when there is no winner", () => {

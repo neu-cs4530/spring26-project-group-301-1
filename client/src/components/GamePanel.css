@@ -1,4 +1,5 @@
 .gamePanel {
+  position: relative;
   padding: 1rem;
   display: grid;
   grid-template-rows: max-content minmax(0, 1fr);
@@ -56,6 +57,20 @@
 
 .gameRoster__action {
   white-space: nowrap;
+}
+
+button.gameRoster__action--join,
+button.gameRoster__action--start {
+  background: #e0edff;
+  border: 1.5px solid #90b4e8;
+  color: #1d3b7a;
+}
+
+button.gameRoster__action--join:hover,
+button.gameRoster__action--start:hover {
+  background: #c3dbfa;
+  border-color: #3b82f6;
+  color: #1741a0;
 }
 
 .gameRoster__action--forfeit {
@@ -150,6 +165,51 @@
   color: #475569;
 }
 
+.gamePanel__inactivityWarning {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  position: fixed;
+  top: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: fit-content;
+  max-width: 480px;
+  height: auto;
+  max-height: fit-content;
+  z-index: 100;
+}
+
+/* ✅ Badge is now at the top level — visible on ALL screen sizes */
+.gameRoster__privateBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  color: #1e40af;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border: 1px solid #93c5fd;
+  box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.25);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.gameRoster__privateBadge svg {
+  flex-shrink: 0;
+  color: #2563eb;
+}
+
 @media (max-width: 820px) {
   .gamePanel {
     padding: 0.8rem;
@@ -170,9 +230,5 @@
 
   .gameRoster__versus {
     justify-self: center;
-  }
-
-  .gameRoster__action {
-    width: 100%;
   }
 }

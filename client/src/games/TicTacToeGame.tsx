@@ -179,7 +179,7 @@ export default function TicTacToeGame({
     );
   }
 
-  return (
+  return view.opponentTypeSelected ? (
     <div className="ticTacToeGame content">
       {winnerBanner}
       <div
@@ -195,6 +195,22 @@ export default function TicTacToeGame({
           )),
         )}
       </div>
+    </div>
+  ) : (
+    <div className="ticTacToeGame content">
+      <h3 style={{ fontSize: "1.5rem", fontWeight: "bold" }}>Select Difficulty:</h3>
+      <button
+        className="tttDifficultyButton__action--easy"
+        onClick={() => makeMove({ type: "move", difficulty: "random" })}
+      >
+        Random (easy)
+      </button>
+      <button
+        className="tttDifficultyButton__action--hard"
+        onClick={() => makeMove({ type: "move", difficulty: "minimax" })}
+      >
+        Minimax (hard)
+      </button>
     </div>
   );
 }

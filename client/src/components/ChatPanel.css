@@ -16,6 +16,9 @@ div.chatHeader {
 
 .chatHeader__title {
   margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   font-size: 1.65rem;
   color: #0f172a;
   font-weight: 800;

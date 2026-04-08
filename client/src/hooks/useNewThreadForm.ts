@@ -15,6 +15,7 @@ export default function useNewThreadForm() {
   const [title, setTitle] = useState("");
   const [contents, setContents] = useState("");
   const [err, setErr] = useState<string | null>(null);
+  const [filtered, setFiltered] = useState(true);
   const auth = useAuth();
   const navigate = useNavigate();
 
@@ -22,13 +23,15 @@ export default function useNewThreadForm() {
    * Handles form input change
    */
   const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    field: "title" | "contents",
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+    field: "title" | "contents" | "filtered",
   ) => {
     if (field === "title") {
       setTitle(e.target.value);
     } else if (field === "contents") {
       setContents(e.target.value);
+    } else if (field === "filtered") {
+      setFiltered(e.target.value === "true" ? true : false);
     }
   };
 
@@ -48,7 +51,7 @@ export default function useNewThreadForm() {
       return;
     }
 
-    const thread = await createThread(auth, { title, text: contents });
+    const thread = await createThread(auth, { title, text: contents, filtered });
     if ("error" in thread) {
       setErr(thread.error);
       return;
@@ -57,5 +60,5 @@ export default function useNewThreadForm() {
     navigate(`/forum/post/${thread.threadId}`);
   };
 
-  return { title, contents, err, handleInputChange, handleSubmit };
+  return { title, contents, filtered, err, handleInputChange, handleSubmit };
 }

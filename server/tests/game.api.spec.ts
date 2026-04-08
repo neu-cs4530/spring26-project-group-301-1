@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import supertest, { type Response } from "supertest";
 import { app } from "../src/app.ts";
 import { randomUUID } from "crypto";
+import { getUserByUsername } from "../src/services/auth.service.ts";
+import { joinGame } from "../src/services/game.service.ts";
 
 let response: Response;
 
@@ -25,15 +27,17 @@ describe("POST /api/game/create", () => {
   it("should return 403 with bad auth", async () => {
     response = await supertest(app)
       .post(`/api/game/create`)
-      .send({ auth: authBad, payload: "nim" });
+      .send({ auth: authBad, payload: { gameKey: "nim", isPrivate: false } });
     expect(response.status).toBe(403);
   });
 
   it("should succeed when asked to create a game of nim", async () => {
-    response = await supertest(app).post(`/api/game/create`).send({
-      auth: auth3,
-      payload: "nim",
-    });
+    response = await supertest(app)
+      .post(`/api/game/create`)
+      .send({
+        auth: auth3,
+        payload: { gameKey: "nim", isPrivate: false },
+      });
     expect(response.status).toBe(200);
     expect(response.body).toStrictEqual({
       gameId: expect.anything(),
@@ -60,33 +64,90 @@ describe("POST /api/game/create", () => {
           privateProfile: false,
         },
       ],
+      chatFiltered: true,
+      isPrivate: false,
     });
   });
 });
 
 describe("GET /api/game/:id", () => {
   it("should 404 given a nonexistent id", async () => {
-    response = await supertest(app).get(`/api/game/${randomUUID().toString()}`);
+    response = await supertest(app).get(
+      `/api/game/${randomUUID().toString()}?username=user3&password=pwd3333`,
+    );
     expect(response.status).toBe(404);
   });
 
   it("should succeed if a created game is requested", async () => {
-    response = await supertest(app).post(`/api/game/create`).send({
-      auth: auth3,
-      payload: "nim",
-    });
+    response = await supertest(app)
+      .post(`/api/game/create`)
+      .send({
+        auth: auth3,
+        payload: { gameKey: "nim", isPrivate: false },
+      });
     expect(response.status).toBe(200);
     const gameInfo = response.body;
 
-    response = await supertest(app).get(`/api/game/${gameInfo.gameId}`);
+    response = await supertest(app).get(
+      `/api/game/${gameInfo.gameId}?username=user3&password=pwd3333`,
+    );
     expect(response.status).toBe(200);
     expect(response.body).toStrictEqual(gameInfo);
   });
+
+  it("enforces private game visibility rules", async () => {
+    // user1 and user2 are friends; user3 is not friends with user1
+    const createResp = await supertest(app)
+      .post(`/api/game/create`)
+      .send({
+        auth: { username: "user1", password: "pwd1111" },
+        payload: { gameKey: "guess", isPrivate: true },
+      });
+    expect(createResp.status).toBe(200);
+
+    const gameId = createResp.body.gameId;
+
+    // friend can see
+    response = await supertest(app).get(`/api/game/${gameId}?username=user2&password=pwd2222`);
+    expect(response.status).toBe(200);
+
+    // non-friend cannot see
+    response = await supertest(app).get(`/api/game/${gameId}?username=user3&password=pwd3333`);
+    expect(response.status).toBe(404);
+  });
+
+  it("enforces private game join rules", async () => {
+    const createResp = await supertest(app)
+      .post(`/api/game/create`)
+      .send({
+        auth: { username: "user1", password: "pwd1111" },
+        payload: { gameKey: "nim", isPrivate: true },
+      });
+    expect(createResp.status).toBe(200);
+
+    const gameId: string = createResp.body.gameId;
+
+    const user0 = await getUserByUsername("user0");
+    const user3 = await getUserByUsername("user3");
+
+    expect(user0).not.toBeNull();
+    expect(user3).not.toBeNull();
+
+    // non-friend (user3) cannot join
+    await expect(joinGame(gameId, { userId: user3!.userId, username: "user3" })).rejects.toThrow(
+      "not authorized to join private game",
+    );
+
+    // friend (user0) can join private game created by user1
+    await expect(
+      joinGame(gameId, { userId: user0!.userId, username: "user0" }),
+    ).resolves.toHaveProperty("gameId");
+  });
 });
 
-describe("GET /api/game/list", () => {
+describe("POST /api/game/list", () => {
   it("should return created games in reverse chronological order", async () => {
-    response = await supertest(app).get(`/api/game/list`);
+    response = await supertest(app).post(`/api/game/list`).send({ auth: auth3 });
     expect(response.status).toBe(200);
     expect(response.body).toMatchObject([
       {
@@ -111,5 +172,20 @@ describe("GET /api/game/list", () => {
         players: [{ username: "user2" }, { username: "user3" }],
       },
     ]);
+  });
+
+  it("should include private games for target user list endpoint even for non-friends", async () => {
+    const createResp = await supertest(app)
+      .post(`/api/game/create`)
+      .send({
+        auth: { username: "user1", password: "pwd1111" },
+        payload: { gameKey: "nim", isPrivate: true },
+      });
+    expect(createResp.status).toBe(200);
+
+    const listResp = await supertest(app).post(`/api/game/list/user1`).send({ auth: auth3 });
+    expect(listResp.status).toBe(200);
+    const ratedGames = listResp.body as Array<{ gameId: string }>;
+    expect(ratedGames.some((game) => game.gameId === createResp.body.gameId)).toBe(true);
   });
 });

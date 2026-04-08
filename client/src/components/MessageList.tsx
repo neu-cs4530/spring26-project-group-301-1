@@ -1,4 +1,5 @@
 import "./MessageList.css";
+import { Trash2 } from "lucide-react";
 import useLoginContext from "../hooks/useLoginContext.ts";
 import type { ChatMessage } from "../util/types.ts";
 import { useEffect, useRef } from "react";
@@ -8,9 +9,18 @@ import UserLink from "./UserLink.tsx";
 interface MessageListProps {
   messages: ChatMessage[];
   onDeleteMessage: (messageId: string) => void;
+  hiddenMessageIds: Set<string>;
+  onHideMessage: (messageId: string) => void;
+  onUnhideMessage: (messageId: string) => void;
 }
 
-export default function MessageList({ messages, onDeleteMessage }: MessageListProps) {
+export default function MessageList({
+  messages,
+  onDeleteMessage,
+  hiddenMessageIds,
+  onHideMessage,
+  onUnhideMessage,
+}: MessageListProps) {
   const { user } = useLoginContext();
   const chatWindowRef = useRef<HTMLDivElement | null>(null);
   const timeSince = useTimeSince();
@@ -57,6 +67,29 @@ export default function MessageList({ messages, onDeleteMessage }: MessageListPr
           }
 
           const isMessageSender = user.username === message.createdBy.username;
+          const isHidden = hiddenMessageIds.has(message.messageId);
+
+          if (isHidden) {
+            return (
+              <div key={message.messageId} className={isMessageSender ? "chatMe" : "chatOther"}>
+                <div className="chatSender">
+                  {!isMessageSender && (
+                    <>
+                      <UserLink user={message.createdBy} />{" "}
+                    </>
+                  )}
+                  {timeSince(message.createdAt)}
+                </div>
+                <div className="chatContent chatHiddenMessage">Message hidden</div>
+                <button
+                  className="chatInlineAction"
+                  onClick={() => onUnhideMessage(message.messageId)}
+                >
+                  Unhide
+                </button>
+              </div>
+            );
+          }
 
           if (message.deleted) {
             return (
@@ -86,10 +119,16 @@ export default function MessageList({ messages, onDeleteMessage }: MessageListPr
                   aria-label="Delete message"
                   onClick={() => onDeleteMessage(message.messageId)}
                 >
-                  ✕
+                  <Trash2 aria-hidden="true" focusable="false" className="chatDeleteIcon" />
                 </button>
                 <div className="chatSender">{timeSince(message.createdAt)}</div>
                 <div className="chatContent">{message.text}</div>
+                <button
+                  className="chatInlineAction"
+                  onClick={() => onHideMessage(message.messageId)}
+                >
+                  Hide
+                </button>
               </div>
             );
           }
@@ -99,6 +138,9 @@ export default function MessageList({ messages, onDeleteMessage }: MessageListPr
                 <UserLink user={message.createdBy} /> {timeSince(message.createdAt)}
               </div>
               <div className="chatContent">{message.text}</div>
+              <button className="chatInlineAction" onClick={() => onHideMessage(message.messageId)}>
+                Hide
+              </button>
             </div>
           );
         })}

@@ -7,6 +7,7 @@ import { createMessage, deleteMessage, MessageCooldownError } from "../services/
 import { logSocketError } from "./socket.controller.ts";
 import { enforceAuth } from "../services/auth.service.ts";
 import { moderateMessage } from "../services/moderate.service.ts";
+import { ChatRepo } from "../repository.ts";
 
 /**
  * Handle a socket request to join a chat: send the connection the chat's
@@ -67,21 +68,24 @@ export const socketSendMessage: SocketAPI = (socket, io) => async (body) => {
     const now = new Date();
     const message = await createMessage(user, text, now);
 
-    try {
-      const moderationResult = await moderateMessage(text);
-      if (moderationResult.label === "UNSAFE") {
-        socket.emit("chatSendError", {
-          code: "MESSAGE_UNSAFE",
-          message:
-            "[Message violates content policy. Reason: " +
-            moderationResult.categories.join(", ") +
-            "]",
-        });
-        return;
+    const chat = await ChatRepo.get(chatId);
+    if (chat.chatFiltered) {
+      try {
+        const moderationResult = await moderateMessage(text);
+        if (moderationResult.label === "UNSAFE") {
+          socket.emit("chatSendError", {
+            code: "MESSAGE_UNSAFE",
+            message:
+              "[Message violates content policy. Reason: " +
+              moderationResult.categories.join(", ") +
+              "]",
+          });
+          return;
+        }
+      } catch (err) {
+        logSocketError(socket, err);
+        // If moderation fails for some reason, we default to allowing the message
       }
-    } catch (err) {
-      logSocketError(socket, err);
-      // If moderation fails for some reason, we default to allowing the message
     }
 
     await addMessageToChat(chatId, user, message.messageId);

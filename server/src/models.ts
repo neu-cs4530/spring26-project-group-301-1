@@ -39,11 +39,13 @@ export interface AuthRecord {
  * - `messages`: the ordered list of messages in the chat
  * - `moveLog`: the ordered list of move log entries for this chat
  * - `createdAt`: when the chat was created
+ * - `chatFiltered`: whether the chat should be filtered for content violations
  */
 export interface ChatRecord {
   messages: RecordId[]; // References Message models
   moveLog: MoveLogEntry[];
   createdAt: DateISO;
+  chatFiltered: boolean;
 }
 
 /**
@@ -80,6 +82,7 @@ export interface CommentRecord {
  * - `players`: active players for the game
  * - `createdAt`: when the game was created
  * - `createdBy`: username of the person who created the game
+ * - `isPrivate`: whether the game is visible to non-friends of the creator
  */
 export interface GameRecord {
   type: GameKey;
@@ -89,6 +92,7 @@ export interface GameRecord {
   players: RecordId[]; // References User records
   createdAt: DateISO;
   createdBy: RecordId; // References User records
+  isPrivate: boolean;
 }
 
 /**
@@ -121,6 +125,7 @@ export interface ThreadRecord {
   createdAt: DateISO;
   createdBy: RecordId; // References User records
   comments: RecordId[]; // References Comment records
+  filtered: boolean;
 }
 
 /**
