@@ -115,6 +115,13 @@ endpoints in `server/src/app.ts`.
 | `/:username/status`           | POST   | Get friendship status with a user |
 | `/remove`                     | POST   | Remove a friend                   |
 
+#### `api/oauth`
+
+| Endpoint              | Method | Description                                                                                                   |
+| --------------------- | ------ | ------------------------------------------------------------------------------------------------------------- |
+| `/:platform/verify`   | POST   | Start the OAuth process for the social media platform verification                                            |
+| `/:platform/callback` | GET    | Endpoint for external OAuth API for the given platform to send access code to, completes verification process |
+
 ### Websockets
 
 The Socket.io API for event-driven communication between clients and the
@@ -140,6 +147,7 @@ erDiagram
         string customBackground "optional"
         boolean hideUsername ""
         boolean privateProfile ""
+        SocialProfileLink[] profileLinks "optional"
         Date createdAt ""
     }
     User ||--|| Auth: "User.username"

@@ -245,9 +245,12 @@ describe("GET /api/oauth/:platform/callback", () => {
       const user: SafeUserInfo = userResponse.body;
       expect(user === undefined).toBe(false);
       const links = user.profileLinks;
-      const twitchProfile = links.find(
-        (p: { type: string; link: string; verified: boolean }) => p.type === "twitch",
-      );
+      const twitchProfile =
+        links !== undefined
+          ? links.find(
+              (p: { type: string; link: string; verified: boolean }) => p.type === "twitch",
+            )
+          : undefined;
       expect(twitchProfile).toBeDefined();
       expect(twitchProfile!.verified).toBe(true);
     });

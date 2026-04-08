@@ -152,21 +152,29 @@ export async function updateUser(
       if (validateProfileURL(profile.link, profile.type) === false) {
         return { error: "Invalid URL for platform type!" };
       }
-      if (newUser.profileLinks.filter((p) => p.type === profile.type).length > 0) {
-        return { error: "Platform type is already linked-to!" };
+      if (newUser.profileLinks !== undefined) {
+        if (newUser.profileLinks.filter((p) => p.type === profile.type).length > 0) {
+          return { error: "Platform type is already linked-to!" };
+        }
+        newUser.profileLinks = [
+          { link: profile.link, type: profile.type, verified: false },
+          ...newUser.profileLinks,
+        ];
+      } else {
+        newUser.profileLinks = [{ link: profile.link, type: profile.type, verified: false }];
       }
-      newUser.profileLinks = [
-        { link: profile.link, type: profile.type, verified: false },
-        ...newUser.profileLinks,
-      ];
     }
   }
 
   if (profilesToDelete !== undefined) {
-    for (const profile of profilesToDelete) {
-      newUser.profileLinks = newUser.profileLinks.filter((p) => {
-        return !(p.link === profile.link && p.type === profile.type);
-      });
+    if (newUser.profileLinks !== undefined) {
+      for (const profile of profilesToDelete) {
+        newUser.profileLinks = newUser.profileLinks.filter((p) => {
+          return !(p.link === profile.link && p.type === profile.type);
+        });
+      }
+    } else {
+      return { error: "User does not have any profiles to delete!" };
     }
   }
 

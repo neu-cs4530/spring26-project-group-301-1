@@ -52,7 +52,6 @@ export function getYoutubeAuthUrl(
   link: string,
   type: SocialProfilePlatformWithAuth,
 ): string {
-  // https://www.googleapis.com/auth/youtube
   const state = Buffer.from(
     JSON.stringify({ username: username, link: link, type: type }),
   ).toString("base64");
@@ -153,6 +152,7 @@ export async function getYoutubeLogin(accessToken: string): Promise<string> {
   return data.items[0].snippet.customUrl.toLowerCase();
 }
 
+// Map between social media platform and helper functions for OAuth verification
 const platformToFunc: Record<SocialProfilePlatformWithAuth, PlatformFuncs> = {
   twitch: {
     getAuthUrl: getTwitchAuthUrl,

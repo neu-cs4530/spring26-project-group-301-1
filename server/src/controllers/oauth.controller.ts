@@ -20,19 +20,17 @@ const CLIENT_URL = "http://localhost:4530";
  * @returns true if valid, false if not
  */
 function validateAuthByPlatform(
-  platform: SocialProfilePlatform,
+  platform: SocialProfilePlatformWithAuth,
   link: string,
   login: string,
 ): boolean {
   if (platform === "twitch") {
     const linkedUsername = link.match(/twitch\.tv\/([^/?#]+)/i)?.[1]?.toLowerCase();
     return linkedUsername !== undefined && login === linkedUsername;
-  } else if (platform === "youtube") {
+  } else {
     const username = link.match(/(?:youtube\.com\/)(@[\w.]+|(?:c|user|channel)\/[\w.-]+)/);
     return username?.[1] !== null && username?.[1] === login;
   }
-
-  return false; // unsupported platform for verification
 }
 
 /**
@@ -99,7 +97,9 @@ export const getCallbackByPlatform: RestAPI<never, { platform: SocialProfilePlat
     return;
   }
 
-  // this is the 'state' maintained
+  // this is the 'state' maintained between the initial POST request and the external
+  // platform callback. This lets us verify that we are receiving the right access code for the
+  // given user & linked account.
   let decoded: string;
   try {
     decoded = Buffer.from(state, "base64").toString("utf8");
@@ -134,6 +134,10 @@ export const getCallbackByPlatform: RestAPI<never, { platform: SocialProfilePlat
   }
 
   const record = await UserRepo.get(user.userId);
+  if (record.profileLinks === undefined) {
+    res.status(400).send({ error: "User does not have any linked profiles to verify!" });
+    return;
+  }
   record.profileLinks = record.profileLinks.map((p) =>
     p.link === link && p.type === type ? { ...p, verified: true } : p,
   );
