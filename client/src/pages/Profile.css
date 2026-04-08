@@ -212,6 +212,18 @@ button.profilePasswordRevealButton:focus {
   transition: transform 0.2s;
 }
 
+.toggleRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+}
+
+.toggleRowLabel {
+  font-size: 15px;
+  font-weight: 600;
+}
+
 .toggleSwitch input:checked + .toggleSlider {
   background: var(--color-primary, oklch(0.45 0.1 260));
 }
@@ -424,6 +436,10 @@ button.profilePasswordRevealButton:focus {
   line-height: 1.4;
 }
 
+.profileSocialLink:hover {
+  cursor: pointer;
+}
+
 @media (max-width: 980px) {
   .profileLayout {
     grid-template-columns: 1fr;
@@ -583,6 +599,32 @@ button.profilePasswordRevealButton:focus {
 /* Check icon stays above preview */
 .gameBgTile__check {
   z-index: 2;
+}
+
+.linkedSocialMediaCard {
+  border: 1px solid #e5e7eb;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 0.5fr));
+  justify-content: center;
+  border-radius: 12px;
+  column-gap: 20px;
+  background: #fff;
+  padding: 0.7rem 0.85rem;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.profileSocialLink {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 4px;
+  background: #fff;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 0.35rem;
+  color: var(--gray-foreground);
+  width: 100%;
 }
 
 .profileInfoList {

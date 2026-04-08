@@ -1,7 +1,7 @@
 import { type SafeUserInfo, type GameInfo } from "@gamenite/shared";
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { Box } from "@chakra-ui/react";
-import { CalendarDays, Gamepad2 } from "lucide-react";
+import { CalendarDays, Gamepad2, CircleAlert, CircleCheck } from "lucide-react";
 import useTimeSince from "../hooks/useTimeSince";
 import useLoginContext from "../hooks/useLoginContext";
 import { getUserById } from "../services/userService";
@@ -10,6 +10,7 @@ import useTopFriendsList from "../hooks/useTopFriendsList";
 import usePlayersStatsInfo from "../hooks/usePlayerStatsInfo";
 import GameSummaryView from "../components/GameSummaryView";
 import UserLink from "../components/UserLink";
+import { getIconByPlatform } from "../components/SocialPlatformLink";
 
 type FriendStatus =
   | "loading"
@@ -285,7 +286,7 @@ export default function ViewProfile({ username }: ViewProfileProps) {
                           <span className="profileIdentityMetaDot" aria-hidden="true">
                             •
                           </span>
-                          <span className="profileIdentityStatusPill">{friendStatusLabel()}</span>
+                          <span className="profileIdtoentityStatusPill">{friendStatusLabel()}</span>
                         </>
                       )}
                     </div>
@@ -298,6 +299,41 @@ export default function ViewProfile({ username }: ViewProfileProps) {
                     {getLosses() !== null && (
                       <div className="profileIdentityMeta">Games Lost: {getLosses()}</div>
                     )}
+                    <div>
+                      <h3 style={{ fontSize: "2xl", fontWeight: "bold", paddingTop: 4 }}>
+                        Social Profiles
+                      </h3>
+                      {componentState.user.profileLinks.length === 0 ? (
+                        <span className="smallAndGray">
+                          This user has no linked social profiles
+                        </span>
+                      ) : (
+                        componentState.user.profileLinks.map((p) => {
+                          return (
+                            <a href={p.link} target="_blank">
+                              <div
+                                className="linkedSocialMediaCard"
+                                style={{
+                                  display: "grid",
+                                  gridTemplateColumns: "repeat(2, minmax(0, 0.5fr))",
+                                }}
+                              >
+                                {getIconByPlatform(p)}
+                                {p.verified === true ? (
+                                  <p title="This profile is verified.">
+                                    <CircleCheck color="green" />
+                                  </p>
+                                ) : (
+                                  <p title="Warning! This profile is unverified. Verification is supported for Twitch and YouTube accounts.">
+                                    <CircleAlert color="orange" />
+                                  </p>
+                                )}
+                              </div>
+                            </a>
+                          );
+                        })
+                      )}
+                    </div>
                   </div>
                 </div>
                 <div className="profileIdentityRight profileIdentityRight--topRight">
