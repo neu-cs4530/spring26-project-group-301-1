@@ -130,6 +130,19 @@ describe(`Automated Tic Tac Toe's update() logic`, () => {
       automatedTicTacToeLogic.update(gameState, { type: "move", coord: [1, 0] }, 0),
     ).toStrictEqual(null);
   });
+  it("Should not allow difficulty selection after it has already been selected", () => {
+    const gameState = makeState({
+      board: [
+        [null, null, null],
+        [null, null, null],
+        [null, null, null],
+      ],
+    });
+    gameState.opponentTypeSelected = true;
+    expect(
+      automatedTicTacToeLogic.update(gameState, { type: "move", difficulty: "random" }, 0),
+    ).toStrictEqual(null);
+  });
   it("Should return null if move.coord is missing in update", () => {
     const state = makeState();
     // move without coord

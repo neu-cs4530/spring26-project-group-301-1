@@ -67,8 +67,7 @@ function minimax(board: TicTacToeBoard, current: Mark, ai: Mark, depth: number):
   let best = isMax ? -Infinity : Infinity;
 
   for (const move of moves) {
-    const r: number = move.coord ? move.coord[0] : -1;
-    const c: number = move.coord ? move.coord[1] : -1;
+    const [r, c] = move.coord ? move.coord : [-1, -1];
     const next = cloneBoard(board);
     next[r][c] = current;
     const score = minimax(next, oppositeMark(current), ai, depth + 1);
