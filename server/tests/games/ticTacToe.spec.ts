@@ -79,7 +79,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
           nextPlayer: 1,
           forfeited: false,
         },
-        { type: "move", difficulty: "easy" },
+        { type: "move", difficulty: "minimax" },
         1,
       ),
     ).toStrictEqual(null);
@@ -95,7 +95,7 @@ describe(`Tic Tac Toe's update() logic`, () => {
           nextPlayer: 0,
           forfeited: false,
         },
-        { type: "move", difficulty: "hard" },
+        { type: "move", difficulty: "random" },
         1,
       ),
     ).toStrictEqual(null);
