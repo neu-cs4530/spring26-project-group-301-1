@@ -1,3 +1,4 @@
+import "./NewGame.css";
 import useNewGameForm from "../hooks/useNewGameForm.ts";
 import { gameNames } from "../util/consts.ts";
 import { Gamepad2, Users, Plus, ShieldCheck } from "lucide-react";

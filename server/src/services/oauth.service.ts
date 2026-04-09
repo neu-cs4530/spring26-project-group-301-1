@@ -3,13 +3,14 @@ import {
   zSocialProfilePlatformWithAuth,
 } from "@gamenite/shared";
 
+const SITE_URL = process.env.RENDER_EXTERNAL_URL ?? "http://localhost:8000";
 const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID ?? "";
 const TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET ?? "";
-const TWITCH_REDIRECT_URI = "http://localhost:8000/api/oauth/twitch/callback";
+const TWITCH_REDIRECT_URI = SITE_URL + "/api/oauth/twitch/callback";
 
 const YOUTUBE_CLIENT_ID = process.env.YOUTUBE_CLIENT_ID;
 const YOUTUBE_CLIENT_SECRET = process.env.YOUTUBE_CLIENT_SECRET;
-const YOUTUBE_REDIRECT_URI = "http://localhost:8000/api/oauth/youtube/callback";
+const YOUTUBE_REDIRECT_URI = SITE_URL + "/api/oauth/youtube/callback";
 
 type PlatformFuncs = {
   getAuthUrl: (username: string, link: string, type: SocialProfilePlatformWithAuth) => string;
@@ -52,7 +53,6 @@ export function getYoutubeAuthUrl(
   link: string,
   type: SocialProfilePlatformWithAuth,
 ): string {
-  // https://www.googleapis.com/auth/youtube
   const state = Buffer.from(
     JSON.stringify({ username: username, link: link, type: type }),
   ).toString("base64");
@@ -153,6 +153,7 @@ export async function getYoutubeLogin(accessToken: string): Promise<string> {
   return data.items[0].snippet.customUrl.toLowerCase();
 }
 
+// Map between social media platform and helper functions for OAuth verification
 const platformToFunc: Record<SocialProfilePlatformWithAuth, PlatformFuncs> = {
   twitch: {
     getAuthUrl: getTwitchAuthUrl,
@@ -177,7 +178,6 @@ export async function getLogin(
   platform: SocialProfilePlatformWithAuth,
 ): Promise<string> {
   const funcs = platformToFunc[platform];
-  if (!funcs) throw new Error("Unsupported platform for verification!");
   return funcs.getLogin(accessToken);
 }
 
@@ -192,7 +192,6 @@ export async function exchangeCode(
   platform: SocialProfilePlatformWithAuth,
 ): Promise<string> {
   const funcs = platformToFunc[platform];
-  if (!funcs) throw new Error("Unsupported platform for verification!");
   return funcs.exchangeCode(code);
 }
 
@@ -212,7 +211,5 @@ export function initOAuthFlow(
   if (!parsedPlatform.success) return { error: "Unsupported platform" };
 
   const funcs = platformToFunc[platform];
-  if (!funcs) return { error: "Unsupported platform" };
-
   return { url: funcs.getAuthUrl(username, link, platform) };
 }

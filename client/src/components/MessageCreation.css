@@ -7,5 +7,21 @@ form.messageCreation textarea {
 }
 
 form.messageCreation {
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+form.messageCreation textarea {
+  background-color: rgb(255, 255, 255);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: white;
+}
+
+form.messageCreation textarea::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+form.messageCreation textarea:focus {
+  outline: none;
+  border-color: rgba(106, 248, 158, 0.5);
+  box-shadow: 0 0 0 2px rgba(106, 248, 158, 0.15);
 }

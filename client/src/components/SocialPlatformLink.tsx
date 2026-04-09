@@ -29,6 +29,15 @@ const platformMeta: Record<SocialProfilePlatform, PlatformMeta> = {
   },
 };
 
+/**
+ * Props for SocialPlatformLink.
+ * - `link`: the SocialProfileLink to display
+ * - `verifyPlatform`: callback to verify the link
+ * - `deletePlatform`: callback to delete the linked social media account for the platform
+ * - `modifyable`: boolean to control whether or not link should be verify-able or delete-able
+ *        (helpful for displaying to own vs other users)
+ * - `queued`: whether or not the link is queued to be added/deleted
+ */
 interface SocialPlatformLinkProps {
   link: SocialProfileLink;
   verifyPlatform: (link: SocialProfileLink) => void;
@@ -37,6 +46,11 @@ interface SocialPlatformLinkProps {
   queued: boolean;
 }
 
+/**
+ * Helper function to get styled div for link based on the platform type
+ * @param link the SocialProfileLink to style and display
+ * @returns JSX element to display for link
+ */
 export function getIconByPlatform(link: SocialProfileLink) {
   const { icon, color, label } = platformMeta[link.type];
   return (

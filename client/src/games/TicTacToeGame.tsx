@@ -102,7 +102,7 @@ export default function TicTacToeGame({
   }, [view, userPlayerIndex]);
 
   const disabled = userPlayerIndex !== displayView.nextPlayer || displayView.forfeited;
-  const me = userPlayerIndex === 0 ? "O" : "X";
+  const playerMark = userPlayerIndex === 0 ? "O" : "X";
 
   const boardFull = displayView.board.every((row) => row.every((entry) => entry !== null));
 
@@ -138,10 +138,9 @@ export default function TicTacToeGame({
       <button
         className="tttMoveButton"
         disabled={disabled}
+        aria-label={`Place ${playerMark} at row ${row + 1}, column ${col + 1}`}
         onClick={() => makeMove({ type: "move", coord: [row, col] })}
-      >
-        {me}
-      </button>
+      />
     );
   };
 

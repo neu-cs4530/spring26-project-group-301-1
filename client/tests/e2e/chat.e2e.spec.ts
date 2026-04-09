@@ -54,7 +54,11 @@ test.describe("Chat in the context of a Nim game", () => {
       await expect(page1.getByText(`message ${i} B`)).toBeVisible();
     }
 
-    await page2.getByRole("link", { name: "Games" }).click();
+    await page2.getByRole("button", { name: "Open navigation menu" }).click();
+    await page2
+      .getByRole("toolbar", { name: "Application dock" })
+      .getByRole("button", { name: "Games" })
+      .click();
     await expect(page2.getByRole("listitem").filter({ hasText: username1 })).toHaveCount(1);
     await page2
       .getByRole("listitem")

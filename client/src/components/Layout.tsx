@@ -1,22 +1,111 @@
 import "./Layout.css";
-import { Outlet } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Header from "./Header.tsx";
-import SideBarNav from "./SideBarNav.tsx";
+import { House, Gamepad2, Menu, MessageCircle, User, X } from "lucide-react";
+import useAuth from "../hooks/useAuth.ts";
+import Dock from "./ui/Dock.tsx";
 
-/**
- * Main component represents the layout of the main page, including a sidebar
- * and the main content area.
- */
 export default function Layout() {
-  return (
-    <>
-      <div id="main" className="main">
-        <Header />
-        <SideBarNav />
-        <div id="right_main" className="right_main">
-          <Outlet />
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const { username } = useAuth();
+  const [isDockMenuOpen, setIsDockMenuOpen] = useState(false);
+
+  const isActiveGameRoute = /^\/game\/[^/]+$/.test(pathname) && pathname !== "/game/new";
+
+  useEffect(() => {
+    if (!isActiveGameRoute) {
+      const timer = setTimeout(() => setIsDockMenuOpen(false), 0);
+      return () => clearTimeout(timer);
+    }
+    return undefined;
+  }, [isActiveGameRoute]);
+
+  const navigateFromDock = (target: string) => {
+    navigate(target);
+    setIsDockMenuOpen(false);
+  };
+
+  const dockItems = [
+    {
+      icon: (
+        <div className="dock-item-content">
+          <House size={40} color="#fff" />
+          <span className="dock-item-label">Home</span>
         </div>
+      ),
+      label: "",
+      onClick: () => navigateFromDock("/"),
+    },
+    {
+      icon: (
+        <div className="dock-item-content">
+          <Gamepad2 size={40} color="#fff" />
+          <span className="dock-item-label">Games</span>
+        </div>
+      ),
+      label: "",
+      onClick: () => navigateFromDock("/games"),
+    },
+    {
+      icon: (
+        <div className="dock-item-content">
+          <MessageCircle size={40} color="#fff" />
+          <span className="dock-item-label">Forum</span>
+        </div>
+      ),
+      label: "",
+      onClick: () => navigateFromDock("/forum"),
+    },
+    {
+      icon: (
+        <div className="dock-item-content">
+          <User size={40} color="#fff" />
+          <span className="dock-item-label">Profile</span>
+        </div>
+      ),
+      label: "",
+      onClick: () => navigateFromDock(`/profile/${username}`),
+    },
+  ];
+
+  return (
+    <div id="main" className="main">
+      <Header />
+      <div id="right_main" className="right_main">
+        <Outlet />
       </div>
-    </>
+      {isActiveGameRoute ? (
+        <div className="dock-wrapper dock-wrapper--game">
+          <button
+            className="dock-menu-button"
+            type="button"
+            aria-label={isDockMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={isDockMenuOpen}
+            aria-controls="game-route-dock"
+            onClick={() => setIsDockMenuOpen((current) => !current)}
+          >
+            {isDockMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
+
+          {isDockMenuOpen && (
+            <div id="game-route-dock" className="dock-wrapper__expanded">
+              <Dock
+                items={dockItems}
+                baseItemSize={90}
+                magnification={105}
+                panelHeight={85}
+                dockHeight={85}
+              />
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="dock-wrapper">
+          <Dock items={dockItems} baseItemSize={90} magnification={105} panelHeight={85} />
+        </div>
+      )}
+    </div>
   );
 }

@@ -13,10 +13,10 @@ import { Gamepad2, InfoIcon, Users } from "lucide-react";
 import SocialPlatformLink, { getIconByPlatform } from "../components/SocialPlatformLink";
 
 const PRESET_BACKGROUNDS: { label: string; url: string }[] = [
-  { label: "Stripes", url: "/backgrounds/stripes.jpeg" },
-  { label: "Sky", url: "/backgrounds/sky.jpeg" },
-  { label: "Pastels", url: "/backgrounds/pastel.jpeg" },
-  { label: "Lake", url: "/backgrounds/lake.jpeg" },
+  { label: "Blue", url: "/backgrounds/blue.jpg" },
+  { label: "Green", url: "/backgrounds/green.jpg" },
+  { label: "Yellow", url: "/backgrounds/yellow.jpg" },
+  { label: "Star", url: "/backgrounds/star.jpg" },
 ];
 
 export default function UpdateProfile() {
@@ -506,7 +506,7 @@ export default function UpdateProfile() {
                     verifying an account will re-direct you away from PlaySpace!
                   </p>
                   {socialProfileErr !== null && <p className="smallAndGray">{socialProfileErr}</p>}
-                  {user.profileLinks.length === 0 ? (
+                  {user.profileLinks === undefined || user.profileLinks.length === 0 ? (
                     <p>You have no linked accounts</p>
                   ) : (
                     user.profileLinks.map((l, i) => {

@@ -2,6 +2,7 @@ import {
   withAuth,
   zVerifySocialProfilePayload,
   zSocialPlatformState,
+  zOauthCallbackQuery,
   type SocialProfilePlatform,
   type SocialProfilePlatformWithAuth,
 } from "@gamenite/shared";
@@ -10,7 +11,7 @@ import { type RestAPI } from "../types.ts";
 import { initOAuthFlow, exchangeCode, getLogin } from "../services/oauth.service.ts";
 import { UserRepo } from "../repository.ts";
 
-const CLIENT_URL = "http://localhost:4530";
+const CLIENT_URL = process.env.RENDER_EXTERNAL_URL ?? "http://localhost:4530";
 
 /**
  * Helper function to validate user-provided credentials by platform
@@ -20,19 +21,17 @@ const CLIENT_URL = "http://localhost:4530";
  * @returns true if valid, false if not
  */
 function validateAuthByPlatform(
-  platform: SocialProfilePlatform,
+  platform: SocialProfilePlatformWithAuth,
   link: string,
   login: string,
 ): boolean {
   if (platform === "twitch") {
     const linkedUsername = link.match(/twitch\.tv\/([^/?#]+)/i)?.[1]?.toLowerCase();
     return linkedUsername !== undefined && login === linkedUsername;
-  } else if (platform === "youtube") {
+  } else {
     const username = link.match(/(?:youtube\.com\/)(@[\w.]+|(?:c|user|channel)\/[\w.-]+)/);
-    return username?.[1] !== null && username?.[1] === login;
+    return username?.[1] !== null && username?.[1].toLowerCase() === login;
   }
-
-  return false; // unsupported platform for verification
 }
 
 /**
@@ -88,8 +87,11 @@ export const getCallbackByPlatform: RestAPI<never, { platform: SocialProfilePlat
   req,
   res,
 ) => {
-  const { code, state, error } = req.query as { code?: string; state?: string; error?: string };
-
+  const callbackQuery = zOauthCallbackQuery.safeParse(req.query);
+  // parse will never fail, because all fields are optional
+  const code = callbackQuery.data?.code;
+  const state = callbackQuery.data?.state;
+  const error = callbackQuery.data?.error;
   if (error) {
     res.redirect(`${CLIENT_URL}/?oauth_error=${encodeURIComponent(error)}`);
     return;
@@ -99,15 +101,18 @@ export const getCallbackByPlatform: RestAPI<never, { platform: SocialProfilePlat
     return;
   }
 
-  // this is the 'state' maintained
-  let decoded: string;
+  // this is the 'state' maintained between the initial POST request and the external
+  // platform callback. This lets us verify that we are receiving the right access code for the
+  // given user & linked account.
+  const decoded: string = Buffer.from(state, "base64").toString("utf8");
+  let parsed: unknown;
   try {
-    decoded = Buffer.from(state, "base64").toString("utf8");
+    parsed = JSON.parse(decoded);
   } catch (error) {
     res.status(400).send({ error: "Error decoding OAuth state" });
     return;
   }
-  const result = zSocialPlatformState.safeParse(JSON.parse(decoded));
+  const result = zSocialPlatformState.safeParse(parsed);
   if (result.error) {
     res.status(400).send({ error: "Invalid state parameter" });
     return;
@@ -134,6 +139,10 @@ export const getCallbackByPlatform: RestAPI<never, { platform: SocialProfilePlat
   }
 
   const record = await UserRepo.get(user.userId);
+  if (record.profileLinks === undefined) {
+    res.status(400).send({ error: "User does not have any linked profiles to verify!" });
+    return;
+  }
   record.profileLinks = record.profileLinks.map((p) =>
     p.link === link && p.type === type ? { ...p, verified: true } : p,
   );

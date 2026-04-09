@@ -11,11 +11,28 @@ div.gameContainer {
   display: flex;
   min-width: 0;
   min-height: 0;
-  background-color: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
   overflow: hidden;
+  aspect-ratio: unset;
+  min-height: unset;
+  height: unset;
+}
+
+/* Override MagicBento purple glow with green for game panels */
+.gameContainer__panelBg.magic-bento-card--border-glow::after {
+  inset: -1px;
+  background: radial-gradient(
+    var(--glow-radius) circle at var(--glow-x) var(--glow-y),
+    rgba(106, 248, 158, calc(var(--glow-intensity) * 0.8)) 0%,
+    rgba(106, 248, 158, calc(var(--glow-intensity) * 0.4)) 30%,
+    transparent 60%
+  );
+}
+
+.gameContainer__panelBg.magic-bento-card--border-glow:hover,
+.gameContainer__panelBg.particle-container:hover {
+  box-shadow:
+    0 8px 60px rgba(106, 248, 158, 0.2),
+    0 0 60px rgba(106, 248, 158, 0.1);
 }
 
 .gameContainer__panelBg > * {
