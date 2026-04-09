@@ -73,6 +73,7 @@ describe("exchangeTwitchCode", () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue(
+        // must disable lint due to naming convention required by API
         mockResponse({
           // eslint-disable-next-line @typescript-eslint/naming-convention
           access_token: "tok123",
@@ -96,6 +97,7 @@ describe("exchangeYoutubeCode", () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue(
+        // must disable lint due to naming convention required by API
         mockResponse({
           // eslint-disable-next-line @typescript-eslint/naming-convention
           access_token: "yt-tok",
@@ -183,6 +185,7 @@ describe("exchangeCode", () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue(
+        // must disable lint due to naming convention required by API
         mockResponse({
           // eslint-disable-next-line @typescript-eslint/naming-convention
           access_token: "tw-tok",
@@ -197,6 +200,7 @@ describe("exchangeCode", () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue(
+        // must disable lint due to naming convention required by API
         mockResponse({
           // eslint-disable-next-line @typescript-eslint/naming-convention
           access_token: "yt-tok",

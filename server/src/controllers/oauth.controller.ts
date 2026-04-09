@@ -2,6 +2,7 @@ import {
   withAuth,
   zVerifySocialProfilePayload,
   zSocialPlatformState,
+  zOauthCallbackQuery,
   type SocialProfilePlatform,
   type SocialProfilePlatformWithAuth,
 } from "@gamenite/shared";
@@ -86,8 +87,11 @@ export const getCallbackByPlatform: RestAPI<never, { platform: SocialProfilePlat
   req,
   res,
 ) => {
-  const { code, state, error } = req.query as { code?: string; state?: string; error?: string };
-
+  const callbackQuery = zOauthCallbackQuery.safeParse(req.query);
+  // parse will never fail, because all fields are optional
+  const code = callbackQuery.data?.code;
+  const state = callbackQuery.data?.state;
+  const error = callbackQuery.data?.error;
   if (error) {
     res.redirect(`${CLIENT_URL}/?oauth_error=${encodeURIComponent(error)}`);
     return;
@@ -100,14 +104,15 @@ export const getCallbackByPlatform: RestAPI<never, { platform: SocialProfilePlat
   // this is the 'state' maintained between the initial POST request and the external
   // platform callback. This lets us verify that we are receiving the right access code for the
   // given user & linked account.
-  let decoded: string;
+  const decoded: string = Buffer.from(state, "base64").toString("utf8");
+  let parsed: unknown;
   try {
-    decoded = Buffer.from(state, "base64").toString("utf8");
+    parsed = JSON.parse(decoded);
   } catch (error) {
     res.status(400).send({ error: "Error decoding OAuth state" });
     return;
   }
-  const result = zSocialPlatformState.safeParse(JSON.parse(decoded));
+  const result = zSocialPlatformState.safeParse(parsed);
   if (result.error) {
     res.status(400).send({ error: "Invalid state parameter" });
     return;

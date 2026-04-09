@@ -177,7 +177,6 @@ export async function getLogin(
   platform: SocialProfilePlatformWithAuth,
 ): Promise<string> {
   const funcs = platformToFunc[platform];
-  if (!funcs) throw new Error("Unsupported platform for verification!");
   return funcs.getLogin(accessToken);
 }
 
@@ -192,7 +191,6 @@ export async function exchangeCode(
   platform: SocialProfilePlatformWithAuth,
 ): Promise<string> {
   const funcs = platformToFunc[platform];
-  if (!funcs) throw new Error("Unsupported platform for verification!");
   return funcs.exchangeCode(code);
 }
 
@@ -212,7 +210,5 @@ export function initOAuthFlow(
   if (!parsedPlatform.success) return { error: "Unsupported platform" };
 
   const funcs = platformToFunc[platform];
-  if (!funcs) return { error: "Unsupported platform" };
-
   return { url: funcs.getAuthUrl(username, link, platform) };
 }

@@ -20,3 +20,10 @@ export const zSocialPlatformState = z.object({
   link: z.string(),
   type: zSocialProfilePlatformWithAuth,
 });
+
+/** Sent by external API to callback endpoint */
+export const zOauthCallbackQuery = z.object({
+  code: z.string().optional(),
+  state: z.string().optional(),
+  error: z.string().optional(),
+});

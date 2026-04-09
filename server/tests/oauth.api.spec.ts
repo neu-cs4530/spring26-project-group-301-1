@@ -131,6 +131,14 @@ describe("GET /api/oauth/:platform/callback", () => {
     vi.resetAllMocks();
   });
 
+  describe("invalid query parameter", () => {
+    it("returns 400 when receiving a malformed query", async () => {
+      response = await supertest(app).get("/api/oauth/twitch/callback").query({ hi: "hello" });
+      expect(response.status).toBe(400);
+      expect(response.body).toStrictEqual({ error: "Invalid callback request" });
+    });
+  });
+
   describe("error query parameter", () => {
     it("redirects to client with oauth_error when error param is present", async () => {
       response = await supertest(app)
@@ -164,6 +172,13 @@ describe("GET /api/oauth/:platform/callback", () => {
   });
 
   describe("invalid state parameter", () => {
+    it("returns 400 for an invalid state that cannot be decoded", async () => {
+      response = await supertest(app)
+        .get("/api/oauth/twitch/callback")
+        .query({ code: "somecode", state: "hi" });
+      expect(response.status).toBe(400);
+      expect(response.body).toStrictEqual({ error: "Error decoding OAuth state" });
+    });
     it("returns 400 for a state that is valid base64 but missing required fields", async () => {
       const badState = Buffer.from(JSON.stringify({ foo: "bar" })).toString("base64");
       response = await supertest(app)
