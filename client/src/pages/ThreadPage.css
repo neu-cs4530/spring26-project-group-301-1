@@ -68,8 +68,8 @@ span.opBlue {
 
 .threadCard__title {
   margin: 0.48rem 0 0;
-  font-size: 1.2rem;
-  font-weight: 800;
+  font-size: 1.45rem;
+  font-weight: 900;
   color: white;
   line-height: 1.35;
 }
@@ -78,7 +78,8 @@ span.opBlue {
   border: 1px solid rgba(253, 238, 101, 0.3);
   border-radius: 10px;
   padding: 0.28rem 0.7rem;
-  font-size: 0.82rem;
+  font-size: 0.95rem;
+  font-weight: 700;
   color: rgba(253, 238, 101, 0.7);
   background: rgba(253, 238, 101, 0.06);
 }
@@ -87,7 +88,7 @@ span.opBlue {
   border: 1px solid rgba(253, 238, 101, 0.2);
   border-radius: 14px;
   overflow: hidden;
-  background: rgba(253, 238, 101, 0.03);
+  background: rgba(0, 0, 0, 0.48);
 }
 
 .threadCard__opCard {
@@ -108,31 +109,33 @@ span.opBlue {
 }
 
 .threadCard__author {
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 1.1rem;
+  font-weight: 800;
   color: white;
   line-height: 1;
 }
 
 .threadCard__meta {
   color: rgba(255, 255, 255, 0.45);
-  font-size: 0.78rem;
+  font-size: 0.92rem;
+  font-weight: 600;
 }
 
 .threadCard__text {
   margin: 0.35rem 0 0;
   margin-left: 0.55rem;
   color: rgba(255, 255, 255, 0.85);
-  font-size: 1.1rem;
-  font-weight: 500;
-  line-height: 1.55;
+  font-size: 1.24rem;
+  font-weight: 650;
+  line-height: 1.65;
 }
 
 .threadCard__commentsTitle {
   margin: 0;
   padding: 0;
   color: white;
-  font-size: 1.25rem;
+  font-size: 1.38rem;
+  font-weight: 850;
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
@@ -152,9 +155,10 @@ span.opBlue {
 }
 
 .threadCard__emptyComments {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.86);
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 1.08rem;
+  font-weight: 700;
   padding: 0.7rem 0 0.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -172,20 +176,23 @@ span.opBlue {
 
 .threadCard__commentAuthor {
   color: white;
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: 1.06rem;
+  font-weight: 800;
 }
 
 .threadCard__commentTime {
   color: rgba(255, 255, 255, 0.4);
-  font-size: 0.8rem;
+  font-size: 0.9rem;
+  font-weight: 550;
 }
 
 .threadCard__commentText {
   margin-top: 0.36rem;
   margin-left: 0.55rem;
   color: rgba(255, 255, 255, 0.8);
-  font-size: 1rem;
+  font-size: 1.12rem;
+  font-weight: 600;
+  line-height: 1.6;
 }
 
 .threadCard__commentHidden {

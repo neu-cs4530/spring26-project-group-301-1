@@ -39,7 +39,6 @@ export default function UpdateProfile() {
     setColor,
     imageUrl,
     setImageUrl,
-    presetColors,
     password,
     setPassword,
     confirm,
@@ -346,7 +345,7 @@ export default function UpdateProfile() {
                     onClick={() => {
                       setBackgroundType("color");
                       setImageUrl("");
-                      setColor(presetColors[0] ?? "#3b82f6");
+                      setColor("");
                       setHideSelectionCheck(true); // hide checks after reset
                     }}
                   >
