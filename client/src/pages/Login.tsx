@@ -1,6 +1,6 @@
 import useLoginForm from "../hooks/useLoginForm.ts";
 import "./Login.css";
-import { useState } from "react";
+import { useState, type MouseEvent } from "react";
 import EyeToggle from "../components/EyeToggle";
 import { type AuthContext } from "../contexts/LoginContext.ts";
 
@@ -17,20 +17,32 @@ export default function Login({ setAuth }: LoginProps) {
     useLoginForm(setAuth);
   const [showPassword, setShowPassword] = useState(false);
 
+  const handleCardGlowMove = (event: MouseEvent<HTMLFormElement>) => {
+    const card = event.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const relativeX = ((event.clientX - rect.left) / rect.width) * 100;
+    const relativeY = ((event.clientY - rect.top) / rect.height) * 100;
+
+    card.style.setProperty("--glow-x", `${relativeX}%`);
+    card.style.setProperty("--glow-y", `${relativeY}%`);
+    card.style.setProperty("--glow-intensity", "1");
+  };
+
+  const handleCardGlowLeave = (event: MouseEvent<HTMLFormElement>) => {
+    const card = event.currentTarget;
+    card.style.setProperty("--glow-intensity", "0");
+  };
+
   return (
-    <div className="container">
-      <form className="login" onSubmit={(e) => handleSubmit(e)}>
-        <h1
-          style={{
-            fontSize: "2rem",
-            fontWeight: "bold",
-            marginBottom: "0.5rem",
-            textAlign: "center",
-          }}
-        >
-          PlaySpace
-        </h1>
-        <h2 style={{ textAlign: "center" }}>Log into PlaySpace</h2>
+    <div className="login-page">
+      <form
+        className="login"
+        onSubmit={(e) => handleSubmit(e)}
+        onMouseMove={handleCardGlowMove}
+        onMouseLeave={handleCardGlowLeave}
+      >
+        <h1 className="login__brand">PlaySpace</h1>
+        <h2 className="login__title">Log into PlaySpace</h2>
         <input
           type="text"
           value={username}
@@ -39,7 +51,7 @@ export default function Login({ setAuth }: LoginProps) {
           aria-label="Username"
           className="widefill"
         />
-        <div style={{ position: "relative", width: "100%" }}>
+        <div className="login__password-field">
           <input
             type={showPassword ? "text" : "password"}
             value={password}
@@ -47,16 +59,13 @@ export default function Login({ setAuth }: LoginProps) {
             placeholder="Password"
             aria-label="Password"
             className="widefill"
-            style={{ paddingRight: 36 }}
           />
-          <span
-            style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)" }}
-          >
+          <span className="login__eye-toggle">
             <EyeToggle shown={showPassword} onClick={() => setShowPassword((v) => !v)} />
           </span>
         </div>
         {mode === "signup" && (
-          <div style={{ position: "relative", width: "100%" }}>
+          <div className="login__password-field">
             <input
               type={showPassword ? "text" : "password"}
               value={confirm}
@@ -64,61 +73,20 @@ export default function Login({ setAuth }: LoginProps) {
               placeholder="Confirm Password"
               aria-label="Confirm Password"
               className="widefill"
-              style={{ paddingRight: 36 }}
             />
-            <span
-              style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)" }}
-            >
+            <span className="login__eye-toggle">
               <EyeToggle shown={showPassword} onClick={() => setShowPassword((v) => !v)} />
             </span>
           </div>
         )}
         {err && <p className="error-message centered">{err}</p>}
-        <button
-          type="submit"
-          className="widefill login-blue-btn"
-          style={{
-            background: "#dbeafe",
-            color: "#1e3a8a",
-            border: "1px solid #93c5fd",
-            fontWeight: 700,
-            fontSize: "1.05rem",
-            minHeight: "2.6rem",
-            borderRadius: "10px",
-            marginTop: "0.5rem",
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.background = "#bfdbfe";
-            e.currentTarget.style.borderColor = "#60a5fa";
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.background = "#dbeafe";
-            e.currentTarget.style.borderColor = "#93c5fd";
-          }}
-        >
+        <button type="submit" className="widefill login__primary-btn">
           {mode === "signup" ? "Sign Up" : "Log In"}
         </button>
         <div className="intertext">or</div>
         <button
-          className="narrowcenter login-green-btn"
-          style={{
-            background: "#f0fdf4",
-            color: "#166534",
-            border: "1px solid #bbf7d0",
-            fontWeight: 600,
-            fontSize: "1.05rem",
-            minHeight: "2.6rem",
-            borderRadius: "10px",
-            marginTop: "0.5rem",
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.background = "#dcfce7";
-            e.currentTarget.style.borderColor = "#86efac";
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.background = "#f0fdf4";
-            e.currentTarget.style.borderColor = "#bbf7d0";
-          }}
+          type="button"
+          className="narrowcenter login__secondary-btn"
           onClick={(e) => {
             e.preventDefault();
             toggleMode();
@@ -127,7 +95,7 @@ export default function Login({ setAuth }: LoginProps) {
           {mode === "signup" ? "Use Existing Account" : "Create New Account"}
         </button>
       </form>
-      <div className="smallAndGray" style={{ marginTop: "1rem" }}>
+      <div className="smallAndGray login__footnote">
         GameNite stores passwords in cleartext; reusing passwords here is a catastrophically bad
         idea
       </div>
