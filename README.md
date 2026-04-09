@@ -12,7 +12,8 @@ programming language, using React for the user interface.
 
 ## Getting Started
 
-1. Please include the following environment variables in file called `server/.env`
+1. Please include the following environment variables in file called
+   `server/.env`
 
 ```
 ANTHROPIC_API_KEY=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
@@ -26,7 +27,7 @@ YOUTUBE_CLIENT_SECRET=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
 ```
 
 2. Run `npm install` in the root directory to install all dependencies for the
-`client`, `server`, and `shared` folders.
+   `client`, `server`, and `shared` folders.
 
 ### Working on the application
 
