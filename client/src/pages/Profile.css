@@ -102,6 +102,17 @@ button.profilePasswordRevealButton:focus {
   align-items: center;
   gap: 1rem;
 }
+
+.profileIdentityRight--stackedTabs {
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.6rem;
+}
+
+.profileIdentityRight--stackedTabs .profileFriendRequestsTab {
+  width: 240px;
+  justify-content: space-between;
+}
 /* Friend Requests tab */
 .profileFriendRequestsTab {
   display: flex;
@@ -866,6 +877,10 @@ button.profilePasswordRevealButton:focus {
   justify-content: flex-end;
   max-width: 12rem;
   text-align: right;
+}
+
+.profileIdentityRight--topRight .friendRequestStatusText {
+  white-space: nowrap;
 }
 
 .profile-card--darkText,

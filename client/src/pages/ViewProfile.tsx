@@ -155,7 +155,7 @@ export default function ViewProfile({ username }: ViewProfileProps) {
           </button>
         );
       case "request-sent":
-        return <span className="smallAndGray">Friend request sent</span>;
+        return <span className="smallAndGray friendRequestStatusText">Friend request sent</span>;
       case "request-received":
         return <span className="smallAndGray">They sent you a friend request</span>;
       case "error":

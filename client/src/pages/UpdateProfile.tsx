@@ -195,7 +195,7 @@ export default function UpdateProfile() {
               <div className="profileIdentityMeta">Joined {timeSince(user.createdAt)}</div>
             </div>
           </div>
-          <div className="profileIdentityRight">
+          <div className="profileIdentityRight profileIdentityRight--stackedTabs">
             <button
               type="button"
               className={
@@ -235,7 +235,12 @@ export default function UpdateProfile() {
                   : "profileFriendRequestsTab"
               }
               onClick={() => setActiveSection("friend-requests")}
-              style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                position: "relative",
+              }}
             >
               Friend Requests
               {requests.length > 0 && (
@@ -253,6 +258,8 @@ export default function UpdateProfile() {
                     fontSize: "0.95rem",
                     fontWeight: 700,
                     boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
+                    position: "absolute",
+                    right: "0.7rem",
                   }}
                 >
                   {requests.length}
