@@ -1,19 +1,32 @@
-The individual and team project for this class are designed to mirror the
-experiences of a software engineer joining a new development team: you will be
-“onboarded” to our codebase, make several individual contributions, and then
-form a team to propose, develop and implement new features. The codebase that
-we'll be developing is GameNite, a website that answers the question "what if
-Twitch, but for correspondence chess?"
+## Playspace
 
-You will get an opportunity to work with the starter code which provides basic
-skeleton for the app and then additional features will be proposed and
-implemented by you! All implementation will take place in the TypeScript
-programming language, using React for the user interface.
+Playspace is a social gaming platform where users can play games, build a
+gaming community, and compete with others. Beyond gameplay, users can send
+friend requests, invite friends to private games, and message other players
+directly. Profiles are customizable with game history, win/loss records, and
+UI preferences. A global leaderboard fosters competition and encourages
+players to keep improving their rank. Automated opponents let players practice
+at any time without waiting for others to be available. A built-in LLM-based
+chat filter keeps the environment safe and welcoming.
 
 ## Getting Started
 
-Run `npm install` in the root directory to install all dependencies for the
-`client`, `server`, and `shared` folders.
+1. Please include the following environment variables in file called
+   `server/.env`
+
+```
+ANTHROPIC_API_KEY=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
+MONGO_DB_NAME=GameNiteProd
+MONGO_STR=mongodb+srv://kulkarnianushka_db_user:VjwY0j50cbmy2HXS@db-cs4530-spring26-301.ypj1du5.mongodb.net/
+NODE_VERSION=24.13.1
+TWITCH_CLIENT_ID=v86hpzxaydluxx3d3f7zmqy4z4l373
+TWITCH_CLIENT_SECRET=7vckzuk8kmi78dqaxlezf5qh4ubkar
+YOUTUBE_CLIENT_ID=286752764664-3engo6qmobj7rruteii6d5n2nbuh42gr.apps.googleusercontent.com
+YOUTUBE_CLIENT_SECRET=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
+```
+
+2. Run `npm install` in the root directory to install all dependencies for the
+   `client`, `server`, and `shared` folders.
 
 ### Working on the application
 
@@ -72,20 +85,21 @@ endpoints in `server/src/app.ts`.
 
 #### `/api/game`
 
-| Endpoint  | Method | Description                           |
-| --------- | ------ | ------------------------------------- |
-| `/create` | POST   | Create new game                       |
-| `/list`   | GET    | List all games                        |
-| `/:id`    | GET    | Get information about a specific game |
+| Endpoint          | Method | Description                           |
+| ----------------- | ------ | ------------------------------------- |
+| `/create`         | POST   | Create new game                       |
+| `/list`           | POST   | List all games                        |
+| `/list/:username` | POST   | List all games by username            |
+| `/:id`            | GET    | Get information about a specific game |
 
 #### `/api/thread`
 
-| Endpoint       | Method | Description                       |
-| -------------- | ------ | --------------------------------- |
-| `/create`      | POST   | Create new forum post             |
-| `/list`        | GET    | List all forum posts              |
-| `/:id`         | GET    | Get information about a form post |
-| `/:id/comment` | POST   | Add a comment to a forum post     |
+| Endpoint       | Method | Description                        |
+| -------------- | ------ | ---------------------------------- |
+| `/create`      | POST   | Create new forum post              |
+| `/list`        | GET    | List all forum posts               |
+| `/:id`         | GET    | Get information about a forum post |
+| `/:id/comment` | POST   | Add a comment to a forum post      |
 
 #### `/api/user`
 
@@ -96,6 +110,31 @@ endpoints in `server/src/app.ts`.
 | `/signup`    | POST   | Create a new user                     |
 | `/:username` | POST   | Update user's displayname or password |
 | `/:username` | GET    | Get information about a user          |
+
+#### `/api/stats`
+
+| Endpoint       | Method | Description                   |
+| -------------- | ------ | ----------------------------- |
+| `/leaderboard` | GET    | Get the leaderboard           |
+| `/:username`   | GET    | Get stats for a specific user |
+
+#### `/api/friends`
+
+| Endpoint                      | Method | Description                       |
+| ----------------------------- | ------ | --------------------------------- |
+| `/:username/requests`         | POST   | Get friend requests for a user    |
+| `/:username`                  | GET    | Get friends for a user            |
+| `/request`                    | POST   | Send a friend request             |
+| `/request/:requestId/resolve` | POST   | Resolve a friend request          |
+| `/:username/status`           | POST   | Get friendship status with a user |
+| `/remove`                     | POST   | Remove a friend                   |
+
+#### `api/oauth`
+
+| Endpoint              | Method | Description                                                                                                   |
+| --------------------- | ------ | ------------------------------------------------------------------------------------------------------------- |
+| `/:platform/verify`   | POST   | Start the OAuth process for the social media platform verification                                            |
+| `/:platform/callback` | GET    | Endpoint for external OAuth API for the given platform to send access code to, completes verification process |
 
 ### Websockets
 
@@ -119,6 +158,10 @@ erDiagram
         userId userId "generated key"
         username username "unique"
         string display ""
+        string customBackground "optional"
+        boolean hideUsername ""
+        boolean privateProfile ""
+        SocialProfileLink[] profileLinks "optional"
         Date createdAt ""
     }
     User ||--|| Auth: "User.username"
@@ -128,6 +171,7 @@ erDiagram
         threadId threadId "generated key"
         string title ""
         string text ""
+        boolean filtered ""
         Date createdAt ""
         userId createdBy ""
         commentId[] comments ""
@@ -140,15 +184,17 @@ erDiagram
         string text ""
         userId createdBy ""
         Date createdAt ""
-        Date editedAt "can be null"
+        Date editedAt "optional"
     }
     Comment ||--|| User: "Comment.createdBy"
 
     Game {
         gameId gameId "generated key"
         GameKey type ""
-        unknown state ""
-        boolean done ""
+        string status "waiting/active/done"
+        boolean chatFiltered ""
+        boolean isPrivate ""
+        int minPlayers ""
         chatId chat ""
         userId[] players ""
         Date createdAt ""
@@ -168,9 +214,33 @@ erDiagram
     Message {
         messageId messageId "generated key"
         string text ""
+        boolean deleted ""
+        Date deletedAt "optional"
         Date createdAt ""
     }
     Message ||--|| User: "Message.createdBy"
+
+    FriendRequest {
+        requestId requestId "generated key"
+        userId from ""
+        userId to ""
+        string status "pending/accepted/declined"
+        Date createdAt ""
+        Date resolvedAt "optional"
+    }
+    FriendRequest ||--|| User: "FriendRequest.from"
+    FriendRequest ||--|| User: "FriendRequest.to"
+
+    UserStats {
+        userId userId "foreign key"
+        GameKey gameType "optional"
+        int wins ""
+        int losses ""
+        int draws ""
+        int gamesPlayed ""
+        float winRate ""
+    }
+    UserStats ||--|| User: "UserStats.userId"
 ```
 
 ## Games

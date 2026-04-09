@@ -217,6 +217,18 @@ button.profilePasswordRevealButton:focus {
   transition: transform 0.2s;
 }
 
+.toggleRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+}
+
+.toggleRowLabel {
+  font-size: 15px;
+  font-weight: 600;
+}
+
 .toggleSwitch input:checked + .toggleSlider {
   background: rgba(116, 148, 235, 0.7);
 }
@@ -451,6 +463,10 @@ button.profilePasswordRevealButton:focus {
   line-height: 1.4;
 }
 
+.profileSocialLink:hover {
+  cursor: pointer;
+}
+
 .smallAndGray {
   color: rgba(255, 255, 255, 0.74) !important;
   font-weight: 600;
@@ -622,6 +638,32 @@ button.profilePasswordRevealButton:focus {
   font-weight: 700;
   color: rgba(255, 255, 255, 0.85);
   background: rgba(0, 0, 0, 0.65);
+}
+
+.linkedSocialMediaCard {
+  border: 1px solid #e5e7eb;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 0.5fr));
+  justify-content: center;
+  border-radius: 12px;
+  column-gap: 20px;
+  background: #fff;
+  padding: 0.7rem 0.85rem;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.profileSocialLink {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 4px;
+  background: #fff;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 0.35rem;
+  color: var(--gray-foreground);
+  width: 100%;
 }
 
 .profileInfoList {

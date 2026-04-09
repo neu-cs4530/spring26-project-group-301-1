@@ -1,4 +1,4 @@
-import type { GameKey, FriendRequestStatus } from "@gamenite/shared";
+import type { GameKey, FriendRequestStatus, SocialProfileLink } from "@gamenite/shared";
 
 /**
  * Record identifiers used to look up keys in a database. This type
@@ -125,6 +125,7 @@ export interface ThreadRecord {
  * - `createdAt`: when this user registered.
  * - `hideUsername`: privacy preference for user, will hide username if true
  * - `privateProfile`: privacy preference for user, will hide profile from non-friends if true
+ * - `profileLinks`: list of social media profiles linked to the user's account
  */
 export interface UserRecord {
   username: string; // References Auth records
@@ -133,6 +134,7 @@ export interface UserRecord {
   customBackground?: string;
   hideUsername: boolean;
   privateProfile: boolean;
+  profileLinks?: SocialProfileLink[];
 }
 
 /**

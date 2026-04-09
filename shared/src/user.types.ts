@@ -1,4 +1,23 @@
 import { z } from "zod";
+import { type SocialProfilePlatform, zSocialProfilePlatform } from "./oauth.types.ts";
+
+/**
+ * Represents a link to a user's social media profile.
+ * - `link`: the URL to the user's profile
+ * - `type`: the social media platform the link goes to
+ * - `verified`: whether or not the user has verified the link is their own profile
+ */
+export interface SocialProfileLink {
+  link: string;
+  type: SocialProfilePlatform;
+  verified: boolean;
+}
+
+export const zSocialProfileLink = z.object({
+  link: z.string(),
+  type: zSocialProfilePlatform,
+  verified: z.boolean(),
+});
 
 /**
  * Represents a "safe" user object that excludes sensitive information like
@@ -7,6 +26,7 @@ import { z } from "zod";
  * - `display`: A display name
  * - `createdAt`: when this when the user registered.
  * - `hideUsername`: privacy preference of user, will hide username from profile page.
+ * - `profileLinks`: linked social media accounts.
  */
 export interface SafeUserInfo {
   username: string;
@@ -15,6 +35,7 @@ export interface SafeUserInfo {
   customBackground?: string;
   hideUsername: boolean;
   privateProfile: boolean;
+  profileLinks?: SocialProfileLink[];
 }
 
 /*** TYPES USED IN THE USER API ***/
@@ -29,4 +50,6 @@ export const zUserUpdateRequest = z.object({
   customBackground: z.string().optional(),
   hideUsername: z.boolean().optional(),
   privateProfile: z.boolean().optional(),
+  profilesToAdd: z.array(zSocialProfileLink).optional(),
+  profilesToDelete: z.array(zSocialProfileLink).optional(),
 });
