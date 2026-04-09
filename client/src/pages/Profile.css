@@ -66,15 +66,17 @@ button.profilePasswordRevealButton:focus {
 
 /* Profile identity card styles */
 .profileIdentityCard {
-  background: rgba(255, 255, 255, 0.04);
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.04)), rgba(255, 255, 255, 0.04);
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 0.5rem 0.7rem 0.5rem 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  padding: 0.65rem 0.85rem 0.65rem 0.65rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 0.3rem;
   min-height: 70px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
 }
 
 .profileIdentityMain {
@@ -411,23 +413,27 @@ button.profilePasswordRevealButton:focus {
 .profileCol {
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.7rem;
 }
 
 .profileSectionCard {
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.04);
-  padding: 0.95rem;
-  box-shadow: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03)), rgba(255, 255, 255, 0.04);
+  padding: 1.05rem;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
   min-width: 850px;
 }
 
 .profileSectionCard h3 {
-  margin: 0 0 0.6rem;
-  font-size: 1.4rem;
-  font-weight: 800;
+  margin: 0 0 0.7rem;
+  font-size: 1.48rem;
+  font-weight: 900;
   color: white;
+  letter-spacing: 0.01em;
+  padding-bottom: 0.42rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .profileControlRow {
@@ -681,7 +687,8 @@ button.profilePasswordRevealButton:focus {
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 700;
   line-height: 1.55;
 }
 
@@ -707,14 +714,15 @@ button.profilePasswordRevealButton:focus {
 
 .profileTopFriendName {
   font-size: 1.05rem;
-  font-weight: 550;
-  color: white;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.98);
   line-height: 1.2;
 }
 
 .profileTopFriendUsername {
   margin-top: 0.08rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 700;
   font-size: 0.95rem;
 }
 
@@ -723,7 +731,8 @@ button.profilePasswordRevealButton:focus {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.88);
+  font-weight: 700;
   font-size: 0.96rem;
 }
 
@@ -859,6 +868,21 @@ button.profilePasswordRevealButton:focus {
 .profileForm--darkText .profileTopFriendCard {
   background: rgba(255, 255, 255, 0.62);
   border-color: rgba(17, 24, 39, 0.2);
+}
+
+.profile-card--darkText .profileIdentityCard,
+.profileForm--darkText .profileIdentityCard {
+  box-shadow: 0 10px 28px rgba(17, 24, 39, 0.12);
+}
+
+.profile-card--darkText .profileSectionCard,
+.profileForm--darkText .profileSectionCard {
+  box-shadow: 0 10px 28px rgba(17, 24, 39, 0.12);
+}
+
+.profile-card--darkText .profileSectionCard h3,
+.profileForm--darkText .profileSectionCard h3 {
+  border-bottom-color: rgba(17, 24, 39, 0.2);
 }
 
 .profile-card--darkText .profileIdentityMetaDot,

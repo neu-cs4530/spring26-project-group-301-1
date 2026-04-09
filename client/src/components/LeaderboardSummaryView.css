@@ -15,9 +15,9 @@
 }
 
 .leaderboard-summary-updated {
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.82);
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .leaderboard-summary-toggle {
@@ -31,8 +31,8 @@
 }
 
 .leaderboard-summary-toggle-label {
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: 1.02rem;
+  font-weight: 700;
   color: var(--gray-foreground);
 }
 
@@ -41,8 +41,8 @@
   border: 1px solid var(--gray-foreground);
   border-radius: 0.375rem;
   background: white;
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 700;
   color: var(--gray-foreground);
   cursor: pointer;
   white-space: nowrap;
@@ -56,18 +56,18 @@
 .leaderboard-summary-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 1.1rem;
+  font-size: 1.22rem;
   margin-top: 0.15rem; /* was 0.25rem */
   margin-bottom: 0.35rem; /* was 0.5rem */
 }
 
 .leaderboard-summary-table thead th {
   text-align: left;
-  font-weight: 600;
+  font-weight: 800;
   color: rgba(255, 255, 255, 0.7);
   padding: 0.25rem 0.5rem;
   border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
-  font-size: 1rem;
+  font-size: 1.12rem;
 }
 
 .leaderboard-summary-table thead th:not(:nth-child(2)) {
@@ -87,13 +87,14 @@
 .leaderboard-summary-row td {
   padding: 0.4rem 0.5rem;
   white-space: nowrap;
-  font-size: 1rem;
+  font-size: 1.12rem;
+  font-weight: 700;
 }
 
 .leaderboard-summary-rank {
   text-align: center;
   width: 2rem;
-  font-weight: 700;
+  font-weight: 800;
   color: rgba(255, 255, 255, 0.7);
 }
 
@@ -112,17 +113,19 @@
 .leaderboard-summary-wins {
   text-align: center;
   color: #4caf50;
-  font-weight: 600;
+  font-weight: 800;
 }
 
 .leaderboard-summary-losses {
   text-align: center;
   color: #e57373;
+  font-weight: 800;
 }
 
 .leaderboard-summary-draws {
   text-align: center;
   color: rgba(255, 255, 255, 0.7);
+  font-weight: 800;
 }
 
 .leaderboard-summary-unknown {
@@ -190,22 +193,23 @@
   order: 1; /* name first */
   margin-top: 0;
   margin-bottom: 0.2rem;
-  font-weight: 700;
-  font-size: 1rem;
+  font-weight: 800;
+  font-size: 1.1rem;
   color: #1a1a2e;
 }
 
 .leaderboard-summary-podium__medal {
   order: 2; /* rank/medal second */
-  font-weight: 700;
-  font-size: 0.9rem;
+  font-weight: 800;
+  font-size: 1rem;
   color: #1a1a2e;
 }
 
 .leaderboard-summary-podium__stats {
   order: 3; /* stats last */
   margin-top: 0.15rem;
-  font-size: 0.82rem;
+  font-size: 0.92rem;
+  font-weight: 700;
   color: #4a5568;
 }
 
