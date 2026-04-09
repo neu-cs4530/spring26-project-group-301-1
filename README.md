@@ -1,14 +1,13 @@
-The individual and team project for this class are designed to mirror the
-experiences of a software engineer joining a new development team: you will be
-“onboarded” to our codebase, make several individual contributions, and then
-form a team to propose, develop and implement new features. The codebase that
-we'll be developing is GameNite, a website that answers the question "what if
-Twitch, but for correspondence chess?"
+## Playspace
 
-You will get an opportunity to work with the starter code which provides basic
-skeleton for the app and then additional features will be proposed and
-implemented by you! All implementation will take place in the TypeScript
-programming language, using React for the user interface.
+Playspace is a social gaming platform where users can play games, build a
+gaming community, and compete with others. Beyond gameplay, users can send
+friend requests, invite friends to private games, and message other players
+directly. Profiles are customizable with game history, win/loss records, and
+UI preferences. A global leaderboard fosters competition and encourages
+players to keep improving their rank. Automated opponents let players practice
+at any time without waiting for others to be available. A built-in LLM-based
+chat filter keeps the environment safe and welcoming.
 
 ## Getting Started
 
@@ -72,20 +71,21 @@ endpoints in `server/src/app.ts`.
 
 #### `/api/game`
 
-| Endpoint  | Method | Description                           |
-| --------- | ------ | ------------------------------------- |
-| `/create` | POST   | Create new game                       |
-| `/list`   | GET    | List all games                        |
-| `/:id`    | GET    | Get information about a specific game |
+| Endpoint          | Method | Description                           |
+| ----------------- | ------ | ------------------------------------- |
+| `/create`         | POST   | Create new game                       |
+| `/list`           | POST   | List all games                        |
+| `/list/:username` | POST   | List all games by username            |
+| `/:id`            | GET    | Get information about a specific game |
 
 #### `/api/thread`
 
-| Endpoint       | Method | Description                       |
-| -------------- | ------ | --------------------------------- |
-| `/create`      | POST   | Create new forum post             |
-| `/list`        | GET    | List all forum posts              |
-| `/:id`         | GET    | Get information about a form post |
-| `/:id/comment` | POST   | Add a comment to a forum post     |
+| Endpoint       | Method | Description                        |
+| -------------- | ------ | ---------------------------------- |
+| `/create`      | POST   | Create new forum post              |
+| `/list`        | GET    | List all forum posts               |
+| `/:id`         | GET    | Get information about a forum post |
+| `/:id/comment` | POST   | Add a comment to a forum post      |
 
 #### `/api/user`
 
@@ -96,6 +96,24 @@ endpoints in `server/src/app.ts`.
 | `/signup`    | POST   | Create a new user                     |
 | `/:username` | POST   | Update user's displayname or password |
 | `/:username` | GET    | Get information about a user          |
+
+#### `/api/stats`
+
+| Endpoint       | Method | Description                   |
+| -------------- | ------ | ----------------------------- |
+| `/leaderboard` | GET    | Get the leaderboard           |
+| `/:username`   | GET    | Get stats for a specific user |
+
+#### `/api/friends`
+
+| Endpoint                      | Method | Description                       |
+| ----------------------------- | ------ | --------------------------------- |
+| `/:username/requests`         | POST   | Get friend requests for a user    |
+| `/:username`                  | GET    | Get friends for a user            |
+| `/request`                    | POST   | Send a friend request             |
+| `/request/:requestId/resolve` | POST   | Resolve a friend request          |
+| `/:username/status`           | POST   | Get friendship status with a user |
+| `/remove`                     | POST   | Remove a friend                   |
 
 ### Websockets
 
@@ -119,6 +137,9 @@ erDiagram
         userId userId "generated key"
         username username "unique"
         string display ""
+        string customBackground "optional"
+        boolean hideUsername ""
+        boolean privateProfile ""
         Date createdAt ""
     }
     User ||--|| Auth: "User.username"
@@ -128,6 +149,7 @@ erDiagram
         threadId threadId "generated key"
         string title ""
         string text ""
+        boolean filtered ""
         Date createdAt ""
         userId createdBy ""
         commentId[] comments ""
@@ -140,15 +162,17 @@ erDiagram
         string text ""
         userId createdBy ""
         Date createdAt ""
-        Date editedAt "can be null"
+        Date editedAt "optional"
     }
     Comment ||--|| User: "Comment.createdBy"
 
     Game {
         gameId gameId "generated key"
         GameKey type ""
-        unknown state ""
-        boolean done ""
+        string status "waiting/active/done"
+        boolean chatFiltered ""
+        boolean isPrivate ""
+        int minPlayers ""
         chatId chat ""
         userId[] players ""
         Date createdAt ""
@@ -168,9 +192,33 @@ erDiagram
     Message {
         messageId messageId "generated key"
         string text ""
+        boolean deleted ""
+        Date deletedAt "optional"
         Date createdAt ""
     }
     Message ||--|| User: "Message.createdBy"
+
+    FriendRequest {
+        requestId requestId "generated key"
+        userId from ""
+        userId to ""
+        string status "pending/accepted/declined"
+        Date createdAt ""
+        Date resolvedAt "optional"
+    }
+    FriendRequest ||--|| User: "FriendRequest.from"
+    FriendRequest ||--|| User: "FriendRequest.to"
+
+    UserStats {
+        userId userId "foreign key"
+        GameKey gameType "optional"
+        int wins ""
+        int losses ""
+        int draws ""
+        int gamesPlayed ""
+        float winRate ""
+    }
+    UserStats ||--|| User: "UserStats.userId"
 ```
 
 ## Games

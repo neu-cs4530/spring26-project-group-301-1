@@ -3,7 +3,7 @@ import { gameNames } from "../util/consts.ts";
 import { Gamepad2, Users, Plus, ShieldCheck } from "lucide-react";
 
 export default function NewGame() {
-  const { gameKey, opponentType, filtered, handleInputChange, err, handleSubmit } =
+  const { gameKey, opponentType, isPrivate, filtered, handleInputChange, err, handleSubmit } =
     useNewGameForm();
 
   return (
@@ -71,6 +71,24 @@ export default function NewGame() {
             <p className="newGameCard__warning">
               Warning: Turning off chat filtering allows profanity and unsafe content into your
               chat. Are you sure you want to do this?
+            </p>
+          )}
+          <label className="newGameCard__checkboxRow" htmlFor="private-checkbox">
+            <input
+              id="private-checkbox"
+              name="isPrivate"
+              type="checkbox"
+              checked={isPrivate}
+              onChange={handleInputChange}
+              className="newGameCard__checkbox"
+            />
+            <span className="newGameCard__checkboxLabel">Private Game</span>
+          </label>
+          {isPrivate && (
+            <p className="newGameCard__helpText">
+              Only you and your friends can see or join this game.
+              {gameKey === "guess" &&
+                " For Number Guesser, each player must be friends with someone already in the game."}
             </p>
           )}
 

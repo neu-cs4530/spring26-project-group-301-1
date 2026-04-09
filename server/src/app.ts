@@ -11,6 +11,7 @@ import * as user from "./controllers/user.controller.ts";
 import * as thread from "./controllers/thread.controller.ts";
 import * as stats from "./controllers/stats.controller.ts";
 import * as friends from "./controllers/friends.controller.ts";
+import * as oauth from "./controllers/oauth.controller.ts";
 import { type GameServer } from "./types.ts";
 
 export const app = express();
@@ -27,7 +28,8 @@ app.use(
       express
         .Router() //
         .post("/create", game.postCreate)
-        .get("/list", game.getList)
+        .post("/list", game.getList)
+        .post("/list/:username", game.getListByUsername)
         .get("/:id", game.getById),
     )
     .use(
@@ -73,6 +75,13 @@ app.use(
         .get("/:username", dm.getDirectMessagesByUsername)
         .post("/:username", dm.postDirectMessage)
         .post("/:dmId/read", dm.postDmRead),
+    )
+
+    .use(
+      "/oauth",
+      Router()
+        .post("/:platform/verify", oauth.getAuthByPlatform)
+        .get("/:platform/callback", oauth.getCallbackByPlatform),
     ),
 );
 
@@ -107,7 +116,9 @@ io.on("connection", (socket) => {
       console.log(`RECV error: ${checked.error.message}`);
     } else {
       console.log(
-        `RECV [${socketId}] got ${name}${checked.data.auth.username} ${JSON.stringify(checked.data.payload)}`,
+        `RECV [${socketId}] got ${name}${checked.data.auth.username} ${JSON.stringify(
+          checked.data.payload,
+        )}`,
       );
     }
   });

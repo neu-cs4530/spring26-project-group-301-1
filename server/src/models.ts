@@ -1,4 +1,4 @@
-import type { GameKey, FriendRequestStatus } from "@gamenite/shared";
+import type { GameKey, FriendRequestStatus, SocialProfilePlatform } from "@gamenite/shared";
 
 /**
  * Record identifiers used to look up keys in a database. This type
@@ -13,6 +13,16 @@ export type RecordId = string;
  * object and turning it to a string with the Date.toISOString() method.
  */
 export type DateISO = string;
+
+/**
+ * Represents a social media profile which is linked to a user's account.
+ * Can be verified or non-verified.
+ */
+export interface SocialProfileLink {
+  link: string;
+  type: SocialProfilePlatform;
+  verified: boolean;
+}
 
 /**
  * Represents a user's authorization record in the database.
@@ -88,6 +98,7 @@ export interface CommentRecord {
  * - `players`: active players for the game
  * - `createdAt`: when the game was created
  * - `createdBy`: username of the person who created the game
+ * - `isPrivate`: whether the game is visible to non-friends of the creator
  */
 export interface GameRecord {
   type: GameKey;
@@ -97,6 +108,7 @@ export interface GameRecord {
   players: RecordId[]; // References User records
   createdAt: DateISO;
   createdBy: RecordId; // References User records
+  isPrivate: boolean;
 }
 
 /**
@@ -139,6 +151,7 @@ export interface ThreadRecord {
  * - `createdAt`: when this user registered.
  * - `hideUsername`: privacy preference for user, will hide username if true
  * - `privateProfile`: privacy preference for user, will hide profile from non-friends if true
+ * - `profileLinks`: list of social media profiles linked to the user's account
  */
 export interface UserRecord {
   username: string; // References Auth records
@@ -147,6 +160,7 @@ export interface UserRecord {
   customBackground?: string;
   hideUsername: boolean;
   privateProfile: boolean;
+  profileLinks: SocialProfileLink[];
 }
 
 /**

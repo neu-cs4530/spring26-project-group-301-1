@@ -2,6 +2,8 @@ import "./ChatPanel.css";
 import MessageCreation from "./MessageCreation.tsx";
 import MessageList from "./MessageList.tsx";
 import useSocketsForChat from "../hooks/useSocketsForChat.ts";
+import useHiddenIds from "../hooks/useHiddenIds.ts";
+import useLoginContext from "../hooks/useLoginContext.ts";
 import { ShieldCheck, ShieldOff } from "lucide-react";
 
 interface ChatProps {
@@ -13,6 +15,7 @@ interface ChatProps {
  * A chat panel allows viewing and updating messages in live chat
  */
 export default function ChatPanel({ chatId, lightText = false }: ChatProps) {
+  const { user } = useLoginContext();
   const {
     messages,
     handleMessageCreation,
@@ -21,6 +24,16 @@ export default function ChatPanel({ chatId, lightText = false }: ChatProps) {
     cooldownMessage,
     chatFilter,
   } = useSocketsForChat(chatId);
+  const {
+    hiddenIds: hiddenMessageIds,
+    hideItem: handleHideMessage,
+    unhideItem: handleUnhideMessage,
+  } = useHiddenIds({
+    storagePrefix: "hidden-game-chat-messages",
+    entityId: chatId,
+    scopeId: user.username,
+  });
+
   return (
     messages && (
       <div className={lightText ? "chatContainer chatContainer--lightText" : "chatContainer"}>
@@ -38,7 +51,13 @@ export default function ChatPanel({ chatId, lightText = false }: ChatProps) {
             )}
           </h3>
         </div>
-        <MessageList messages={messages} onDeleteMessage={handleMessageDeletion} />
+        <MessageList
+          messages={messages}
+          onDeleteMessage={handleMessageDeletion}
+          hiddenMessageIds={hiddenMessageIds}
+          onHideMessage={handleHideMessage}
+          onUnhideMessage={handleUnhideMessage}
+        />
         <MessageCreation
           handleMessageCreation={handleMessageCreation}
           cooldownUntil={cooldownUntil}

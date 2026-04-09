@@ -207,6 +207,38 @@ hr {
   padding: 0.56rem 0.7rem;
 }
 
+.newGameCard__checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid #dbe3f3;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #f8faff 0%, #eef2ff 100%);
+  padding: 0.56rem 0.7rem;
+}
+
+.newGameCard__checkbox {
+  width: 1.2rem;
+  height: 1.2rem;
+  accent-color: #3b82f6;
+  cursor: pointer;
+}
+
+.newGameCard__checkboxLabel {
+  color: #4b5a87;
+  font-size: 1.08rem;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+}
+
+.newGameCard__helpText {
+  margin: 0.5rem 0 0 1.5rem;
+  font-size: 0.9rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
 .newGameCard__icon {
   width: 1.05rem;
   height: 1.05rem;

@@ -1,6 +1,7 @@
 import "./Profile.css";
 import { useState, useEffect, useMemo } from "react";
-import type { FriendRequestInfo } from "@gamenite/shared";
+import { initiateOAuth } from "../services/oauthService";
+import type { FriendRequestInfo, SocialProfileLink, SocialProfilePlatform } from "@gamenite/shared";
 import useLoginContext from "../hooks/useLoginContext";
 import useTimeSince from "../hooks/useTimeSince";
 import useTopFriendsList from "../hooks/useTopFriendsList";
@@ -8,7 +9,8 @@ import useEditProfileForm from "../hooks/useEditProfileForm";
 import { getPendingRequests, resolveRequest } from "../services/friendsService";
 import ProfileSidebar from "../components/ProfileSidebar";
 import UserLink from "../components/UserLink";
-import { Gamepad2 } from "lucide-react";
+import { Gamepad2, InfoIcon, Users } from "lucide-react";
+import SocialPlatformLink, { getIconByPlatform } from "../components/SocialPlatformLink";
 
 const PRESET_BACKGROUNDS: { label: string; url: string }[] = [
   { label: "Stripes", url: "/backgrounds/stripes.jpeg" },
@@ -24,6 +26,7 @@ export default function UpdateProfile() {
   const [showPass, setShowPass] = useState(false);
   const [hideSelectionCheck, setHideSelectionCheck] = useState(false); // add
   const [customColor, setCustomColor] = useState("#3b82f6");
+  const [socialProfileErr, setSocialProfileErr] = useState<string | null>(null);
 
   const [requests, setRequests] = useState<FriendRequestInfo[]>([]);
   const [requestsErr, setRequestsErr] = useState<string | null>(null);
@@ -42,10 +45,19 @@ export default function UpdateProfile() {
     confirm,
     setConfirm,
     display,
+    setDisplay,
     hideUsername,
     setHideUsername,
     privateProfile,
     setPrivateProfile,
+    socialLink,
+    setSocialLink,
+    socialLinkType,
+    setSocialLinkType,
+    profilesToAdd,
+    setProfilesToAdd,
+    profilesToDelete,
+    setProfilesToDelete,
     err,
     handleSubmit,
   } = useEditProfileForm();
@@ -58,7 +70,9 @@ export default function UpdateProfile() {
       user.display !== display ||
       (user.customBackground || "") !== (backgroundType === "color" ? color : imageUrl) ||
       user.hideUsername !== hideUsername ||
-      user.privateProfile !== privateProfile
+      user.privateProfile !== privateProfile ||
+      profilesToAdd.length > 0 ||
+      profilesToDelete.length > 0
     );
   }, [
     password,
@@ -69,6 +83,8 @@ export default function UpdateProfile() {
     imageUrl,
     hideUsername,
     privateProfile,
+    profilesToAdd,
+    profilesToDelete,
     user,
   ]);
 
@@ -100,6 +116,39 @@ export default function UpdateProfile() {
     } else {
       setRequests((prev: FriendRequestInfo[]) => prev.filter((r) => r.requestId !== requestId));
     }
+  }
+
+  /**
+   * Handle verification requests for linked social media accounts. Note that this will re-direct the
+   * user upon verification.
+   * @param link the social media linked account
+   */
+  async function handleVerify(link: SocialProfileLink) {
+    const result = await initiateOAuth(link.type, user.username, pass, link.link);
+    if ("error" in result) {
+      setSocialProfileErr(result.error);
+    }
+    if ("url" in result) {
+      setSocialProfileErr(null);
+      window.location.replace(result.url);
+    }
+  }
+
+  function handleDelete(link: SocialProfileLink) {
+    setProfilesToDelete((prev) => {
+      if (prev.some((p) => p.link === link.link && p.type === link.type)) return prev;
+      return [...prev, link];
+    });
+  }
+
+  function queueProfileToAdd() {
+    if (socialLink === "" || socialLinkType === null) return;
+    setProfilesToAdd((prev) => {
+      if (prev.some((p) => p.link === socialLink && p.type === socialLinkType)) return prev;
+      return [...prev, { link: socialLink, type: socialLinkType, verified: false }];
+    });
+    setSocialLink("");
+    setSocialLinkType(null);
   }
 
   const { getTopFriends, getFriendGameCount } = useTopFriendsList(user.username);
@@ -148,6 +197,37 @@ export default function UpdateProfile() {
             </div>
           </div>
           <div className="profileIdentityRight">
+            <button
+              type="button"
+              className={
+                activeSection === "friends"
+                  ? "profileFriendRequestsTab is-active"
+                  : "profileFriendRequestsTab"
+              }
+              onClick={() => setActiveSection("friends")}
+            >
+              <Users aria-hidden="true" />
+              Friends
+              <span
+                style={{
+                  background: "#1d4ed8",
+                  color: "#fff",
+                  borderRadius: "999px",
+                  minWidth: 22,
+                  height: 22,
+                  padding: "0 7px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "0.95rem",
+                  fontWeight: 700,
+                  boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
+                }}
+              >
+                {topFriends.length}
+              </span>
+            </button>
+
             <button
               type="button"
               className={
@@ -240,6 +320,22 @@ export default function UpdateProfile() {
           </div>
 
           <div className="profileCol">
+            {activeSection === "display-name" && (
+              <section className="profileSectionCard" id="display-name">
+                <h3>Display Name</h3>
+                <div className="profileControlRow">
+                  <input
+                    type="text"
+                    className="widefill notTooWide"
+                    placeholder="Display name"
+                    value={display}
+                    onChange={(e) => setDisplay(e.target.value)}
+                  />
+                </div>
+                <p className="smallAndGray">This is the name shown to other users.</p>
+                {err && <p className="error-message">{err}</p>}
+              </section>
+            )}
             {activeSection === "game-background" && (
               <section className="profileSectionCard gameBgCard" id="game-background">
                 <div className="gameBgCard__header">
@@ -261,7 +357,9 @@ export default function UpdateProfile() {
                 <div className="gameBgCard__divider" />
                 <div className="gameBgCard__images">
                   <label
-                    className={`gameBgTile gameBgTile--color ${backgroundType === "color" ? "is-selected" : ""}`}
+                    className={`gameBgTile gameBgTile--color ${
+                      backgroundType === "color" ? "is-selected" : ""
+                    }`}
                     aria-label="Pick custom background color"
                     onClick={() => {
                       setBackgroundType("color");
@@ -289,7 +387,9 @@ export default function UpdateProfile() {
                     />
                     <span className="gameBgTile__label">Pick custom color</span>
                     <span
-                      className={`gameBgTile__check ${!hideSelectionCheck && backgroundType === "color" ? "is-selected" : ""}`}
+                      className={`gameBgTile__check ${
+                        !hideSelectionCheck && backgroundType === "color" ? "is-selected" : ""
+                      }`}
                     >
                       {!hideSelectionCheck && backgroundType === "color" ? "✓" : ""}
                     </span>
@@ -311,7 +411,9 @@ export default function UpdateProfile() {
                       >
                         <img src={bg.url} alt={bg.label} />
                         <span
-                          className={`gameBgTile__check ${!hideSelectionCheck && selected ? "is-selected" : ""}`}
+                          className={`gameBgTile__check ${
+                            !hideSelectionCheck && selected ? "is-selected" : ""
+                          }`}
                         >
                           {!hideSelectionCheck && selected ? "✓" : ""}
                         </span>
@@ -334,7 +436,7 @@ export default function UpdateProfile() {
                   />
                   <button
                     type="button"
-                    className="secondary narrow"
+                    className="secondary narrow profilePasswordRevealButton"
                     onClick={() => setShowPass((v: boolean) => !v)}
                   >
                     {showPass ? "Hide" : "Reveal"}
@@ -388,6 +490,91 @@ export default function UpdateProfile() {
                       <span className="toggleSlider" />
                     </label>
                   </div>
+                </div>
+                {err && <p className="error-message">{err}</p>}
+              </section>
+            )}
+            {activeSection === "social-media" && (
+              <section className="profileSectionCard" id="social-media">
+                <h3>Social Media</h3>
+                <div style={{ paddingBottom: 6 }}>
+                  <p style={{ fontWeight: "bold", fontSize: "1.25em" }}>Linked accounts: </p>
+                  <p className="smallAndGray" style={{ display: "flex", flexDirection: "row" }}>
+                    <span style={{ paddingRight: "3px" }}>
+                      <InfoIcon size={15} />
+                    </span>{" "}
+                    verifying an account will re-direct you away from GameNite Connect!
+                  </p>
+                  {socialProfileErr !== null && <p className="smallAndGray">{socialProfileErr}</p>}
+                  {user.profileLinks.length === 0 ? (
+                    <p>You have no linked accounts</p>
+                  ) : (
+                    user.profileLinks.map((l, i) => {
+                      const queued = profilesToDelete.some(
+                        (p) => p.link === l.link && p.type === l.type,
+                      );
+                      return (
+                        <div key={i}>
+                          <SocialPlatformLink
+                            link={l}
+                            verifyPlatform={handleVerify}
+                            deletePlatform={handleDelete}
+                            modifyable={true}
+                            queued={queued}
+                          />
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+                <div>
+                  <p style={{ fontWeight: "bold", fontSize: "1.25em" }}>Add Social Profile Links</p>
+                  <input
+                    type="text"
+                    placeholder="https://platform/yourhandle"
+                    value={socialLink}
+                    onChange={(e) => setSocialLink(e.target.value)}
+                  />
+                  <p>Select the profile name:</p>
+                  <select
+                    value={socialLinkType ?? ""}
+                    onChange={(e) => setSocialLinkType(e.target.value as SocialProfilePlatform)}
+                  >
+                    <option value="" disabled hidden></option>
+                    <option value="twitter">Twitter/X</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="twitch">Twitch</option>
+                    <option value="youtube">YouTube</option>
+                  </select>
+                  <button
+                    className="profilePrimaryButton"
+                    style={{ marginTop: "10px" }}
+                    type="button"
+                    onClick={queueProfileToAdd}
+                  >
+                    Add Profile
+                  </button>
+                  {profilesToAdd.length > 0 && (
+                    <div>
+                      {profilesToAdd.map((p, i) => (
+                        <div key={i} className="linkedSocialMediaCard">
+                          <a href={p.link} target="_blank">
+                            {getIconByPlatform(p)}
+                          </a>
+                          <p className="smallAndGray">Queued for adding to profile</p>
+                          <button
+                            className="profileDangerButton"
+                            type="button"
+                            onClick={() =>
+                              setProfilesToAdd((prev) => prev.filter((_, idx) => idx !== i))
+                            }
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 {err && <p className="error-message">{err}</p>}
               </section>

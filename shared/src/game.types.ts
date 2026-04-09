@@ -12,6 +12,7 @@ import { type SafeUserInfo } from "./user.types.ts";
  * - `createdBy`: username of the person who created the game
  * - `minPlayers`: the minimum number of players required to start the game
  * - `chatFiltered`: whether the game's chat is filtered
+ * - `isPrivate`: whether the game is private (only visible to friends of the creator)
  */
 export interface GameInfo {
   gameId: string;
@@ -23,6 +24,7 @@ export interface GameInfo {
   createdBy: SafeUserInfo;
   minPlayers: number;
   chatFiltered: boolean;
+  isPrivate: boolean;
 }
 
 /**
@@ -74,6 +76,7 @@ export const zGameKey = z.union([
 
 export const zCreateGamePayload = z.object({
   gameKey: zGameKey,
+  isPrivate: z.boolean().optional().default(false),
   filtered: z.boolean().optional().default(true),
 });
 export type CreateGamePayload = z.infer<typeof zCreateGamePayload>;

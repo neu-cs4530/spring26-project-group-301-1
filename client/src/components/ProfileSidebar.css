@@ -36,6 +36,28 @@
   margin-right: 4px;
   box-sizing: border-box;
 }
+.profileSidebar__sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.profileSidebar__group {
+  display: flex;
+  flex-direction: column;
+}
+
+.profileSidebar__group + .profileSidebar__group {
+  padding-top: 0.75rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.profileSidebar__groupHeading {
+  margin: 0 0 0.45rem;
+  padding: 0 0.4rem;
+  letter-spacing: 0.02em;
+  color: #64748b;
+}
 .profileSidebar ul {
   list-style: none;
   margin: 0;

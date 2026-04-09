@@ -1,6 +1,11 @@
-import { type SafeUserInfo, type UserUpdateRequest } from "@gamenite/shared";
+import {
+  type SafeUserInfo,
+  type UserUpdateRequest,
+  type SocialProfilePlatform,
+} from "@gamenite/shared";
 import { getUserByUsername, updateAuth } from "./auth.service.ts";
 import { UserRepo } from "../repository.ts";
+import { is } from "is-social";
 
 const disallowedUsernames = new Set(["login", "signup", "list"]);
 
@@ -19,6 +24,7 @@ export async function populateSafeUserInfo(userId: string): Promise<SafeUserInfo
     customBackground: record.customBackground,
     hideUsername: record.hideUsername,
     privateProfile: record.privateProfile,
+    profileLinks: record.profileLinks,
   });
 }
 
@@ -45,6 +51,7 @@ export async function createUser(
     display: username,
     hideUsername: false,
     privateProfile: false,
+    profileLinks: [],
   });
   await updateAuth(username, password, id);
   return Promise.resolve({
@@ -53,6 +60,7 @@ export async function createUser(
     display: username,
     hideUsername: false,
     privateProfile: false,
+    profileLinks: [],
   });
 }
 
@@ -86,6 +94,31 @@ export async function safeUserFromUsername(username: string): Promise<SafeUserIn
 }
 
 /**
+ * Helper function to verify provided URL is valid
+ * @param link the URL to the social media account
+ * @param type the type of social media account being linked
+ * @returns
+ */
+function validateProfileURL(link: string, type: SocialProfilePlatform): boolean {
+  if (type === "twitter") {
+    // twitter requires also matching the 'x' domain
+    return (
+      is.twitter.profile(link) ||
+      link.match(
+        /^https?:\/\/(?:www\.)?(?:x)\.com\/(?!home|share|i\/flow|search|hashtag|explore)([a-zA-Z0-9_]{1,15})\/?$/,
+      )?.[1] !== null
+    );
+  } else if (type === "instagram") {
+    return is.instagram.url(link);
+  } else if (type === "twitch") {
+    return is.twitch.url(link);
+  } else if (type === "youtube") {
+    return is.youtube.url(link);
+  }
+  return false;
+}
+
+/**
  * Updates user information in the database
  *
  * @param username - A valid username for the user to update
@@ -95,8 +128,16 @@ export async function safeUserFromUsername(username: string): Promise<SafeUserIn
  */
 export async function updateUser(
   username: string,
-  { display, password, customBackground, hideUsername, privateProfile }: UserUpdateRequest,
-): Promise<SafeUserInfo> {
+  {
+    display,
+    password,
+    customBackground,
+    hideUsername,
+    privateProfile,
+    profilesToAdd,
+    profilesToDelete,
+  }: UserUpdateRequest,
+): Promise<SafeUserInfo | { error: string }> {
   const user = await getUserByUsername(username);
   if (!user) throw new Error(`No user ${username}`);
   if (password !== undefined) await updateAuth(username, password, user.userId);
@@ -105,6 +146,30 @@ export async function updateUser(
   if (customBackground !== undefined) newUser.customBackground = customBackground;
   if (hideUsername !== undefined) newUser.hideUsername = hideUsername;
   if (privateProfile !== undefined) newUser.privateProfile = privateProfile;
+
+  if (profilesToAdd !== undefined) {
+    for (const profile of profilesToAdd) {
+      if (validateProfileURL(profile.link, profile.type) === false) {
+        return { error: "Invalid URL for platform type!" };
+      }
+      if (newUser.profileLinks.filter((p) => p.type === profile.type).length > 0) {
+        return { error: "Platform type is already linked-to!" };
+      }
+      newUser.profileLinks = [
+        { link: profile.link, type: profile.type, verified: false },
+        ...newUser.profileLinks,
+      ];
+    }
+  }
+
+  if (profilesToDelete !== undefined) {
+    for (const profile of profilesToDelete) {
+      newUser.profileLinks = newUser.profileLinks.filter((p) => {
+        return !(p.link === profile.link && p.type === profile.type);
+      });
+    }
+  }
+
   await UserRepo.set(user.userId, newUser);
   return populateSafeUserInfo(user.userId);
 }

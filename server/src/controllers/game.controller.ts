@@ -3,6 +3,7 @@ import {
   withAuth,
   zCreateGamePayload,
   zGameMakeMovePayload,
+  zUserAuth,
 } from "@gamenite/shared";
 import { type RestAPI, type GameViewUpdates, type SocketAPI, type GameServer } from "../types.ts";
 import {
@@ -10,6 +11,7 @@ import {
   gameServices,
   getGameById,
   getGames,
+  getGamesByUsername,
   joinGame,
   startGame,
   updateGame,
@@ -46,10 +48,12 @@ export const postCreate: RestAPI<GameInfo> = async (req, res) => {
     body.data.payload.gameKey,
     new Date(),
     body.data.payload.filtered,
+    body.data.payload.isPrivate,
   );
+
   if (game.type === "automatedTicTacToe") {
     await startGame(game.gameId, user);
-    const started = await getGameById(game.gameId);
+    const started = await getGameById(game.gameId, user);
     res.send(started ?? game);
     return;
   }
@@ -62,7 +66,17 @@ export const postCreate: RestAPI<GameInfo> = async (req, res) => {
  * object.
  */
 export const getById: RestAPI<GameInfo, { id: string }> = async (req, res) => {
-  const game = await getGameById(req.params.id);
+  const authParse = zUserAuth.safeParse(req.query);
+  if (!authParse.success) {
+    res.status(401).send({ error: "Authentication required" });
+    return;
+  }
+  const user = await checkAuth(authParse.data);
+  if (!user) {
+    res.status(401).send({ error: "Invalid credentials" });
+    return;
+  }
+  const game = await getGameById(req.params.id, user);
   if (!game) {
     res.status(404).send({ error: "Game not found" });
     return;
@@ -72,11 +86,43 @@ export const getById: RestAPI<GameInfo, { id: string }> = async (req, res) => {
 };
 
 /**
- * Handle GET requests to `/api/game/list` by returning information about all
- * games, sorted in reverse chronological order by creation.
+ * Handle POST requests to `/api/game/list` by returning information about all
+ * games visible to the authenticated user, sorted in reverse chronological order by creation.
  */
 export const getList: RestAPI<GameInfo[]> = async (req, res) => {
-  res.send(await getGames());
+  const body = z.object({ auth: zUserAuth }).safeParse(req.body);
+  if (body.error) {
+    res.status(400).send({ error: "Poorly-formed request" });
+    return;
+  }
+
+  const user = await checkAuth(body.data.auth);
+  if (!user) {
+    res.status(403).send({ error: "Invalid credentials" });
+    return;
+  }
+
+  res.send(await getGames(user));
+};
+
+export const getListByUsername: RestAPI<GameInfo[], { username: string }> = async (req, res) => {
+  const body = z.object({ auth: zUserAuth }).safeParse(req.body);
+  if (body.error) {
+    res.status(400).send({ error: "Poorly-formed request" });
+    return;
+  }
+
+  const user = await checkAuth(body.data.auth);
+  if (!user) {
+    res.status(403).send({ error: "Invalid credentials" });
+    return;
+  }
+
+  try {
+    res.send(await getGamesByUsername(req.params.username));
+  } catch (err) {
+    res.status(404).send({ error: "User not found" });
+  }
 };
 
 /**

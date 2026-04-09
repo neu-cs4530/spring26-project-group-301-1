@@ -10,6 +10,7 @@ import useSocketsForGame from "../hooks/useSocketsForGame.ts";
 import useTimeSince from "../hooks/useTimeSince.ts";
 import UserLink from "./UserLink.tsx";
 import useInactivityForfeit from "../hooks/useInactivityForfeit.ts";
+import { Lock } from "lucide-react";
 
 /**
  * A game panel allows viewing the status and players of a live game
@@ -20,6 +21,7 @@ export default function GamePanel({
   players: initialPlayers,
   createdAt,
   minPlayers,
+  isPrivate,
 }: GameInfo) {
   const displayTitle = gameNames[type].replace(" vs Automated Opponent", "");
   const isAutomatedTicTacToe = type === "automatedTicTacToe";
@@ -124,6 +126,12 @@ export default function GamePanel({
             <div>
               <div className="gameRoster__titleRow">
                 <h2 className="gameRoster__title">{displayTitle}</h2>
+                {isPrivate && (
+                  <div className="gameRoster__privateBadge">
+                    <Lock size={14} />
+                    <span>Private</span>
+                  </div>
+                )}
                 <span className="gameRoster__titleTime">{timeSince(createdAt)}</span>
               </div>
               <div className="gameRoster__meta">
@@ -132,12 +140,18 @@ export default function GamePanel({
               </div>
             </div>
             {userPlayerIndex < 0 && !view && (
-              <button className="primary narrow gameRoster__action" onClick={joinGame}>
+              <button
+                className="primary narrow gameRoster__action gameRoster__action--join"
+                onClick={joinGame}
+              >
                 Join Game
               </button>
             )}
             {userPlayerIndex >= 0 && !view && players.length >= minPlayers && (
-              <button className="primary narrow gameRoster__action" onClick={startGame}>
+              <button
+                className="primary narrow gameRoster__action gameRoster__action--start"
+                onClick={startGame}
+              >
                 Start Game
               </button>
             )}

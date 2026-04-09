@@ -18,6 +18,7 @@ type UseNewGameFormResult = {
   gameKey: GameKey | "";
   opponentType: OpponentType;
   filtered: boolean;
+  isPrivate: boolean;
   handleInputChange: (e: ChangeEvent<HTMLSelectElement | HTMLInputElement>) => void;
   err: string | null;
   handleSubmit: (e: SyntheticEvent<HTMLFormElement>) => Promise<void>;
@@ -34,6 +35,7 @@ export default function useNewGameForm(): UseNewGameFormResult {
   const [gameKey, setGameKey] = useState<GameKey | "">("");
   const [filtered, setFiltered] = useState<boolean>(true);
   const [opponentType, setOpponentType] = useState<OpponentType>("player");
+  const [isPrivate, setIsPrivate] = useState<boolean>(false);
   const [err, setErr] = useState<string | null>(null);
   const auth = useAuth();
   const navigate = useNavigate();
@@ -55,6 +57,9 @@ export default function useNewGameForm(): UseNewGameFormResult {
     if (name === "filtered") {
       setFiltered(value === "true");
     }
+    if (name === "isPrivate") {
+      setIsPrivate((e.target as HTMLInputElement).checked);
+    }
   };
 
   const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
@@ -66,7 +71,7 @@ export default function useNewGameForm(): UseNewGameFormResult {
     }
 
     const finalGameKey = resolveGameKey(gameKey, opponentType);
-    const game = await createGame(auth, finalGameKey, filtered);
+    const game = await createGame(auth, finalGameKey, filtered, isPrivate);
 
     if ("error" in game) {
       setErr(game.error);
@@ -76,5 +81,5 @@ export default function useNewGameForm(): UseNewGameFormResult {
     navigate(`/game/${game.gameId}`);
   };
 
-  return { gameKey, opponentType, filtered, handleInputChange, err, handleSubmit };
+  return { gameKey, opponentType, isPrivate, filtered, handleInputChange, err, handleSubmit };
 }
