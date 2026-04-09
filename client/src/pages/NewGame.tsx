@@ -76,6 +76,7 @@ export default function NewGame() {
           <label className="newGameCard__checkboxRow" htmlFor="private-checkbox">
             <input
               id="private-checkbox"
+              aria-label="privateGameCheck"
               name="isPrivate"
               type="checkbox"
               checked={isPrivate}

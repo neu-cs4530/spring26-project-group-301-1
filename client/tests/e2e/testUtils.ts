@@ -1,6 +1,22 @@
 import { expect, type Page } from "@playwright/test";
 
 /**
+ * Creates a new user using the given page, for the given username and password.
+ * @param page the page to create the user for
+ * @param username the username to use
+ * @param password the password to use
+ */
+export async function createNewUser(page: Page, username: string, password: string) {
+  await page.goto("/login");
+  await page.getByRole("button", { name: "Create New Account" }).click();
+  await page.getByLabel("Username").fill(username);
+  await page.getByLabel("Password", { exact: true }).fill(password);
+  await page.getByLabel("Confirm Password").fill(password);
+  await page.getByRole("button", { name: "Sign Up" }).click();
+  await page.waitForURL("/");
+}
+
+/**
  * Log a user in with a username and password, and wait for successful
  * post-login redirect to the home page
  *
@@ -25,6 +41,7 @@ export async function logInUser(page: Page, username: string, password: string) 
  * @param gameId - The game id shared by the frontend and backend
  * @param gameStartsAutomatically - true if the game has a maximum of two players
  * @param doAssess - `true` adds extra expectations
+ * @param privateGame - `true` creates a private game, false does not
  * @returns
  */
 export async function createAndLoadGame(
@@ -33,27 +50,47 @@ export async function createAndLoadGame(
   gameId: string,
   gameStartsAutomatically: boolean,
   doAssess: boolean,
+  privateGame: boolean = false,
+  credentials?: {
+    username1: string;
+    display1: string;
+    password1: string;
+    username2: string;
+    display2: string;
+    password2: string;
+  },
 ) {
-  // Create a random new user and username to give this test unique identity
-  const username1 = "user" + Math.floor(Math.random() * 2_000_000);
-  const password1 = "pwd_for_" + username1;
-  const username2 = "user2";
-  const password2 = "pwd2222";
+  let username1: string;
+  let display1: string;
+  let username2: string;
+  let password2: string;
 
-  // Create a user for user1
-  await page1.goto("/login");
-  await page1.getByRole("button", { name: "Create New Account" }).click();
-  await page1.getByLabel("Username").fill(username1);
-  await page1.getByLabel("Password", { exact: true }).fill(password1);
-  await page1.getByLabel("Confirm Password").fill(password1);
-  await page1.getByRole("button", { name: "Sign Up" }).click();
-  await page1.waitForURL("/");
+  if (credentials) {
+    username1 = credentials.username1;
+    display1 = credentials.display1;
+    username2 = credentials.username2;
+    password2 = credentials.password2;
+    await logInUser(page1, credentials.username1, credentials.password1);
+  } else {
+    // Create a random new user and username to give this test unique identity
+    username1 = "user" + Math.floor(Math.random() * 2_000_000);
+    display1 = username1;
+    const password1 = "pwd_for_" + username1;
+    username2 = "user2";
+    password2 = "pwd2222";
+
+    await createNewUser(page1, username1, password1);
+  }
 
   // User 1 creates a new game
   await page1.getByRole("button", { name: "Create New Game" }).click();
   await page1.waitForURL("/game/new");
   await page1.waitForSelector('select[aria-label="Game selection"]');
   await page1.getByLabel("Game selection").selectOption(gameId);
+
+  if (privateGame) {
+    await page1.getByLabel("privateGameCheck").click();
+  }
   await page1.getByRole("button", { name: "Create Game" }).click();
 
   // Causes Playwright to auto-wait for for game to be enabled
@@ -70,25 +107,19 @@ export async function createAndLoadGame(
   // Log in user2
   await logInUser(page2, username2, password2);
 
-  // The always-on expectation here gives the page a chance to load
-  await expect(page2.getByRole("listitem").filter({ hasText: username1 })).toHaveCount(1);
+  // The always-on expectation here gives the page a chance to load.
+  const byCreator = page2.locator("#gameList [role='listitem']").filter({ hasText: display1 });
+  const gameListItem = privateGame ? byCreator.filter({ hasText: "Private" }) : byCreator;
+
+  await expect(gameListItem).not.toHaveCount(0);
 
   if (doAssess) {
     // Check that at least one link exists in the listitem for the created game
-    const linkCount = await page2
-      .getByRole("listitem")
-      .filter({ hasText: username1 })
-      .getByRole("link")
-      .count();
+    const linkCount = await gameListItem.first().getByRole("link").count();
     expect(linkCount).toBeGreaterThan(0);
   }
 
-  await page2
-    .getByRole("listitem")
-    .filter({ hasText: username1 })
-    .getByRole("link")
-    .first()
-    .click();
+  await gameListItem.first().getByRole("link").first().click();
 
   if (doAssess) {
     await expect(page1.getByText("waiting for game to begin")).toBeVisible();

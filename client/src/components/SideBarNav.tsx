@@ -18,7 +18,7 @@ export default function SideBarNav() {
 
   return (
     <div className="sideBarNav">
-      <NavLink to="/" className={navClass}>
+      <NavLink to="/" className={navClass} aria-label="HomePageButton">
         <House className="menu_icon" aria-hidden="true" />
         <span>Home</span>
       </NavLink>
