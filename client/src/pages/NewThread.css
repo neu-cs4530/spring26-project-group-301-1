@@ -39,7 +39,9 @@
 
 .newThreadPage.magic-bento-card--border-glow:hover,
 .newThreadPage.particle-container:hover {
-  box-shadow: 0 4px 20px rgba(253, 238, 101, 0.2), 0 0 30px rgba(253, 238, 101, 0.15) !important;
+  box-shadow:
+    0 4px 20px rgba(253, 238, 101, 0.2),
+    0 0 30px rgba(253, 238, 101, 0.15) !important;
 }
 
 .newThreadPage__title {
