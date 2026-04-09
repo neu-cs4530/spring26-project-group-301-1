@@ -1,5 +1,6 @@
 import useAuth from "../hooks/useAuth.ts";
 import useDmContext from "../hooks/useDmContext.ts";
+import useHiddenIds from "../hooks/useHiddenIds.ts";
 import useLoginContext from "../hooks/useLoginContext.ts";
 import useSocketsForDirectMessage from "../hooks/useSocketsForDm.ts";
 import MessageList from "../components/MessageList.tsx";
@@ -17,13 +18,22 @@ import "../components/ChatPanel.css";
  */
 export default function DirectMessagePanel({ dm }: { dm: DirectMessageInfo }) {
   const auth = useAuth();
-  const { socket } = useLoginContext();
+  const { socket, user } = useLoginContext();
   const navigate = useNavigate();
   const { setUnreadCount, setActiveDmId } = useDmContext();
   const { messages, handleMessageCreation, handleMessageDeletion } = useSocketsForDirectMessage(
     dm.dmId,
     dm.messages,
   );
+  const {
+    hiddenIds: hiddenMessageIds,
+    hideItem: handleHideMessage,
+    unhideItem: handleUnhideMessage,
+  } = useHiddenIds({
+    storagePrefix: "hidden-dm-messages",
+    entityId: dm.dmId,
+    scopeId: user.username,
+  });
 
   useEffect(() => {
     function handleFriendRemoved({ otherUsername }: { otherUsername: string }) {
@@ -49,7 +59,13 @@ export default function DirectMessagePanel({ dm }: { dm: DirectMessageInfo }) {
 
   return (
     <>
-      <MessageList messages={messages} onDeleteMessage={handleMessageDeletion} />
+      <MessageList
+        messages={messages}
+        onDeleteMessage={handleMessageDeletion}
+        hiddenMessageIds={hiddenMessageIds}
+        onHideMessage={handleHideMessage}
+        onUnhideMessage={handleUnhideMessage}
+      />
       <MessageCreation
         handleMessageCreation={handleMessageCreation}
         cooldownUntil={0}
