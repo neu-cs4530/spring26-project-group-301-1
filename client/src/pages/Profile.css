@@ -396,6 +396,38 @@ button.profilePasswordRevealButton:focus {
 .profileForm--publicBackground {
   border-radius: 16px;
   padding: 1rem;
+  font-size: 1.1rem;
+}
+
+.profileForm--publicBackground .profileIdentityName {
+  font-size: 2.25rem;
+}
+
+.profileForm--publicBackground .profileIdentityMeta,
+.profileForm--publicBackground .profileIdentityMetaRow {
+  font-size: 1.2rem;
+}
+
+.profileForm--publicBackground .profileSectionCard h3 {
+  font-size: 1.58rem;
+}
+
+.profileForm--publicBackground .profileTopFriendUsername,
+.profileForm--publicBackground .profileTopFriendStatRow {
+  font-size: 1.02rem;
+}
+
+.profileForm--publicBackground .gameSummary {
+  font-size: 1.08rem;
+}
+
+.profileForm--publicBackground .gameSummary__titleLink {
+  font-size: 1.3rem;
+}
+
+.profileForm--publicBackground .profilePrimaryButton,
+.profileForm--publicBackground .profileDangerButton {
+  font-size: 1.08rem;
 }
 
 .profileIdentityCard .smallAndGray {
@@ -745,6 +777,13 @@ button.profilePasswordRevealButton:focus {
   margin-top: 0.65rem;
 }
 
+.spacesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+  margin-bottom: 0.85rem;
+}
+
 .profile-card .profileDangerButton {
   color: #f87171;
   border: 1px solid rgba(248, 113, 113, 0.4);
@@ -883,6 +922,70 @@ button.profilePasswordRevealButton:focus {
 .profile-card--darkText .profileSectionCard h3,
 .profileForm--darkText .profileSectionCard h3 {
   border-bottom-color: rgba(17, 24, 39, 0.2);
+}
+
+.profile-card--darkText .profileTopFriendsList,
+.profileForm--darkText .profileTopFriendsList {
+  color: rgba(17, 24, 39, 0.9);
+}
+
+.profile-card--darkText .profileTopFriendName,
+.profileForm--darkText .profileTopFriendName,
+.profile-card--darkText .profileTopFriendUsername,
+.profileForm--darkText .profileTopFriendUsername,
+.profile-card--darkText .profileTopFriendStatRow,
+.profileForm--darkText .profileTopFriendStatRow {
+  color: rgba(17, 24, 39, 0.92);
+}
+
+.profile-card--darkText .profileTopFriendNameRow .userLink,
+.profileForm--darkText .profileTopFriendNameRow .userLink {
+  color: #1e3a8a;
+}
+
+.profile-card--darkText .profileTopFriendNameRow .userLink:hover,
+.profile-card--darkText .profileTopFriendNameRow .userLink:focus,
+.profileForm--darkText .profileTopFriendNameRow .userLink:hover,
+.profileForm--darkText .profileTopFriendNameRow .userLink:focus {
+  color: #1e40af;
+}
+
+.profileForm--darkText .home-game-list__item {
+  background: rgba(255, 255, 255, 0.82) !important;
+  border-color: rgba(17, 24, 39, 0.28) !important;
+  box-shadow: 0 8px 22px rgba(17, 24, 39, 0.14) !important;
+}
+
+.profileForm--darkText .gameSummary,
+.profileForm--darkText .gameSummary__titleLink,
+.profileForm--darkText .gameSummary__lastActivity {
+  color: rgba(17, 24, 39, 0.94);
+}
+
+.profileForm--darkText .gameSummary__titleLink:hover {
+  color: rgba(17, 24, 39, 1);
+}
+
+.profileForm--darkText .gameSummary__status--waiting {
+  color: #92400e;
+}
+
+.profileForm--darkText .gameSummary__status--active {
+  color: #166534;
+}
+
+.profileForm--darkText .gameSummary__status--done {
+  color: rgba(17, 24, 39, 0.86);
+}
+
+.profileForm--darkText .gameSummary__privateBadge {
+  background: rgba(22, 163, 74, 0.16);
+  color: #166534;
+  border-color: rgba(22, 163, 74, 0.34);
+}
+
+.profileForm--darkText .gameSummary__privateBadge svg {
+  color: #166534;
 }
 
 .profile-card--darkText .profileIdentityMetaDot,

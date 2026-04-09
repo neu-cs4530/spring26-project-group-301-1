@@ -22,13 +22,14 @@ export default function GameList() {
         </Heading>
         <Box display="flex" alignItems="center" gap={2} className="home-card__actions">
           <Button
-            background="#f0fdf4"
-            color="#166534"
-            border="1px solid #bbf7d0"
-            _hover={{ background: "#dcfce7", borderColor: "#86efac" }}
-            size="sm"
+            background="#166534"
+            color="#f0fdf4"
+            border="1px solid #14532d"
+            _hover={{ background: "#14532d", borderColor: "#134e4a" }}
+            size="lg"
             borderRadius="md"
-            fontWeight="600"
+            fontWeight="800"
+            fontSize="lg"
             onClick={() => navigate("/game/new")}
             className="home-card__button home-card__button--create-game"
           >

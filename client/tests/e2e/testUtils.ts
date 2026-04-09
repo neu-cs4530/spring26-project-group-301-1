@@ -50,7 +50,7 @@ export async function createAndLoadGame(
   await page1.waitForURL("/");
 
   // User 1 creates a new game
-  await page1.getByRole("button", { name: "Create New Game" }).click();
+  await page1.getByRole("button", { name: "New Game" }).click();
   await page1.waitForURL("/game/new");
   await page1.waitForSelector('select[aria-label="Game selection"]');
   await page1.getByLabel("Game selection").selectOption(gameId);
