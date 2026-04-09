@@ -101,12 +101,8 @@ export async function safeUserFromUsername(username: string): Promise<SafeUserIn
  */
 function validateProfileURL(link: string, type: SocialProfilePlatform): boolean {
   if (type === "twitter") {
-    // twitter requires also matching the 'x' domain
     return (
-      is.twitter.profile(link) ||
-      link.match(
-        /^https?:\/\/(?:www\.)?(?:x)\.com\/(?!home|share|i\/flow|search|hashtag|explore)([a-zA-Z0-9_]{1,15})\/?$/,
-      )?.[1] !== null
+      is.twitter.profile(link) || link.match(/https:\/\/x\.com\/([a-zA-Z0-9_]{1,15})/) !== null
     );
   } else if (type === "instagram") {
     return is.instagram.url(link);
