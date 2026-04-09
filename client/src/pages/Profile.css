@@ -1041,6 +1041,22 @@ button.profilePasswordRevealButton:focus {
   background: rgba(17, 24, 39, 0.14);
 }
 
+.profile-card--darkText .gameBgCard__reset,
+.profileForm--darkText .gameBgCard__reset {
+  color: rgba(17, 24, 39, 0.95);
+  border-color: rgba(17, 24, 39, 0.3);
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.profile-card--darkText .gameBgCard__reset:hover,
+.profile-card--darkText .gameBgCard__reset:focus,
+.profileForm--darkText .gameBgCard__reset:hover,
+.profileForm--darkText .gameBgCard__reset:focus {
+  color: rgba(17, 24, 39, 1);
+  border-color: rgba(17, 24, 39, 0.42);
+  background: rgba(255, 255, 255, 0.94);
+}
+
 .profile-card--darkText input,
 .profile-card--darkText textarea,
 .profile-card--darkText select,
