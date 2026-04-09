@@ -11,7 +11,17 @@
   grid-area: header;
 }
 
+.header__logo {
+  height: 1.8rem;
+  width: auto;
+  object-fit: contain;
+  vertical-align: middle;
+  margin-right: 0.35rem;
+}
+
 .title {
+  display: inline-flex;
+  align-items: center;
   font-size: 1.45rem;
   font-weight: 700;
   letter-spacing: 0.2px;

@@ -42,6 +42,7 @@ export default function Login({ setAuth }: LoginProps) {
         onMouseLeave={handleCardGlowLeave}
       >
         <h1 className="login__brand">PlaySpace</h1>
+        <img src="/PlaySpace.png" alt="PlaySpace logo" className="login__logo" />
         <h2 className="login__title">Log into PlaySpace</h2>
         <input
           type="text"

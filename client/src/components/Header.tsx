@@ -12,6 +12,7 @@ export default function Header() {
   return (
     <header id="header" className="header">
       <Link to="/" className="title">
+        <img src="/PlaySpace.png" alt="PlaySpace logo" className="header__logo" />
         PlaySpace!
       </Link>
 
