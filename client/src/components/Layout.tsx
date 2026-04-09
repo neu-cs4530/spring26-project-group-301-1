@@ -16,8 +16,10 @@ export default function Layout() {
 
   useEffect(() => {
     if (!isActiveGameRoute) {
-      setIsDockMenuOpen(false);
+      const timer = setTimeout(() => setIsDockMenuOpen(false), 0);
+      return () => clearTimeout(timer);
     }
+    return undefined;
   }, [isActiveGameRoute]);
 
   const navigateFromDock = (target: string) => {
