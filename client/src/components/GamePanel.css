@@ -234,14 +234,14 @@ button.gameRoster__action--start:hover {
 }
 
 .gameContainer--darkText .gameRoster {
-  background: rgba(255, 255, 255, 0.58);
-  border-color: rgba(17, 24, 39, 0.2);
+  background: #0d1a14;
+  border-color: rgba(106, 248, 158, 0.3);
 }
 
 .gameContainer--darkText .gameRoster__title,
 .gameContainer--darkText .gameRoster__itemName,
 .gameContainer--darkText .gameRoster__itemName a {
-  color: rgba(17, 24, 39, 0.96);
+  color: white;
 }
 
 .gameContainer--darkText .gameRoster__titleTime,
@@ -249,13 +249,23 @@ button.gameRoster__action--start:hover {
 .gameContainer--darkText .gameRoster__itemRole,
 .gameContainer--darkText .gameRoster__versus,
 .gameContainer--darkText .gameFrame__waitingText {
-  color: rgba(17, 24, 39, 0.8);
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .gameContainer--darkText .gameRoster__list,
 .gameContainer--darkText .gameFrame,
 .gameContainer--darkText .gameFrame--waiting,
 .gameContainer--darkText .gameRoster__playerCard {
-  background: rgba(255, 255, 255, 0.45);
-  border-color: rgba(17, 24, 39, 0.18);
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.gameContainer--darkText .gameFrame,
+.gameContainer--darkText .gameFrame--waiting {
+  background: #0b1410;
+  border-color: rgba(106, 248, 158, 0.22);
+}
+
+.gameContainer--darkText .gameRoster__playerCard {
+  background: rgb(20, 47, 30);
 }
