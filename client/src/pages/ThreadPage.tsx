@@ -31,9 +31,7 @@ export default function ThreadPage() {
   });
 
   const forumBackgroundStyle =
-    "message" in threadInfo
-      ? {}
-      : getCustomBackgroundStyle(threadInfo.createdBy.customBackground || user.customBackground);
+    "message" in threadInfo ? {} : getCustomBackgroundStyle(user.customBackground);
   const threadCardStyle =
     Object.keys(forumBackgroundStyle).length > 0
       ? forumBackgroundStyle

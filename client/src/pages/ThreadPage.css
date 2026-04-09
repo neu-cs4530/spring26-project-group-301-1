@@ -88,7 +88,7 @@ span.opBlue {
   border: 1px solid rgba(253, 238, 101, 0.2);
   border-radius: 14px;
   overflow: hidden;
-  background: rgba(0, 0, 0, 0.48);
+  background: #0b1410;
 }
 
 .threadCard__opCard {
@@ -116,9 +116,9 @@ span.opBlue {
 }
 
 .threadCard__meta {
-  color: rgba(255, 255, 255, 0.45);
-  font-size: 0.92rem;
-  font-weight: 600;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 1.05rem;
+  font-weight: 700;
 }
 
 .threadCard__text {
