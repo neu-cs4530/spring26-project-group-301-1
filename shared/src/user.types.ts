@@ -26,6 +26,7 @@ export const zSocialProfileLink = z.object({
  * - `display`: A display name
  * - `createdAt`: when this when the user registered.
  * - `hideUsername`: privacy preference of user, will hide username from profile page.
+ * - `profileLinks`: linked social media accounts.
  */
 export interface SafeUserInfo {
   username: string;
@@ -34,16 +35,10 @@ export interface SafeUserInfo {
   customBackground?: string;
   hideUsername: boolean;
   privateProfile: boolean;
-  profileLinks: SocialProfileLink[];
+  profileLinks?: SocialProfileLink[];
 }
 
 /*** TYPES USED IN THE USER API ***/
-
-/**
- * Represents a type of Social Media profile that can be linked to by a user.
- */
-export type SocialProfileReqType = "add" | "delete" | "verify";
-export const zSocialProfileReqType = z.enum(["add", "delete", "verify"]);
 
 /**
  * Represents allowed updates to a user.

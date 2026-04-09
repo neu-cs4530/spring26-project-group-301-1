@@ -506,7 +506,7 @@ export default function UpdateProfile() {
                     verifying an account will re-direct you away from GameNite Connect!
                   </p>
                   {socialProfileErr !== null && <p className="smallAndGray">{socialProfileErr}</p>}
-                  {user.profileLinks.length === 0 ? (
+                  {user.profileLinks === undefined || user.profileLinks.length === 0 ? (
                     <p>You have no linked accounts</p>
                   ) : (
                     user.profileLinks.map((l, i) => {

@@ -320,7 +320,8 @@ export default function ViewProfile({ username }: ViewProfileProps) {
                       <h3 style={{ fontSize: "2xl", fontWeight: "bold", paddingTop: 4 }}>
                         Social Profiles
                       </h3>
-                      {componentState.user.profileLinks.length === 0 ? (
+                      {componentState.user.profileLinks === undefined ||
+                      componentState.user.profileLinks.length === 0 ? (
                         <span className="smallAndGray">
                           This user has no linked social profiles
                         </span>

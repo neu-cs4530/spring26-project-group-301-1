@@ -1,4 +1,4 @@
-import type { GameKey, FriendRequestStatus, SocialProfilePlatform } from "@gamenite/shared";
+import type { GameKey, FriendRequestStatus, SocialProfileLink } from "@gamenite/shared";
 
 /**
  * Record identifiers used to look up keys in a database. This type
@@ -13,16 +13,6 @@ export type RecordId = string;
  * object and turning it to a string with the Date.toISOString() method.
  */
 export type DateISO = string;
-
-/**
- * Represents a social media profile which is linked to a user's account.
- * Can be verified or non-verified.
- */
-export interface SocialProfileLink {
-  link: string;
-  type: SocialProfilePlatform;
-  verified: boolean;
-}
 
 /**
  * Represents a user's authorization record in the database.
@@ -160,7 +150,7 @@ export interface UserRecord {
   customBackground?: string;
   hideUsername: boolean;
   privateProfile: boolean;
-  profileLinks: SocialProfileLink[];
+  profileLinks?: SocialProfileLink[];
 }
 
 /**

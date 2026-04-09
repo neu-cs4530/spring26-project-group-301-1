@@ -101,12 +101,8 @@ export async function safeUserFromUsername(username: string): Promise<SafeUserIn
  */
 function validateProfileURL(link: string, type: SocialProfilePlatform): boolean {
   if (type === "twitter") {
-    // twitter requires also matching the 'x' domain
     return (
-      is.twitter.profile(link) ||
-      link.match(
-        /^https?:\/\/(?:www\.)?(?:x)\.com\/(?!home|share|i\/flow|search|hashtag|explore)([a-zA-Z0-9_]{1,15})\/?$/,
-      )?.[1] !== null
+      is.twitter.profile(link) || link.match(/https:\/\/x\.com\/([a-zA-Z0-9_]{1,15})/) !== null
     );
   } else if (type === "instagram") {
     return is.instagram.url(link);
@@ -152,21 +148,29 @@ export async function updateUser(
       if (validateProfileURL(profile.link, profile.type) === false) {
         return { error: "Invalid URL for platform type!" };
       }
-      if (newUser.profileLinks.filter((p) => p.type === profile.type).length > 0) {
-        return { error: "Platform type is already linked-to!" };
+      if (newUser.profileLinks !== undefined) {
+        if (newUser.profileLinks.filter((p) => p.type === profile.type).length > 0) {
+          return { error: "Platform type is already linked-to!" };
+        }
+        newUser.profileLinks = [
+          { link: profile.link, type: profile.type, verified: false },
+          ...newUser.profileLinks,
+        ];
+      } else {
+        newUser.profileLinks = [{ link: profile.link, type: profile.type, verified: false }];
       }
-      newUser.profileLinks = [
-        { link: profile.link, type: profile.type, verified: false },
-        ...newUser.profileLinks,
-      ];
     }
   }
 
   if (profilesToDelete !== undefined) {
-    for (const profile of profilesToDelete) {
-      newUser.profileLinks = newUser.profileLinks.filter((p) => {
-        return !(p.link === profile.link && p.type === profile.type);
-      });
+    if (newUser.profileLinks !== undefined) {
+      for (const profile of profilesToDelete) {
+        newUser.profileLinks = newUser.profileLinks.filter((p) => {
+          return !(p.link === profile.link && p.type === profile.type);
+        });
+      }
+    } else {
+      return { error: "User does not have any profiles to delete!" };
     }
   }
 

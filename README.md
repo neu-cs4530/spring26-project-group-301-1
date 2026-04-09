@@ -11,8 +11,22 @@ chat filter keeps the environment safe and welcoming.
 
 ## Getting Started
 
-Run `npm install` in the root directory to install all dependencies for the
-`client`, `server`, and `shared` folders.
+1. Please include the following environment variables in file called
+   `server/.env`
+
+```
+ANTHROPIC_API_KEY=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
+MONGO_DB_NAME=GameNiteProd
+MONGO_STR=mongodb+srv://kulkarnianushka_db_user:VjwY0j50cbmy2HXS@db-cs4530-spring26-301.ypj1du5.mongodb.net/
+NODE_VERSION=24.13.1
+TWITCH_CLIENT_ID=v86hpzxaydluxx3d3f7zmqy4z4l373
+TWITCH_CLIENT_SECRET=7vckzuk8kmi78dqaxlezf5qh4ubkar
+YOUTUBE_CLIENT_ID=286752764664-3engo6qmobj7rruteii6d5n2nbuh42gr.apps.googleusercontent.com
+YOUTUBE_CLIENT_SECRET=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
+```
+
+2. Run `npm install` in the root directory to install all dependencies for the
+   `client`, `server`, and `shared` folders.
 
 ### Working on the application
 
@@ -115,6 +129,13 @@ endpoints in `server/src/app.ts`.
 | `/:username/status`           | POST   | Get friendship status with a user |
 | `/remove`                     | POST   | Remove a friend                   |
 
+#### `api/oauth`
+
+| Endpoint              | Method | Description                                                                                                   |
+| --------------------- | ------ | ------------------------------------------------------------------------------------------------------------- |
+| `/:platform/verify`   | POST   | Start the OAuth process for the social media platform verification                                            |
+| `/:platform/callback` | GET    | Endpoint for external OAuth API for the given platform to send access code to, completes verification process |
+
 ### Websockets
 
 The Socket.io API for event-driven communication between clients and the
@@ -140,6 +161,7 @@ erDiagram
         string customBackground "optional"
         boolean hideUsername ""
         boolean privateProfile ""
+        SocialProfileLink[] profileLinks "optional"
         Date createdAt ""
     }
     User ||--|| Auth: "User.username"
