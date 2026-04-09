@@ -8,6 +8,7 @@ import GamePanel from "../components/GamePanel.tsx";
 import useLoginContext from "../hooks/useLoginContext.ts";
 import useAuth from "../hooks/useAuth.ts";
 import { ParticleCard, GlobalSpotlight } from "../components/ui/MagicBento.tsx";
+import { getCustomBackgroundStyle, isLightHexColor } from "../util/customBackground.ts";
 
 const basePanelStyle: CSSProperties = {
   backgroundColor: "#000001",
@@ -24,20 +25,9 @@ export default function Game() {
   const customBackground = (user.customBackground || "").trim();
 
   const gameBgStyle = useMemo<CSSProperties>(() => {
-    if (!customBackground) return {};
-
-    const isHex = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(customBackground);
-    if (isHex) {
-      return { backgroundColor: customBackground };
-    }
-
-    return {
-      backgroundImage: `url("${customBackground}")`,
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      backgroundRepeat: "no-repeat",
-    };
+    return getCustomBackgroundStyle(customBackground);
   }, [customBackground]);
+  const useDarkTextForContrast = isLightHexColor(customBackground);
 
   useEffect(() => {
     let ignore = false;
@@ -55,7 +45,10 @@ export default function Game() {
 
   return (
     game && (
-      <div className="gameContainer bento-section" ref={gridRef}>
+      <div
+        className={`gameContainer bento-section ${useDarkTextForContrast ? "gameContainer--darkText" : ""}`}
+        ref={gridRef}
+      >
         <GlobalSpotlight
           gridRef={gridRef}
           spotlightRadius={400}
@@ -80,7 +73,11 @@ export default function Game() {
           enableTilt={false}
           enableMagnetism={false}
         >
-          <ChatPanel chatId={game.chat} lightText={true} />
+          <ChatPanel
+            chatId={game.chat}
+            lightText={!useDarkTextForContrast}
+            darkText={useDarkTextForContrast}
+          />
         </ParticleCard>
       </div>
     )

@@ -116,3 +116,46 @@
 .sidebarLink.is-active .sidebarIcon {
   color: rgba(116, 148, 235, 1);
 }
+
+.profile-card--darkText .profileSidebar {
+  background: rgba(255, 255, 255, 0.62);
+  border-color: rgba(17, 24, 39, 0.2);
+}
+
+.profile-card--darkText .profileSidebar__groupHeading {
+  color: rgba(17, 24, 39, 0.96);
+  font-weight: 800;
+}
+
+.profile-card--darkText .sidebarLink {
+  color: rgba(17, 24, 39, 0.84);
+}
+
+.profile-card--darkText .sidebarLink:hover {
+  background: rgba(17, 24, 39, 0.08);
+  color: rgba(17, 24, 39, 0.95);
+}
+
+.profile-card--darkText .sidebarLink.is-active {
+  background: rgba(17, 24, 39, 0.12);
+  border-color: rgba(17, 24, 39, 0.25);
+  color: rgba(17, 24, 39, 0.95);
+}
+
+.profile-card--darkText .sidebarIcon,
+.profile-card--darkText .sidebarLink.is-active .sidebarIcon {
+  color: rgba(17, 24, 39, 0.72);
+}
+
+.profile-card--darkText .profileSidebar__saveButton {
+  color: rgba(17, 24, 39, 0.92);
+  border-color: rgba(17, 24, 39, 0.24);
+  background: rgba(17, 24, 39, 0.08);
+}
+
+.profile-card--darkText .profileSidebar__saveButton:hover,
+.profile-card--darkText .profileSidebar__saveButton:focus {
+  background: rgba(17, 24, 39, 0.14);
+  border-color: rgba(17, 24, 39, 0.32);
+  color: rgba(17, 24, 39, 0.98);
+}

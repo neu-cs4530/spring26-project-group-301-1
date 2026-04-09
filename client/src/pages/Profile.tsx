@@ -5,6 +5,7 @@ import UpdateProfile from "./UpdateProfile.tsx";
 import ViewProfile from "./ViewProfile.tsx";
 import { ParticleCard, GlobalSpotlight } from "../components/ui/MagicBento.tsx";
 import "./Profile.css";
+import { getCustomBackgroundStyle, isLightHexColor } from "../util/customBackground.ts";
 
 const baseCardStyle: React.CSSProperties = {
   borderRadius: "20px",
@@ -20,25 +21,13 @@ export default function Profile() {
   const { user } = useLoginContext();
   const gridRef = useRef<HTMLDivElement>(null);
   const isViewingOtherUser = Boolean(username && username !== user.username);
+  const customBackground = (user.customBackground || "").trim();
+  const useDarkTextForContrast = !isViewingOtherUser && isLightHexColor(customBackground);
 
   // Determine background style for personal profile
   let personalProfileBackgroundStyle: React.CSSProperties = {};
   if (!isViewingOtherUser) {
-    const customBackground = (user.customBackground || "").trim();
-    if (customBackground) {
-      const isHex = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(customBackground);
-      const isWhite = ["#fff", "#ffffff", "#FFF", "#FFFFFF"].includes(customBackground);
-      if (isHex && !isWhite) {
-        personalProfileBackgroundStyle = { backgroundColor: customBackground };
-      } else {
-        personalProfileBackgroundStyle = {
-          backgroundImage: `url("${customBackground}")`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        };
-      }
-    }
+    personalProfileBackgroundStyle = getCustomBackgroundStyle(customBackground);
   }
 
   const cardStyle = !isViewingOtherUser
@@ -54,7 +43,7 @@ export default function Profile() {
         showSpotlight={false}
       />
       <ParticleCard
-        className={`profile-card magic-bento-card magic-bento-card--border-glow ${isViewingOtherUser ? "profile-card--public" : ""}`}
+        className={`profile-card magic-bento-card magic-bento-card--border-glow ${isViewingOtherUser ? "profile-card--public" : ""} ${useDarkTextForContrast ? "profile-card--darkText" : ""}`}
         style={cardStyle}
         glowColor="116, 148, 235"
         particleCount={0}

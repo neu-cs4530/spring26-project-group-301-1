@@ -232,3 +232,30 @@ button.gameRoster__action--start:hover {
     justify-self: center;
   }
 }
+
+.gameContainer--darkText .gameRoster {
+  background: rgba(255, 255, 255, 0.58);
+  border-color: rgba(17, 24, 39, 0.2);
+}
+
+.gameContainer--darkText .gameRoster__title,
+.gameContainer--darkText .gameRoster__itemName,
+.gameContainer--darkText .gameRoster__itemName a {
+  color: rgba(17, 24, 39, 0.96);
+}
+
+.gameContainer--darkText .gameRoster__titleTime,
+.gameContainer--darkText .gameRoster__meta,
+.gameContainer--darkText .gameRoster__itemRole,
+.gameContainer--darkText .gameRoster__versus,
+.gameContainer--darkText .gameFrame__waitingText {
+  color: rgba(17, 24, 39, 0.8);
+}
+
+.gameContainer--darkText .gameRoster__list,
+.gameContainer--darkText .gameFrame,
+.gameContainer--darkText .gameFrame--waiting,
+.gameContainer--darkText .gameRoster__playerCard {
+  background: rgba(255, 255, 255, 0.45);
+  border-color: rgba(17, 24, 39, 0.18);
+}

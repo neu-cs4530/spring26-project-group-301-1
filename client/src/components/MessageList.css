@@ -157,3 +157,27 @@ div.chatContainer--lightText .chatInlineAction {
 div.chatContainer--lightText .chatInlineAction:hover {
   background-color: rgba(15, 23, 42, 0.5);
 }
+
+div.chatContainer--darkText div.chatScroller .chatMeta,
+div.chatContainer--darkText div.chatScroller .chatSender,
+div.chatContainer--darkText div.chatScroller .chatMe .chatSender {
+  color: rgba(17, 24, 39, 0.82);
+}
+
+div.chatContainer--darkText div.chatScroller .chatMoveLog,
+div.chatContainer--darkText div.chatScroller .chatContent,
+div.chatContainer--darkText div.chatScroller .chatMe .chatContent {
+  background-color: rgba(255, 255, 255, 0.58);
+  color: rgba(17, 24, 39, 0.96);
+  border-color: rgba(17, 24, 39, 0.2);
+}
+
+div.chatContainer--darkText .chatInlineAction {
+  background: rgba(255, 255, 255, 0.62);
+  color: rgba(17, 24, 39, 0.9);
+  border-color: rgba(17, 24, 39, 0.26);
+}
+
+div.chatContainer--darkText .chatInlineAction:hover {
+  background: rgba(255, 255, 255, 0.8);
+}

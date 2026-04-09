@@ -318,6 +318,10 @@ button.profilePasswordRevealButton:focus {
   color: white;
 }
 
+.profile-card--darkText h2:first-of-type {
+  color: rgba(17, 24, 39, 0.96);
+}
+
 .profile-card p,
 .profile-card label,
 .profile-card span {
@@ -814,6 +818,118 @@ button.profilePasswordRevealButton:focus {
   justify-content: flex-end;
   max-width: 12rem;
   text-align: right;
+}
+
+.profile-card--darkText,
+.profileForm--darkText {
+  color: rgba(17, 24, 39, 0.94);
+}
+
+.profile-card--darkText h1,
+.profile-card--darkText h2,
+.profile-card--darkText h3,
+.profile-card--darkText p,
+.profile-card--darkText span,
+.profile-card--darkText label,
+.profile-card--darkText .profileIdentityName,
+.profile-card--darkText .profileIdentityMeta,
+.profile-card--darkText .profileIdentityMetaRow,
+.profileForm--darkText h1,
+.profileForm--darkText h2,
+.profileForm--darkText h3,
+.profileForm--darkText p,
+.profileForm--darkText span,
+.profileForm--darkText label,
+.profileForm--darkText .profileIdentityName,
+.profileForm--darkText .profileIdentityMeta,
+.profileForm--darkText .profileIdentityMetaRow {
+  color: rgba(17, 24, 39, 0.94);
+}
+
+.profile-card--darkText .smallAndGray,
+.profileForm--darkText .smallAndGray {
+  color: rgba(17, 24, 39, 0.72) !important;
+}
+
+.profile-card--darkText .profileIdentityCard,
+.profile-card--darkText .profileSectionCard,
+.profile-card--darkText .profileTopFriendCard,
+.profileForm--darkText .profileIdentityCard,
+.profileForm--darkText .profileSectionCard,
+.profileForm--darkText .profileTopFriendCard {
+  background: rgba(255, 255, 255, 0.62);
+  border-color: rgba(17, 24, 39, 0.2);
+}
+
+.profile-card--darkText .profileIdentityMetaDot,
+.profileForm--darkText .profileIdentityMetaDot {
+  color: rgba(17, 24, 39, 0.45);
+}
+
+.profile-card--darkText .profileIdentityStatusPill,
+.profileForm--darkText .profileIdentityStatusPill {
+  background: rgba(17, 24, 39, 0.08);
+  color: rgba(17, 24, 39, 0.86);
+  border-color: rgba(17, 24, 39, 0.2);
+}
+
+.profile-card--darkText .profileFriendRequestsTab,
+.profileForm--darkText .profileFriendRequestsTab {
+  color: rgba(17, 24, 39, 0.86);
+  border-color: rgba(17, 24, 39, 0.2);
+  background: rgba(17, 24, 39, 0.07);
+}
+
+.profile-card--darkText .profileFriendRequestsTab:hover,
+.profile-card--darkText .profileFriendRequestsTab:focus,
+.profileForm--darkText .profileFriendRequestsTab:hover,
+.profileForm--darkText .profileFriendRequestsTab:focus {
+  background: rgba(17, 24, 39, 0.12);
+  border-color: rgba(17, 24, 39, 0.28);
+  color: rgba(17, 24, 39, 0.95);
+}
+
+.profile-card--darkText .profileFriendRequestsTab.is-active,
+.profileForm--darkText .profileFriendRequestsTab.is-active {
+  background: rgba(17, 24, 39, 0.14);
+  border-color: rgba(17, 24, 39, 0.32);
+  color: rgba(17, 24, 39, 0.95);
+}
+
+.profile-card--darkText .profilePrimaryButton,
+.profileForm--darkText .profilePrimaryButton,
+.profile-card--darkText .profileDangerButton,
+.profileForm--darkText .profileDangerButton {
+  color: rgba(17, 24, 39, 0.92);
+  border-color: rgba(17, 24, 39, 0.24);
+  background: rgba(17, 24, 39, 0.08);
+}
+
+.profile-card--darkText .profilePrimaryButton:hover,
+.profile-card--darkText .profileDangerButton:hover,
+.profileForm--darkText .profilePrimaryButton:hover,
+.profileForm--darkText .profileDangerButton:hover {
+  color: rgba(17, 24, 39, 0.98);
+  border-color: rgba(17, 24, 39, 0.32);
+  background: rgba(17, 24, 39, 0.14);
+}
+
+.profile-card--darkText input,
+.profile-card--darkText textarea,
+.profile-card--darkText select,
+.profileForm--darkText input,
+.profileForm--darkText textarea,
+.profileForm--darkText select {
+  color: rgba(17, 24, 39, 0.95);
+  border-color: rgba(17, 24, 39, 0.24);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.profile-card--darkText input::placeholder,
+.profile-card--darkText textarea::placeholder,
+.profileForm--darkText input::placeholder,
+.profileForm--darkText textarea::placeholder {
+  color: rgba(17, 24, 39, 0.56);
 }
 
 @media (max-width: 760px) {

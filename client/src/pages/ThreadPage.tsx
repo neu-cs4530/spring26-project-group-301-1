@@ -9,25 +9,7 @@ import useHiddenIds from "../hooks/useHiddenIds.ts";
 import { ShieldCheck, ShieldOff } from "lucide-react";
 import { useRef } from "react";
 import { ParticleCard, GlobalSpotlight } from "../components/ui/MagicBento.tsx";
-
-function getCustomBackgroundStyle(customBackgroundRaw?: string): React.CSSProperties {
-  const customBackground = (customBackgroundRaw || "").trim();
-  if (!customBackground) {
-    return {};
-  }
-
-  const isHex = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(customBackground);
-  if (isHex) {
-    return { backgroundColor: customBackground };
-  }
-
-  return {
-    backgroundImage: `url("${customBackground}")`,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
-  };
-}
+import { getCustomBackgroundStyle, isLightHexColor } from "../util/customBackground.ts";
 
 export default function ThreadPage() {
   const formatTimeSince = useTimeSince();
@@ -52,6 +34,11 @@ export default function ThreadPage() {
     "message" in threadInfo
       ? {}
       : getCustomBackgroundStyle(threadInfo.createdBy.customBackground || user.customBackground);
+  const activeBackgroundValue =
+    "message" in threadInfo
+      ? ""
+      : threadInfo.createdBy.customBackground || user.customBackground || "";
+  const useDarkTextForContrast = isLightHexColor(activeBackgroundValue);
   const threadCardStyle =
     Object.keys(forumBackgroundStyle).length > 0
       ? forumBackgroundStyle
@@ -74,7 +61,7 @@ export default function ThreadPage() {
           </Link>
 
           <ParticleCard
-            className="threadCard magic-bento-card magic-bento-card--border-glow"
+            className={`threadCard magic-bento-card magic-bento-card--border-glow ${useDarkTextForContrast ? "threadCard--darkText" : ""}`}
             style={threadCardStyle}
             glowColor="253, 238, 101"
             particleCount={0}

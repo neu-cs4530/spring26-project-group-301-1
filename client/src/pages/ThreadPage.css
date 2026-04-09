@@ -219,3 +219,39 @@ span.opBlue {
   background: #f8fafc;
   border-color: #94a3b8;
 }
+
+.threadCard--darkText .threadCard__body {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.threadCard--darkText .threadCard__title,
+.threadCard--darkText .threadCard__author,
+.threadCard--darkText .threadCard__text,
+.threadCard--darkText .threadCard__commentsTitle,
+.threadCard--darkText .threadCard__commentAuthor,
+.threadCard--darkText .threadCard__commentText,
+.threadCard--darkText .threadCard__emptyComments {
+  color: rgba(17, 24, 39, 0.98);
+}
+
+.threadCard--darkText .threadCard__meta,
+.threadCard--darkText .threadCard__commentTime {
+  color: rgba(17, 24, 39, 0.72);
+}
+
+.threadCard--darkText .threadCard__comment,
+.threadCard--darkText .threadCard__commentsHeader,
+.threadCard--darkText .threadCard__opCard,
+.threadCard--darkText .threadCard__emptyComments {
+  border-bottom-color: rgba(17, 24, 39, 0.16);
+}
+
+.threadCard--darkText .threadCard__commentCount {
+  color: rgba(17, 24, 39, 0.85);
+  border-color: rgba(17, 24, 39, 0.28);
+  background: rgba(17, 24, 39, 0.08);
+}
+
+.threadCard--darkText span.opBlue {
+  color: rgba(30, 64, 175, 0.95);
+}
