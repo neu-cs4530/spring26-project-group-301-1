@@ -6,7 +6,7 @@ import {
   zRemoveFriendPayload,
   zUserAuth,
 } from "@gamenite/shared";
-import { type RestAPI } from "../types.ts";
+import { type RestAPI, type GameServer } from "../types.ts";
 import { checkAuth } from "../services/auth.service.ts";
 import {
   sendFriendRequest,
@@ -16,6 +16,7 @@ import {
   getPendingRequests,
   getFriendStatus,
 } from "../services/friends.service.ts";
+import { markDmReadForBothIfExists } from "../services/dm.service.ts";
 import { type FriendInfo, type FriendRequestInfo } from "@gamenite/shared";
 
 /**
@@ -104,26 +105,32 @@ export const postResolve: RestAPI<{ message: string }, { requestId: string }> = 
 /**
  * POST /api/friends/remove
  */
-export const postRemove: RestAPI<{ message: string }> = async (req, res) => {
-  const body = withAuth(zRemoveFriendPayload).safeParse(req.body);
-  if (body.error) {
-    res.status(400).send({ error: "Poorly-formed request" });
-    return;
-  }
+export const postRemove =
+  (io: GameServer): RestAPI<{ message: string }> =>
+  async (req, res) => {
+    const body = withAuth(zRemoveFriendPayload).safeParse(req.body);
+    if (body.error) {
+      res.status(400).send({ error: "Poorly-formed request" });
+      return;
+    }
 
-  const caller = await checkAuth(body.data.auth);
-  if (!caller) {
-    res.status(403).send({ error: "Invalid credentials" });
-    return;
-  }
+    const caller = await checkAuth(body.data.auth);
+    if (!caller) {
+      res.status(403).send({ error: "Invalid credentials" });
+      return;
+    }
 
-  try {
-    await removeFriend(caller.username, body.data.payload.friendUsername);
-    res.send({ message: "Friend removed" });
-  } catch (error) {
-    res.status(400).send({ error: "Failed to remove friend" });
-  }
-};
+    try {
+      const friendUsername = body.data.payload.friendUsername;
+      await removeFriend(caller.username, friendUsername);
+      await markDmReadForBothIfExists(caller.username, friendUsername);
+      io.to(`inbox:${caller.username}`).emit("friendRemoved", { otherUsername: friendUsername });
+      io.to(`inbox:${friendUsername}`).emit("friendRemoved", { otherUsername: caller.username });
+      res.send({ message: "Friend removed" });
+    } catch (error) {
+      res.status(400).send({ error: "Failed to remove friend" });
+    }
+  };
 
 /**
  * POST /api/friends/:username/status

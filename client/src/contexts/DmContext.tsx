@@ -1,6 +1,7 @@
 import { createContext, useCallback, useEffect, useState, type ReactNode } from "react";
 import useLoginContext from "../hooks/useLoginContext";
 import useAuth from "../hooks/useAuth";
+import { getDirectMessages } from "../services/dmService";
 
 /**
  * The context for direct messages, which holds the number of unread messages in each dm,
@@ -26,21 +27,45 @@ export function DmContextProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    // Register inbox on mount
-    socket.emit("directMessageRegister", { auth, payload: null });
+    void getDirectMessages(auth.username).then((result) => {
+      if ("error" in result) return;
+      result.forEach((dm) => {
+        if (dm.unreadCount > 0) {
+          setUnreadCounts((prev) => {
+            if (dm.dmId in prev) return prev;
+            return { ...prev, [dm.dmId]: dm.unreadCount };
+          });
+        }
+      });
+    });
+  }, [auth.username]);
 
-    // Listen for unread notifications
+  useEffect(() => {
+    socket.emit("directMessageRegister", { auth, payload: null });
+  }, [auth, socket]);
+
+  useEffect(() => {
     function handleNotify({ dmId, unreadCount }: { dmId: string; unreadCount: number }) {
       setUnreadCounts((prev) => {
         if (dmId === activeDmId) return prev;
         return { ...prev, [dmId]: unreadCount };
       });
     }
+    function handleFriendRemoved({ otherUsername }: { otherUsername: string }) {
+      const dmId = [auth.username, otherUsername].sort().join(":");
+      setUnreadCounts((prev) => {
+        const next = { ...prev };
+        delete next[dmId];
+        return next;
+      });
+    }
     socket.on("directMessageNotify", handleNotify);
+    socket.on("friendRemoved", handleFriendRemoved);
     return () => {
       socket.off("directMessageNotify", handleNotify);
+      socket.off("friendRemoved", handleFriendRemoved);
     };
-  }, [auth, socket, activeDmId]);
+  }, [auth.username, socket, activeDmId]);
 
   return (
     <DmContext.Provider value={{ unreadCounts, totalUnread, setUnreadCount, setActiveDmId }}>

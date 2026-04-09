@@ -36,6 +36,18 @@ export default function DirectMessageList() {
     };
   }, [socket, user.username]);
 
+  useEffect(() => {
+    function handleFriendRemoved({ otherUsername }: { otherUsername: string }) {
+      setDms((prev) =>
+        prev ? prev.filter((dm) => dm.otherUser.username !== otherUsername) : prev,
+      );
+    }
+    socket.on("friendRemoved", handleFriendRemoved);
+    return () => {
+      socket.off("friendRemoved", handleFriendRemoved);
+    };
+  }, [socket]);
+
   return (
     <div className="dm-layout">
       <div className="dm-sidebar">

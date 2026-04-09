@@ -78,7 +78,11 @@ export async function getDirectMessagesForUser(username: string): Promise<Direct
   for (const key of keys) {
     const directMessage = await DirectMessageRepo.get(key);
     if (directMessage.userA === username || directMessage.userB === username) {
-      results.push(await getDirectMessageInfo(key, username));
+      const otherUser =
+        directMessage.userA === username ? directMessage.userB : directMessage.userA;
+      if (await areFriends(username, otherUser)) {
+        results.push(await getDirectMessageInfo(key, username));
+      }
     }
   }
   return results;
@@ -86,6 +90,9 @@ export async function getDirectMessagesForUser(username: string): Promise<Direct
 
 /**
  * Get the other user involved in a direct message.
+ * @param dmId the id of the direct message to obtain the other user of
+ * @param loggedInUser the user that is requesting the other user of the direct message
+ * @returns the username of the other user involved in the direct message
  */
 export async function getOtherDirectMessageUser(
   dmId: string,
@@ -110,6 +117,8 @@ export async function addMessageToDirectMessage(dmId: string, messageId: string)
 
 /**
  * Marks a direct message as read by updating the last read timestamp for the user
+ * @param dmId the id of the direct message to mark as read
+ * @param username the user that is marking the direct message as read
  */
 export async function markDirectMessageRead(dmId: string, username: string): Promise<void> {
   const record = await DirectMessageRepo.get(dmId);
@@ -117,4 +126,18 @@ export async function markDirectMessageRead(dmId: string, username: string): Pro
     ...record,
     lastReadAt: { ...record.lastReadAt, [username]: new Date().toISOString() },
   });
+}
+
+/**
+ * If a DM exists between two users, marks it as read for both so unread counts
+ * don't carry over if they later re-friend each other.
+ * @param userA One user of the DM
+ * @param userB The other user of the DM
+ */
+export async function markDmReadForBothIfExists(userA: string, userB: string): Promise<void> {
+  const key = dmKey(userA, userB);
+  const dm = await DirectMessageRepo.find(key);
+  if (!dm) return;
+  await markDirectMessageRead(key, userA);
+  await markDirectMessageRead(key, userB);
 }

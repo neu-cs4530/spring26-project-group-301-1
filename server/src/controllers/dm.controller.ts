@@ -13,6 +13,7 @@ import {
   markDirectMessageRead,
 } from "../services/dm.service.ts";
 import { createMessage, deleteMessage } from "../services/message.service.ts";
+import { areFriends } from "../services/friends.service.ts";
 
 /**
  * GET /api/dms/:username
@@ -97,10 +98,13 @@ export const socketDirectMessageNew: SocketAPI = (socket, io) => async (body) =>
       payload: { dmId, text },
     } = withAuth(z.object({ dmId: z.string(), text: z.string() })).parse(body);
     const user = await enforceAuth(auth);
+    const otherUsername = await getOtherDirectMessageUser(dmId, user.username);
+    if (!(await areFriends(user.username, otherUsername))) {
+      throw new Error("Cannot send messages to non-friends");
+    }
     const message = await createMessage(user, text, new Date(), true);
 
     await addMessageToDirectMessage(dmId, message.messageId);
-    const otherUsername = await getOtherDirectMessageUser(dmId, user.username);
 
     io.to(`inbox:${user.username}`).emit("directMessageNew", { dmId, message });
     io.to(`inbox:${otherUsername}`).emit("directMessageNew", { dmId, message });

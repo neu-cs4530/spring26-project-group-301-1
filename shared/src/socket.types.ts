@@ -54,6 +54,7 @@ export interface ServerToClientEvents {
   directMessageNew: (payload: DirectMessageNewPayload) => void;
   directMessageDeleted: (payload: DirectMessageDeletedPayload) => void;
   directMessageNotify: (payload: { dmId: string; unreadCount: number }) => void;
+  friendRemoved: (payload: { otherUsername: string }) => void;
 }
 
 export type ChatSendErrorPayload = {

@@ -64,7 +64,7 @@ app.use(
         .post("/request", friends.postRequest)
         .post("/request/:requestId/resolve", friends.postResolve)
         .post("/:username/status", friends.getStatus)
-        .post("/remove", friends.postRemove),
+        .post("/remove", friends.postRemove(io)),
     )
     .use(
       "/dms",

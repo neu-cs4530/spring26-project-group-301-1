@@ -1,10 +1,12 @@
 import useAuth from "../hooks/useAuth.ts";
 import useDmContext from "../hooks/useDmContext.ts";
+import useLoginContext from "../hooks/useLoginContext.ts";
 import useSocketsForDirectMessage from "../hooks/useSocketsForDm.ts";
 import MessageList from "../components/MessageList.tsx";
 import MessageCreation from "../components/MessageCreation.tsx";
 import type { DirectMessageInfo } from "@gamenite/shared";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { markDirectMessageAsRead } from "../services/dmService.ts";
 import "../components/ChatPanel.css";
 
@@ -15,11 +17,25 @@ import "../components/ChatPanel.css";
  */
 export default function DirectMessagePanel({ dm }: { dm: DirectMessageInfo }) {
   const auth = useAuth();
+  const { socket } = useLoginContext();
+  const navigate = useNavigate();
   const { setUnreadCount, setActiveDmId } = useDmContext();
   const { messages, handleMessageCreation, handleMessageDeletion } = useSocketsForDirectMessage(
     dm.dmId,
     dm.messages,
   );
+
+  useEffect(() => {
+    function handleFriendRemoved({ otherUsername }: { otherUsername: string }) {
+      if (otherUsername === dm.otherUser.username) {
+        navigate("/messages");
+      }
+    }
+    socket.on("friendRemoved", handleFriendRemoved);
+    return () => {
+      socket.off("friendRemoved", handleFriendRemoved);
+    };
+  }, [socket, dm.otherUser.username, navigate]);
 
   useEffect(() => {
     setActiveDmId(dm.dmId);

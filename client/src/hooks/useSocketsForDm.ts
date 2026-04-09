@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import useAuth from "./useAuth";
 import useLoginContext from "./useLoginContext";
 import useDmContext from "./useDmContext";
+import { markDirectMessageAsRead } from "../services/dmService";
 import type {
   DirectMessageDeletedPayload,
   DirectMessageNewPayload,
@@ -25,6 +26,7 @@ export default function useSocketsForDirectMessage(dmId: string, initialMessages
       if (id !== dmId) return;
       setMessages((prev) => [...prev, message]);
       setUnreadCount(dmId, 0);
+      void markDirectMessageAsRead(auth, dmId);
     }
     function handleDeleted({ dmId: id, messageId, deletedAt }: DirectMessageDeletedPayload) {
       if (id !== dmId) return;
@@ -38,7 +40,7 @@ export default function useSocketsForDirectMessage(dmId: string, initialMessages
       socket.off("directMessageNew", handleNew);
       socket.off("directMessageDeleted", handleDeleted);
     };
-  }, [socket, dmId, setUnreadCount]);
+  }, [socket, dmId, setUnreadCount, auth]);
 
   /**
    * Handles creating a new message in a dm
