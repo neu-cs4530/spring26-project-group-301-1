@@ -121,12 +121,17 @@ const Particles: React.FC<ParticlesProps> = ({
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
-
-    const renderer = new Renderer({
-      dpr: pixelRatio,
-      depth: false,
-      alpha: true,
-    });
+    let renderer: Renderer;
+    try {
+      renderer = new Renderer({
+        dpr: pixelRatio,
+        depth: false,
+        alpha: true,
+      });
+    } catch {
+      // Gracefully no-op when WebGL cannot be initialized (e.g. some headless test runs).
+      return;
+    }
     const gl = renderer.gl;
     gl.canvas.style.width = "100%";
     gl.canvas.style.height = "100%";
@@ -255,7 +260,7 @@ const Particles: React.FC<ParticlesProps> = ({
     particleColors,
   ]);
 
-  return <div ref={containerRef} className={`particles-container ${className}`} />;
+  return <div ref={containerRef} className={`particles-container ${className ?? ""}`} />;
 };
 
 export default Particles;

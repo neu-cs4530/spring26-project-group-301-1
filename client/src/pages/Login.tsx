@@ -96,7 +96,7 @@ export default function Login({ setAuth }: LoginProps) {
         </button>
       </form>
       <div className="smallAndGray login__footnote">
-        GameNite stores passwords in cleartext; reusing passwords here is a catastrophically bad
+        PlaySpace stores passwords in cleartext; reusing passwords here is a catastrophically bad
         idea
       </div>
     </div>
