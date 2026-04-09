@@ -11,7 +11,7 @@ import { type RestAPI } from "../types.ts";
 import { initOAuthFlow, exchangeCode, getLogin } from "../services/oauth.service.ts";
 import { UserRepo } from "../repository.ts";
 
-const CLIENT_URL = "http://localhost:4530";
+const CLIENT_URL = process.env.RENDER_EXTERNAL_URL ?? "http://localhost:4530";
 
 /**
  * Helper function to validate user-provided credentials by platform
@@ -30,7 +30,7 @@ function validateAuthByPlatform(
     return linkedUsername !== undefined && login === linkedUsername;
   } else {
     const username = link.match(/(?:youtube\.com\/)(@[\w.]+|(?:c|user|channel)\/[\w.-]+)/);
-    return username?.[1] !== null && username?.[1] === login;
+    return username?.[1] !== null && username?.[1].toLowerCase() === login;
   }
 }
 
