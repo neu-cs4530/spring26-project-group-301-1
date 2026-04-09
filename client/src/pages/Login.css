@@ -1,33 +1,179 @@
-/* Container is the base class for the login page */
-.container {
+.login-page {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   min-height: 100vh;
-  background-color: var(--gray-background);
-  padding: 20px;
-  padding-top: 6rem;
+  padding: 2rem 1rem;
 }
 
 form.login {
-  width: 350px;
-  padding: 1rem;
-  border-radius: 1.5rem;
-  background-color: #fff;
+  position: relative;
+  width: min(430px, 100%);
+  padding: 1.5rem;
+  border-radius: 1.25rem;
+  background-color: #000001;
+  border: 3px solid rgba(116, 148, 235, 0.55);
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  box-shadow: 0 0 5px #000;
+  gap: 0.75rem;
+  overflow: hidden;
+  --glow-x: 50%;
+  --glow-y: 50%;
+  --glow-intensity: 0;
+  --glow-radius: 220px;
+  box-shadow:
+    0 18px 60px rgba(0, 0, 0, 0.45),
+    0 0 100px rgba(116, 148, 235, 0.16);
+  transition: box-shadow 0.25s ease;
+}
+
+form.login::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  padding: 4px;
+  border-radius: inherit;
+  background: radial-gradient(
+    var(--glow-radius) circle at var(--glow-x) var(--glow-y),
+    rgba(116, 148, 235, calc(var(--glow-intensity) * 0.85)) 0%,
+    rgba(116, 148, 235, calc(var(--glow-intensity) * 0.35)) 35%,
+    transparent 65%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+form.login:hover {
+  box-shadow:
+    0 18px 60px rgba(0, 0, 0, 0.45),
+    0 0 100px rgba(116, 148, 235, 0.2),
+    0 0 40px rgba(116, 148, 235, 0.2);
+}
+
+.login__brand {
+  margin: 0;
+  text-align: center;
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.04em;
+}
+
+.login__title {
+  margin: 0 0 0.25rem;
+  text-align: center;
+  color: #d5deff;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+form.login .widefill {
+  background-color: rgba(9, 12, 20, 0.95);
+  color: #f7f8ff;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  min-height: 2.7rem;
+}
+
+form.login .widefill::placeholder {
+  color: rgba(213, 222, 255, 0.62);
+}
+
+form.login .widefill:focus {
+  outline: none;
+  border-color: rgba(116, 148, 235, 0.9);
+  box-shadow: 0 0 0 3px rgba(116, 148, 235, 0.2);
+}
+
+.login__password-field {
+  position: relative;
+  width: 100%;
+}
+
+.login__password-field .widefill {
+  padding-right: 2.3rem;
+}
+
+.login__eye-toggle {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 form.login .intertext {
   text-align: center;
   font-size: 0.8rem;
-  color: #888;
+  color: rgba(213, 222, 255, 0.75);
 }
 
-form.login .labeled-section {
-  display: flex;
-  flex-direction: row;
-  gap: 0.5rem;
+.login__primary-btn,
+.login__secondary-btn {
+  border: 1px solid transparent;
+  border-radius: 0.7rem;
+  font-weight: 700;
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.login__primary-btn {
+  margin-top: 0.35rem;
+  background: #dbeafe;
+  color: #1e3a8a;
+  border-color: #93c5fd;
+}
+
+.login__primary-btn:hover {
+  background: #bfdbfe;
+  border-color: #60a5fa;
+  transform: translateY(-1px);
+  box-shadow: 0 0 24px rgba(116, 148, 235, 0.35);
+}
+
+.login__secondary-btn {
+  margin-top: 0.35rem;
+  background: #cfdfff;
+  color: #1f3565;
+  border-color: #9fbeff;
+}
+
+.login__secondary-btn:hover {
+  background: #bfd4ff;
+  border-color: #76a5ff;
+  transform: translateY(-1px);
+  box-shadow: 0 0 20px rgba(116, 148, 235, 0.25);
+}
+
+.login__footnote {
+  margin-top: 1rem;
+  max-width: 430px;
+  text-align: center;
+  color: rgba(213, 222, 255, 0.8);
+}
+
+@media (max-width: 520px) {
+  .login-page {
+    justify-content: flex-start;
+    padding-top: 4.5rem;
+  }
+
+  form.login {
+    padding: 1.1rem;
+    border-width: 2px;
+  }
+
+  .login__brand {
+    font-size: 1.8rem;
+  }
 }

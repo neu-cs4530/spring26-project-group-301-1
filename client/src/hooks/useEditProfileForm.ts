@@ -63,7 +63,7 @@ export default function useEditProfileForm() {
   const [backgroundType, setBackgroundType] = useState(
     isColor ? "color" : isPresetImg ? "preset" : initialBg ? "image" : "color",
   );
-  const [color, setColor] = useState(isColor ? initialBg : presetColors[0]);
+  const [color, setColor] = useState(isColor ? initialBg : "");
   const [imageUrl, setImageUrl] = useState(isPresetImg || !isColor ? initialBg : "");
   const [password, setPassword] = useState("");
   const [hideUsername, setHideUsername] = useState<boolean>(user.hideUsername);

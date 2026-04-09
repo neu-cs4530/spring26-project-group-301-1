@@ -50,11 +50,11 @@ test.describe("The username hide/reveal logic", () => {
     // wait for the user information to have loaded
     expect(await page2.getByText("@user0").count()).toBe(0);
 
-    await page2.getByRole("link", { name: "Home" }).click();
+    await page2.getByRole("button", { name: "Home" }).click();
     await page2.waitForURL("/");
 
     await logInUser(page1, "user0", "pwd0000");
-    await page1.getByRole("link", { name: "Profile" }).first().click();
+    await page1.getByRole("button", { name: "Profile" }).click();
     await page1.waitForURL("/profile/user0");
     await page1.getByRole("button", { name: "Privacy" }).click();
     await page1.getByLabel("Toggle hide username").waitFor({ state: "visible" });
@@ -98,7 +98,7 @@ test.describe("The private profile logic", () => {
     await page2.waitForTimeout(1000); // Wait 1 second for content to render
     expect(await page2.getByText("Account created").count()).toBe(0);
 
-    await page2.getByRole("link", { name: "Home" }).click();
+    await page2.getByRole("button", { name: "Home" }).click();
     await page2.waitForURL("/");
 
     await logInUser(page1, "user1", "pwd1111");
@@ -183,7 +183,7 @@ test.describe("Friends count badge", () => {
     await expect(friendsButtonOnB).toContainText("2");
 
     // Remove user0 as a friend
-    await page2.getByRole("link", { name: "Home" }).click();
+    await page2.getByRole("button", { name: "Home" }).click();
     await page2.waitForURL("/");
     await page2.getByRole("link", { name: "The Knight Of Games" }).click();
     await page2.waitForURL("/profile/user0");
@@ -209,7 +209,7 @@ test.describe("Friends count badge", () => {
     await expect(friendsButtonOnD).toContainText("2");
 
     // -------- Add user1 as a friend again on user0's profile --------
-    await page1.getByRole("link", { name: "Home" }).click();
+    await page1.getByRole("button", { name: "Home" }).click();
     await page1.waitForURL("/");
     await page1.waitForTimeout(1000); // Wait 1 second for content to render
     await page1.getByRole("link", { name: "Yāo" }).first().click();

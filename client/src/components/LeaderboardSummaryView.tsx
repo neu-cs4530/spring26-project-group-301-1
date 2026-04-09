@@ -107,7 +107,7 @@ export default function LeaderboardSummaryView({ entryLimit = 10 }: LeaderboardS
               </tr>
             </thead>
             <tbody>
-              {entries.map((entry) => (
+              {entries.slice(0, 3).map((entry) => (
                 <tr
                   key={entry.user?.username ?? entry.rank}
                   aria-label={"leaderboard-" + entry.user.display}

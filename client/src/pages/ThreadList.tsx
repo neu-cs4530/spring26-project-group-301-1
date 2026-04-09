@@ -9,7 +9,7 @@ export default function ThreadList() {
   const navigate = useNavigate();
 
   return (
-    <Box p={6} maxW="1200px" mx="auto" className="home-page">
+    <Box p={6} maxW="1200px" mx="auto">
       <Box
         display="flex"
         alignItems="center"
