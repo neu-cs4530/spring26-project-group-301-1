@@ -3,13 +3,14 @@ import {
   zSocialProfilePlatformWithAuth,
 } from "@gamenite/shared";
 
+const SITE_URL = process.env.RENDER_EXTERNAL_URL ?? "http://localhost:8000";
 const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID ?? "";
 const TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET ?? "";
-const TWITCH_REDIRECT_URI = "http://localhost:8000/api/oauth/twitch/callback";
+const TWITCH_REDIRECT_URI = SITE_URL + "/api/oauth/twitch/callback";
 
 const YOUTUBE_CLIENT_ID = process.env.YOUTUBE_CLIENT_ID;
 const YOUTUBE_CLIENT_SECRET = process.env.YOUTUBE_CLIENT_SECRET;
-const YOUTUBE_REDIRECT_URI = "http://localhost:8000/api/oauth/youtube/callback";
+const YOUTUBE_REDIRECT_URI = SITE_URL + "/api/oauth/youtube/callback";
 
 type PlatformFuncs = {
   getAuthUrl: (username: string, link: string, type: SocialProfilePlatformWithAuth) => string;

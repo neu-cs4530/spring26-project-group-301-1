@@ -2,15 +2,13 @@
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
-  color: var(--gray-foreground);
+  color: white;
   width: 100%;
+  font-size: 1rem;
+  cursor: pointer;
 }
 
 .gameSummary__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1rem;
   width: 100%;
 }
 
@@ -24,35 +22,30 @@
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-  color: #1e40af;
+  background: rgba(106, 248, 158, 0.1);
+  color: rgba(106, 248, 158, 0.9);
   padding: 0.25rem 0.6rem;
   border-radius: 999px;
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.03em;
   text-transform: uppercase;
-  border: 1px solid #93c5fd;
-  box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.25);
+  border: 1px solid rgba(106, 248, 158, 0.35);
   white-space: nowrap;
   user-select: none;
 }
 
 .gameSummary__privateBadge svg {
   flex-shrink: 0;
-  color: #2563eb;
+  color: rgba(106, 248, 158, 0.9);
 }
 
 .gameSummary__titleLink {
-  color: #2563eb;
+  color: white;
   font-size: 1.2rem;
-  font-weight: 600;
+  font-weight: 700;
   text-decoration: none;
   line-height: 1.2;
-}
-
-.gameSummary__titleLink:visited {
-  color: #796781;
 }
 
 .gameSummary__titleLink:hover {
@@ -60,9 +53,11 @@
 }
 
 .gameSummary__status {
-  white-space: nowrap;
-  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   font-size: 1.1rem;
+  font-weight: 700;
 }
 
 .gameSummary__status--waiting {
@@ -73,25 +68,13 @@
   color: #16a34a;
 }
 
+.gameSummary__status--done {
+  color: rgba(255, 255, 255, 0.78);
+}
+
 .gameSummary__lastActivity {
-  white-space: nowrap;
-  text-align: right;
-  flex-shrink: 0;
-}
-
-.gameSummary__status {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-
-@media (max-width: 900px) {
-  .gameSummary__header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .gameSummary__lastActivity {
-    text-align: left;
-  }
+  margin-top: 0;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.98rem;
+  font-weight: bold;
 }

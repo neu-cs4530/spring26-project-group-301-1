@@ -7,11 +7,14 @@ import UserLink from "../components/UserLink.tsx";
 import useLoginContext from "../hooks/useLoginContext.ts";
 import useHiddenIds from "../hooks/useHiddenIds.ts";
 import { ShieldCheck, ShieldOff } from "lucide-react";
+import { useRef } from "react";
+import { ParticleCard, GlobalSpotlight } from "../components/ui/MagicBento.tsx";
 
 export default function ThreadPage() {
   const formatTimeSince = useTimeSince();
   const { threadId } = useParams();
   const { user } = useLoginContext();
+  const gridRef = useRef<HTMLDivElement>(null);
 
   // non-nullish assertion is okay here given that Thread is only called in a
   // route with `:threadId` on the path
@@ -50,12 +53,31 @@ export default function ThreadPage() {
       {"message" in threadInfo ? (
         threadInfo.message
       ) : (
-        <div className="threadPage__shell">
+        <div className="threadPage__shell bento-section" ref={gridRef}>
+          <GlobalSpotlight
+            gridRef={gridRef}
+            spotlightRadius={500}
+            glowColor="253, 238, 101"
+            showSpotlight={false}
+          />
           <Link to="/forum" className="threadPage__backLink">
             {"\u2190"} Back to Forum
           </Link>
 
-          <section className="threadCard" style={forumBackgroundStyle}>
+          <ParticleCard
+            className="threadCard magic-bento-card magic-bento-card--border-glow"
+            style={{
+              ...forumBackgroundStyle,
+              backgroundColor:
+                forumBackgroundStyle && "backgroundImage" in forumBackgroundStyle
+                  ? undefined
+                  : "#000001",
+            }}
+            glowColor="253, 238, 101"
+            particleCount={0}
+            enableTilt={false}
+            enableMagnetism={false}
+          >
             <div className="threadCard__body">
               <div className="threadCard__opCard">
                 <div className="threadCard__opHeader">
@@ -151,7 +173,7 @@ export default function ThreadPage() {
                 setThread={setThread}
               />
             </div>
-          </section>
+          </ParticleCard>
         </div>
       )}
     </div>

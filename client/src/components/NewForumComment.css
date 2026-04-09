@@ -5,9 +5,15 @@
 .newForumComment__inputRow {
   display: flex;
   align-items: center;
-  border: 1px solid #d3d9e8;
+  border: 1px solid rgba(253, 238, 101, 0.25);
   border-radius: 12px;
   padding: 0.35rem 0.6rem;
+  background: rgba(253, 238, 101, 0.04);
+}
+
+.newForumComment__inputRow:focus-within {
+  border-color: rgba(253, 238, 101, 0.55);
+  box-shadow: 0 0 0 3px rgba(253, 238, 101, 0.1);
 }
 
 .newForumComment__input {
@@ -18,13 +24,13 @@
   border: none;
   outline: none;
   background: transparent;
-  color: #2c3858;
+  color: rgba(255, 255, 255, 0.85);
   font-size: 1rem;
   line-height: 1.35;
 }
 
 .newForumComment__input::placeholder {
-  color: #7b86a3;
+  color: rgba(255, 255, 255, 0.3);
 }
 
 .newForumComment__actions {
@@ -34,16 +40,16 @@
 }
 
 .newForumComment__submit {
-  border: 1px solid #93c5fd;
+  border: 1px solid rgba(253, 238, 101, 0.35);
   border-radius: 10px;
-  background: #dbeafe;
-  color: #1e3a8a;
+  background: rgba(253, 238, 101, 0.1);
+  color: rgba(253, 238, 101, 0.9);
   font-size: 0.95rem;
   font-weight: 700;
   padding: 0.42rem 1.05rem;
 }
 
 .newForumComment__submit:hover {
-  background: #bfdbfe;
-  border-color: #60a5fa;
+  background: rgba(253, 238, 101, 0.18);
+  border-color: rgba(253, 238, 101, 0.6);
 }

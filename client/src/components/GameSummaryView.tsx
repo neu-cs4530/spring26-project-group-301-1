@@ -1,6 +1,6 @@
 import "./GameSummaryView.css";
 import type { GameInfo } from "@gamenite/shared";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { gameNames } from "../util/consts.ts";
 import useTimeSince from "../hooks/useTimeSince.ts";
 import UserLink from "./UserLink.tsx";
@@ -30,13 +30,15 @@ export default function GameSummaryView({
         ? "gameSummary__status--active"
         : "gameSummary__status--done";
 
+  function handleClick() {
+    navigate(`/game/${gameId}`);
+  }
+
   return (
-    <div className="gameSummary" role="listitem">
+    <div className="gameSummary" role="listitem" onClick={handleClick}>
       <div className="gameSummary__header">
         <div className="gameSummary__titleContainer">
-          <NavLink to={`/game/${gameId}`} className="gameSummary__titleLink">
-            {gameNames[type]}
-          </NavLink>
+          <span className="gameSummary__titleLink">{gameNames[type]}</span>
           {isPrivate && (
             <div className="gameSummary__privateBadge">
               <Lock size={14} />
@@ -44,16 +46,9 @@ export default function GameSummaryView({
             </div>
           )}
         </div>
-
-        <div className="gameSummary__lastActivity">
-          <UserLink user={createdBy} capitalize /> created {timeSince(createdAt)}
-        </div>
       </div>
 
-      <div
-        className={`gameSummary__status ${statusClass}`}
-        onClick={() => navigate(`/game/${gameId}`)}
-      >
+      <div className={`gameSummary__status ${statusClass}`}>
         {status}
         {status !== "done" && `, ${numPlayers} player${numPlayers === 1 ? "" : "s"}`}
         {chatFiltered ? (
@@ -65,6 +60,10 @@ export default function GameSummaryView({
             <ShieldOff size={14} />
           </span>
         )}
+      </div>
+
+      <div className="gameSummary__lastActivity">
+        <UserLink user={createdBy} capitalize /> created {timeSince(createdAt)}
       </div>
     </div>
   );

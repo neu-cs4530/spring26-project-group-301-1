@@ -9,7 +9,7 @@ export default function GameList() {
   const navigate = useNavigate();
 
   return (
-    <Box p={6} maxW="1200px" mx="auto" className="home-page">
+    <Box p={6} maxW="1200px" mx="auto">
       <Box
         display="flex"
         alignItems="center"
@@ -45,17 +45,7 @@ export default function GameList() {
         ) : (
           <SimpleGrid columns={{ base: 1, md: 2 }} gap={6} id="gameList" className="home-game-list">
             {gameList.map((game) => (
-              <Box
-                key={game.gameId.toString()}
-                borderRadius="xl"
-                border="1px solid #E5E7EB"
-                bg="white"
-                p={5}
-                boxShadow="xs"
-                transition="box-shadow 0.2s"
-                _hover={{ boxShadow: "md" }}
-                className="home-game-list__item"
-              >
+              <Box key={game.gameId.toString()} className="home-game-list__item">
                 <GameSummaryView {...game} />
               </Box>
             ))}

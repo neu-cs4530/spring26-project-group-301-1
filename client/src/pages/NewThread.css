@@ -9,20 +9,46 @@
   width: min(980px, 100%);
   margin: 0 auto;
   padding: 1.15rem;
-  border: 1px solid #dfe4ef;
+  border: 3px solid rgba(253, 238, 101, 0.6);
   border-radius: 18px;
-  background: #ffffff;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+  background: #060010;
+  box-shadow: 0 8px 40px rgba(253, 238, 101, 0.08);
   display: flex;
   flex-direction: column;
   gap: 0.9rem;
+  aspect-ratio: unset;
+  min-height: unset;
+  height: fit-content;
+}
+
+.newThreadPage form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.newThreadPage.magic-bento-card--border-glow::after {
+  inset: -1px;
+  background: radial-gradient(
+    var(--glow-radius) circle at var(--glow-x) var(--glow-y),
+    rgba(253, 238, 101, calc(var(--glow-intensity) * 0.8)) 0%,
+    rgba(253, 238, 101, calc(var(--glow-intensity) * 0.4)) 30%,
+    transparent 60%
+  );
+}
+
+.newThreadPage.magic-bento-card--border-glow:hover,
+.newThreadPage.particle-container:hover {
+  box-shadow:
+    0 4px 20px rgba(253, 238, 101, 0.2),
+    0 0 30px rgba(253, 238, 101, 0.15) !important;
 }
 
 .newThreadPage__title {
   margin: 0;
   font-size: 1.65rem;
   line-height: 1.2;
-  color: #1d2947;
+  color: white;
   font-weight: 800;
 }
 
@@ -34,23 +60,28 @@
 
 .newThreadField__label {
   font-size: 0.95rem;
-  color: #5d6d90;
+  color: rgba(255, 255, 255, 0.55);
   font-weight: 600;
 }
 
 .newThreadField__input,
 .newThreadField__textarea {
   width: 100%;
-  border: 1px solid #d3d9e8;
+  border: 1px solid rgba(253, 238, 101, 0.25);
   border-radius: 12px;
-  background: #ffffff;
-  color: #2c3858;
+  background: rgba(253, 238, 101, 0.04);
+  color: rgba(255, 255, 255, 0.9);
   font-size: 1rem;
   padding: 0.62rem 0.75rem;
   outline: none;
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease;
+}
+
+.newThreadField__input::placeholder,
+.newThreadField__textarea::placeholder {
+  color: rgba(255, 255, 255, 0.25);
 }
 
 .newThreadField__textarea {
@@ -62,8 +93,8 @@
 .newThreadField__input:focus,
 .newThreadField__textarea:focus,
 .newThreadModeration__select:focus {
-  border-color: #9cb7ef;
-  box-shadow: 0 0 0 3px rgba(76, 130, 234, 0.14);
+  border-color: rgba(253, 238, 101, 0.6);
+  box-shadow: 0 0 0 3px rgba(253, 238, 101, 0.12);
 }
 
 .newThreadModeration {
@@ -71,27 +102,33 @@
   align-items: center;
   gap: 0.4rem;
   width: fit-content;
-  border: 1px solid #cfd7ea;
+  border: 1px solid rgba(253, 238, 101, 0.3);
   border-radius: 10px;
-  background: linear-gradient(180deg, #f8faff 0%, #edf2ff 100%);
-  color: #3758a5;
+  background: rgba(253, 238, 101, 0.06);
+  color: rgba(253, 238, 101, 0.85);
   padding: 0.32rem 0.54rem;
 }
 
 .newThreadModeration__select {
   border: none;
   background: transparent;
-  color: #1f3d80;
+  color: rgba(253, 238, 101, 0.9);
   font-size: 0.95rem;
   font-weight: 700;
   outline: none;
 }
 
+.newThreadModeration__select option {
+  background: #060010;
+  color: white;
+}
+
 .newThread__warning {
   margin: 0.3rem 0 0;
-  color: #b42318;
+  color: #ff6b6b;
   font-size: 0.92rem;
   max-width: 72ch;
+  font-weight: bold;
 }
 
 .newThreadPage__error {
@@ -104,24 +141,21 @@
 }
 
 .newThreadPage__submit {
-  border: 1px solid #5b8bd8;
+  border: 1px solid rgba(253, 238, 101, 0.35);
   border-radius: 10px;
-  background: #dbeafe;
-  color: #1e3a8a;
+  background: rgba(253, 238, 101, 0.1);
+  color: rgba(253, 238, 101, 0.9);
   font-size: 0.95rem;
   font-weight: 700;
   padding: 0.5rem 1.05rem;
-  box-shadow: 0 3px 10px rgba(79, 132, 235, 0.2);
   transition:
-    background-color 0.2s ease,
-    transform 0.15s ease,
-    box-shadow 0.2s ease;
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .newThreadPage__submit:hover {
-  background: #bfdbfe;
-  transform: translateY(-1px);
-  box-shadow: 0 5px 12px rgba(79, 132, 235, 0.24);
+  background: rgba(253, 238, 101, 0.18);
+  border-color: rgba(253, 238, 101, 0.6);
 }
 
 @media (max-width: 760px) {
