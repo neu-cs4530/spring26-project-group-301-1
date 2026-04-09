@@ -29,17 +29,17 @@
 }
 
 button.profilePasswordRevealButton {
-  background: #f0fdf4;
-  color: #166534;
-  border: 1px solid #bbf7d0;
-  font-weight: 600;
+  background: #166534;
+  color: #f0fdf4;
+  border: 1px solid #14532d;
+  font-weight: 800;
 }
 
 button.profilePasswordRevealButton:hover,
 button.profilePasswordRevealButton:focus {
-  background: #dcfce7;
-  border-color: #86efac;
-  color: #166534;
+  background: #14532d;
+  border-color: #134e4a;
+  color: #f0fdf4;
 }
 
 .friendRequestDeclineButton {
