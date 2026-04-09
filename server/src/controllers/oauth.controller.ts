@@ -29,7 +29,7 @@ function validateAuthByPlatform(
     return linkedUsername !== undefined && login === linkedUsername;
   } else if (platform === "youtube") {
     const username = link.match(/(?:youtube\.com\/)(@[\w.]+|(?:c|user|channel)\/[\w.-]+)/);
-    return username?.[1] !== null && username?.[1] === login;
+    return username?.[1] !== null && username?.[1].toLowerCase() === login;
   }
 
   return false; // unsupported platform for verification
