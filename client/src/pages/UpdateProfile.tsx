@@ -98,7 +98,7 @@ export default function UpdateProfile() {
           setRequestsErr(res.error);
           setRequests([]);
         }
-      },
+      }
     );
   }, [user.username, pass]);
 
@@ -109,7 +109,7 @@ export default function UpdateProfile() {
     const res = await resolveRequest(
       { username: user.username, password: pass },
       requestId,
-      action,
+      action
     );
     if ("error" in res) {
       setResolveErrors((prev: Record<string, string>) => ({ ...prev, [requestId]: res.error }));
@@ -503,7 +503,7 @@ export default function UpdateProfile() {
                     <span style={{ paddingRight: "3px" }}>
                       <InfoIcon size={15} />
                     </span>{" "}
-                    verifying an account will re-direct you away from GameNite Connect!
+                    verifying an account will re-direct you away from PlaySpace!
                   </p>
                   {socialProfileErr !== null && <p className="smallAndGray">{socialProfileErr}</p>}
                   {user.profileLinks.length === 0 ? (
@@ -511,7 +511,7 @@ export default function UpdateProfile() {
                   ) : (
                     user.profileLinks.map((l, i) => {
                       const queued = profilesToDelete.some(
-                        (p) => p.link === l.link && p.type === l.type,
+                        (p) => p.link === l.link && p.type === l.type
                       );
                       return (
                         <div key={i}>
