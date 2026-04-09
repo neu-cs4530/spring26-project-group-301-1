@@ -1,13 +1,29 @@
 import "./Layout.css";
-import { Outlet, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Header from "./Header.tsx";
-import { House, Gamepad2, MessageCircle, User } from "lucide-react";
+import { House, Gamepad2, Menu, MessageCircle, User, X } from "lucide-react";
 import useAuth from "../hooks/useAuth.ts";
 import Dock from "./ui/Dock.tsx";
 
 export default function Layout() {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const { username } = useAuth();
+  const [isDockMenuOpen, setIsDockMenuOpen] = useState(false);
+
+  const isActiveGameRoute = /^\/game\/[^/]+$/.test(pathname) && pathname !== "/game/new";
+
+  useEffect(() => {
+    if (!isActiveGameRoute) {
+      setIsDockMenuOpen(false);
+    }
+  }, [isActiveGameRoute]);
+
+  const navigateFromDock = (target: string) => {
+    navigate(target);
+    setIsDockMenuOpen(false);
+  };
 
   const dockItems = [
     {
@@ -18,7 +34,7 @@ export default function Layout() {
         </div>
       ),
       label: "",
-      onClick: () => navigate("/"),
+      onClick: () => navigateFromDock("/"),
     },
     {
       icon: (
@@ -28,7 +44,7 @@ export default function Layout() {
         </div>
       ),
       label: "",
-      onClick: () => navigate("/games"),
+      onClick: () => navigateFromDock("/games"),
     },
     {
       icon: (
@@ -38,7 +54,7 @@ export default function Layout() {
         </div>
       ),
       label: "",
-      onClick: () => navigate("/forum"),
+      onClick: () => navigateFromDock("/forum"),
     },
     {
       icon: (
@@ -48,7 +64,7 @@ export default function Layout() {
         </div>
       ),
       label: "",
-      onClick: () => navigate(`/profile/${username}`),
+      onClick: () => navigateFromDock(`/profile/${username}`),
     },
   ];
 
@@ -58,9 +74,36 @@ export default function Layout() {
       <div id="right_main" className="right_main">
         <Outlet />
       </div>
-      <div className="dock-wrapper">
-        <Dock items={dockItems} baseItemSize={90} magnification={105} panelHeight={85} />
-      </div>
+      {isActiveGameRoute ? (
+        <div className="dock-wrapper dock-wrapper--game">
+          <button
+            className="dock-menu-button"
+            type="button"
+            aria-label={isDockMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={isDockMenuOpen}
+            aria-controls="game-route-dock"
+            onClick={() => setIsDockMenuOpen((current) => !current)}
+          >
+            {isDockMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
+
+          {isDockMenuOpen && (
+            <div id="game-route-dock" className="dock-wrapper__expanded">
+              <Dock
+                items={dockItems}
+                baseItemSize={90}
+                magnification={105}
+                panelHeight={85}
+                dockHeight={85}
+              />
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="dock-wrapper">
+          <Dock items={dockItems} baseItemSize={90} magnification={105} panelHeight={85} />
+        </div>
+      )}
     </div>
   );
 }

@@ -18,3 +18,37 @@
   transform: translateX(-50%);
   z-index: 100;
 }
+
+.dock-wrapper--game {
+  left: 1rem;
+  transform: none;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.65rem;
+}
+
+.dock-menu-button {
+  width: 3rem;
+  height: 3rem;
+  margin-left: 0.75rem;
+  margin-bottom: 0.85rem;
+  border-radius: 0.9rem;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  background: #000001;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.dock-menu-button:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.dock-wrapper__expanded .dock-panel {
+  position: static;
+  transform: none;
+  left: auto;
+  bottom: auto;
+}

@@ -1,4 +1,8 @@
 /* Styles used across the site */
+html {
+  font-size: 17px;
+}
+
 body {
   background-color: #000001;
   color: #f0f0f0;
@@ -6,7 +10,7 @@ body {
 
 /** Core fonts **/
 * {
-  font-family: 'Courier New', Courier, monospace;
+  font-family: "Courier New", Courier, monospace;
   --gray-background: #f7f7f7;
   --gray-foreground: #555;
 }

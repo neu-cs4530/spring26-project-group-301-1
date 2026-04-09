@@ -5,23 +5,6 @@ import { gameNames } from "../util/consts.ts";
 import useTimeSince from "../hooks/useTimeSince.ts";
 import UserLink from "./UserLink.tsx";
 import { Lock, ShieldCheck, ShieldOff } from "lucide-react";
-import { useState } from "react";
-
-const VISITED_KEY = "visitedGames";
-
-function getVisited(): Set<string> {
-  try {
-    return new Set(JSON.parse(localStorage.getItem(VISITED_KEY) ?? "[]") as string[]);
-  } catch {
-    return new Set();
-  }
-}
-
-function markVisited(id: string) {
-  const visited = getVisited();
-  visited.add(id);
-  localStorage.setItem(VISITED_KEY, JSON.stringify([...visited]));
-}
 
 /**
  * Summarizes information for a single game as part of a list of games
@@ -39,7 +22,6 @@ export default function GameSummaryView({
   const timeSince = useTimeSince();
   const navigate = useNavigate();
   const numPlayers = players.length;
-  const [visited, setVisited] = useState(() => getVisited().has(gameId.toString()));
 
   const statusClass =
     status === "waiting"
@@ -49,8 +31,6 @@ export default function GameSummaryView({
         : "gameSummary__status--done";
 
   function handleClick() {
-    markVisited(gameId.toString());
-    setVisited(true);
     navigate(`/game/${gameId}`);
   }
 
@@ -58,11 +38,7 @@ export default function GameSummaryView({
     <div className="gameSummary" role="listitem" onClick={handleClick}>
       <div className="gameSummary__header">
         <div className="gameSummary__titleContainer">
-          <span
-            className={`gameSummary__titleLink ${visited ? "gameSummary__titleLink--visited" : ""}`}
-          >
-            {gameNames[type]}
-          </span>
+          <span className="gameSummary__titleLink">{gameNames[type]}</span>
           {isPrivate && (
             <div className="gameSummary__privateBadge">
               <Lock size={14} />

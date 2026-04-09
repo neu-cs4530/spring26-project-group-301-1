@@ -4,7 +4,7 @@
   gap: 0.35rem;
   color: white;
   width: 100%;
-  font-size: 1.0rem;
+  font-size: 1rem;
   cursor: pointer;
 }
 
@@ -52,15 +52,12 @@
   text-decoration: underline;
 }
 
-.gameSummary__titleLink--visited {
-  color: rgba(183, 183, 183, 0.776);
-}
-
 .gameSummary__status {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
   font-size: 1.1rem;
+  font-weight: 700;
 }
 
 .gameSummary__status--waiting {
@@ -72,13 +69,12 @@
 }
 
 .gameSummary__status--done {
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .gameSummary__lastActivity {
   margin-top: 0;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.82);
   font-size: 0.98rem;
   font-weight: bold;
 }
-
