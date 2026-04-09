@@ -43,6 +43,15 @@
   color: rgba(255, 255, 255, 0.82);
 }
 
+.threadSummary .mid {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .threadSummary .lastActivity {
   grid-column: 1;
   grid-row: 2;
