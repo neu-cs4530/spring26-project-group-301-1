@@ -136,6 +136,14 @@ endpoints in `server/src/app.ts`.
 | `/:platform/verify`   | POST   | Start the OAuth process for the social media platform verification                                            |
 | `/:platform/callback` | GET    | Endpoint for external OAuth API for the given platform to send access code to, completes verification process |
 
+#### `/api/dms`
+
+| Endpoint       | Method |Description                                                               |
+| -------------- | ------ | ------------------------------------------------------------------------ |
+| `/:username`   | POST   | Either creates a new or obtains an existing direct message for a user    |
+| `/:dmId/read`  | POST   | Marks a direct message as read for a user                                |
+| `/:username`   | GET    | Gets the direct messages for that user                                   |
+
 ### Websockets
 
 The Socket.io API for event-driven communication between clients and the
@@ -219,6 +227,18 @@ erDiagram
         Date createdAt ""
     }
     Message ||--|| User: "Message.createdBy"
+
+    DirectMessage {
+        dmId dmId "generated key"
+        string usernameA ""
+        string usernameB ""
+        RecordId[] messages ""
+        Date lastReadAt ""
+        Date createdAt ""
+    }
+    DirectMessage ||--|| User : "usernameA"
+    DirectMessage ||--|| User : "usernameB"
+    DirectMessage ||--o{ Message : "DirectMessage.messages"
 
     FriendRequest {
         requestId requestId "generated key"
