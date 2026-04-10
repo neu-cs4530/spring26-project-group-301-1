@@ -15,7 +15,11 @@ export default function DirectMessageList() {
   const sidebarStyle = customBackground
     ? /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(customBackground)
       ? { backgroundColor: customBackground }
-      : { backgroundImage: `url("${customBackground}")`, backgroundSize: "cover", backgroundPosition: "center" }
+      : {
+          backgroundImage: `url("${customBackground}")`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }
     : {};
 
   useEffect(() => {
