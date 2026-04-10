@@ -62,31 +62,31 @@
 
 button.gameRoster__action--join,
 button.gameRoster__action--start {
-  background: #e0edff;
-  border: 1.5px solid #90b4e8;
-  color: #1d3b7a;
+  background: rgba(15, 28, 19, 0.06);
+  border: 1.5px solid #60a5fa;
+  color: #60a5fa;
 }
 
 button.gameRoster__action--join:hover,
 button.gameRoster__action--start:hover {
-  background: #c3dbfa;
-  border-color: #3b82f6;
-  color: #1741a0;
+  background: rgba(106, 248, 158, 0.12);
+  border-color: #93c5fd;
+  color: #93c5fd;
 }
 
 .gameRoster__action--forfeit {
-  border: 1px solid rgba(248, 113, 113, 0.4);
+  border: 1px solid rgba(239, 68, 68, 0.62);
   border-radius: 10px;
   padding: 0.5rem 0.85rem;
-  background: rgba(248, 113, 113, 0.1);
-  color: #f87171;
+  background: rgba(239, 68, 68, 0.14);
+  color: #ef4444;
   font-size: 0.95rem;
   font-weight: 700;
 }
 
 .gameRoster__action--forfeit:hover {
-  background: rgba(248, 113, 113, 0.2);
-  border-color: rgba(248, 113, 113, 0.65);
+  background: rgba(239, 68, 68, 0.26);
+  border-color: rgba(239, 68, 68, 0.85);
 }
 
 .gameRoster__list {
