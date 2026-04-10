@@ -25,7 +25,7 @@ export default function UpdateProfile() {
   const timeSince = useTimeSince();
   const [showPass, setShowPass] = useState(false);
   const [hideSelectionCheck, setHideSelectionCheck] = useState(false); // add
-  const [customColor, setCustomColor] = useState("#3b82f6");
+  const [customColor, setCustomColor] = useState("#41ba65");
   const [socialProfileErr, setSocialProfileErr] = useState<string | null>(null);
 
   const [requests, setRequests] = useState<FriendRequestInfo[]>([]);
