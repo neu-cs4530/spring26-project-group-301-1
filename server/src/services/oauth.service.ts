@@ -8,8 +8,8 @@ const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID ?? "";
 const TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET ?? "";
 const TWITCH_REDIRECT_URI = SITE_URL + "/api/oauth/twitch/callback";
 
-const YOUTUBE_CLIENT_ID = process.env.YOUTUBE_CLIENT_ID;
-const YOUTUBE_CLIENT_SECRET = process.env.YOUTUBE_CLIENT_SECRET;
+const YOUTUBE_CLIENT_ID = process.env.YOUTUBE_CLIENT_ID ?? "";
+const YOUTUBE_CLIENT_SECRET = process.env.YOUTUBE_CLIENT_SECRET ?? "";
 const YOUTUBE_REDIRECT_URI = SITE_URL + "/api/oauth/youtube/callback";
 
 type PlatformFuncs = {
@@ -36,7 +36,7 @@ export function getTwitchAuthUrl(
   ).toString("base64");
   const query = `client_id=${TWITCH_CLIENT_ID}&redirect_uri=${encodeURIComponent(
     TWITCH_REDIRECT_URI,
-  )}&response_type=code&scope=user%3Aread%3Aemail&state=${encodeURIComponent(state)}`;
+  )}&response_type=code&state=${encodeURIComponent(state)}`;
   return `https://id.twitch.tv/oauth2/authorize?${query}`;
 }
 
@@ -58,7 +58,7 @@ export function getYoutubeAuthUrl(
   ).toString("base64");
   const query = `client_id=${YOUTUBE_CLIENT_ID}&redirect_uri=${encodeURIComponent(
     YOUTUBE_REDIRECT_URI,
-  )}&response_type=code&&scope=${encodeURIComponent(
+  )}&response_type=code&scope=${encodeURIComponent(
     "https://www.googleapis.com/auth/youtube.readonly",
   )} &state=${encodeURIComponent(state)}`;
   return `https://accounts.google.com/o/oauth2/v2/auth?${query}`;

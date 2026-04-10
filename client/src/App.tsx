@@ -18,6 +18,7 @@ import ThreadPage from "./pages/ThreadPage.tsx";
 import { ErrorBoundary } from "react-error-boundary";
 import fallback from "./fallback.tsx";
 import NewThread from "./pages/NewThread.tsx";
+import OAuthResult from "./pages/OAuthResult.tsx";
 import TimeContextKeeper from "./components/UpdatingTimeContext.tsx";
 import { Provider } from "./components/ui/provider.tsx";
 import Particles from "./components/ui/Particles.tsx";
@@ -93,6 +94,7 @@ export default function App() {
           <BrowserRouter>
             <Routes>
               <Route path="/login" element={<Login setAuth={(auth) => setAuth(auth)} />} />
+              <Route path="/oauth" element={<OAuthResult />} />
               <Route
                 element={
                   <LoggedInRoute auth={auth} socket={socket}>

@@ -132,10 +132,10 @@ describe("GET /api/oauth/:platform/callback", () => {
   });
 
   describe("invalid query parameter", () => {
-    it("returns 400 when receiving a malformed query", async () => {
+    it("redirects to oauth_error when receiving a malformed query", async () => {
       response = await supertest(app).get("/api/oauth/twitch/callback").query({ hi: "hello" });
-      expect(response.status).toBe(400);
-      expect(response.body).toStrictEqual({ error: "Invalid callback request" });
+      expect(response.status).toBe(302);
+      expect(response.headers.location).toContain("oauth_error=");
     });
   });
 
@@ -151,52 +151,52 @@ describe("GET /api/oauth/:platform/callback", () => {
   });
 
   describe("missing query parameters", () => {
-    it("returns 400 when code is missing", async () => {
+    it("redirects with oauth_error when code is missing", async () => {
       const state = buildState("user0", twitchLink, "twitch");
       response = await supertest(app).get("/api/oauth/twitch/callback").query({ state });
-      expect(response.status).toBe(400);
-      expect(response.body).toStrictEqual({ error: "Invalid callback request" });
+      expect(response.status).toBe(302);
+      expect(response.headers.location).toContain("oauth_error=");
     });
 
-    it("returns 400 when state is missing", async () => {
+    it("redirects with oauth_error when state is missing", async () => {
       response = await supertest(app).get("/api/oauth/twitch/callback").query({ code: "somecode" });
-      expect(response.status).toBe(400);
-      expect(response.body).toStrictEqual({ error: "Invalid callback request" });
+      expect(response.status).toBe(302);
+      expect(response.headers.location).toContain("oauth_error=");
     });
 
-    it("returns 400 when both code and state are missing", async () => {
+    it("redirects with oauth_error when both code and state are missing", async () => {
       response = await supertest(app).get("/api/oauth/twitch/callback");
-      expect(response.status).toBe(400);
-      expect(response.body).toStrictEqual({ error: "Invalid callback request" });
+      expect(response.status).toBe(302);
+      expect(response.headers.location).toContain("oauth_error=");
     });
   });
 
   describe("invalid state parameter", () => {
-    it("returns 400 for an invalid state that cannot be decoded", async () => {
+    it("redirects with oauth_error for an invalid state that cannot be decoded", async () => {
       response = await supertest(app)
         .get("/api/oauth/twitch/callback")
         .query({ code: "somecode", state: "hi" });
-      expect(response.status).toBe(400);
-      expect(response.body).toStrictEqual({ error: "Error decoding OAuth state" });
+      expect(response.status).toBe(302);
+      expect(response.headers.location).toContain("oauth_error=");
     });
-    it("returns 400 for a state that is valid base64 but missing required fields", async () => {
+    it("redirects with oauth_error for a state that is valid base64 but missing required fields", async () => {
       const badState = Buffer.from(JSON.stringify({ foo: "bar" })).toString("base64");
       response = await supertest(app)
         .get("/api/oauth/twitch/callback")
         .query({ code: "somecode", state: badState });
-      expect(response.status).toBe(400);
-      expect(response.body).toStrictEqual({ error: "Invalid state parameter" });
+      expect(response.status).toBe(302);
+      expect(response.headers.location).toContain("oauth_error=");
     });
   });
 
   describe("user not found", () => {
-    it("returns 400 when the username in state does not exist", async () => {
+    it("redirects with oauth_error when the username in state does not exist", async () => {
       const state = buildState("nonexistentuser", twitchLink, "twitch");
       response = await supertest(app)
         .get("/api/oauth/twitch/callback")
         .query({ code: "somecode", state });
-      expect(response.status).toBe(400);
-      expect(response.body).toStrictEqual({ error: "User not found" });
+      expect(response.status).toBe(302);
+      expect(response.headers.location).toContain("oauth_error=");
     });
   });
 
