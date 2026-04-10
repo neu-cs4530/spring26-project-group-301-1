@@ -14,14 +14,14 @@ div.chatScroller {
 
 div.chatScroller .chatMeta {
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.5);
 }
 
 div.chatScroller .chatMoveLog {
   text-align: center;
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-weight: 600;
   color: rgba(106, 248, 158, 0.9);
   background-color: #0d1a14;
@@ -32,13 +32,13 @@ div.chatScroller .chatMoveLog {
 }
 
 div.chatScroller .chatSender {
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.6);
 }
 
 div.chatScroller .chatMe .chatSender {
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.6);
   text-align: right;
@@ -51,15 +51,16 @@ div.chatScroller .chatContent {
   padding-block: 0.5rem;
   padding-inline: 0.75rem;
   border-radius: 0.5rem;
-  background-color: rgb(20, 47, 30);
+  background-color: rgb(31, 72, 46);
   color: rgba(255, 255, 255, 0.9);
   font-weight: bold;
+  font-size: 1.2rem
 }
 
 div.chatScroller .chatMe .chatContent {
   margin-right: 0;
   margin-left: auto;
-  background-color: rgb(52, 118, 76);
+  background-color: rgb(59, 133, 86);
   color: rgba(255, 255, 255, 0.9);
   font-weight: bold;
 }
@@ -72,15 +73,15 @@ div.chatScroller .chatMe .chatContent {
   display: none;
   position: absolute;
   top: 12px;
-  right: -6px;
-  width: 16px;
-  height: 16px;
+  right: -10px;
+  width: 24px;
+  height: 24px;
   padding: 0;
   background-color: rgba(0, 0, 0, 0.6);
   color: white;
   border: none;
   border-radius: 50%;
-  font-size: 10px;
+  font-size: 14px;
   line-height: 1;
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -92,10 +93,11 @@ div.chatScroller .chatMe .chatContent {
 }
 
 .chatDeleteIcon {
-  width: 10px;
-  height: 10px;
+  width: 15px;
+  height: 15px;
   stroke: currentColor;
   fill: none;
+  padding-bottom: 0.1rem;
 }
 
 .chatDeletable:hover .chatDeleteBtn {
