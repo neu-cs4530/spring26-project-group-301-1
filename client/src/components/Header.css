@@ -84,6 +84,23 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
+.header__link--messages .header__badge {
+  background: #ef4444;
+  border-color: #111111;
+}
+
+.header__link--messages {
+  color: #6af89e;
+  border-color: #6af89e;
+  background: #000001;
+}
+
+.header__link--messages:hover {
+  background: #111111;
+  border-color: #a0ffc4;
+  color: #a0ffc4;
+}
+
 .header__link--profile {
   color: #60a5fa;
   border-color: #60a5fa;

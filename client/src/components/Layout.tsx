@@ -106,7 +106,7 @@ export default function Layout() {
                 baseItemSize={90}
                 magnification={105}
                 panelHeight={110}
-                dockHeight={85}
+                dockHeight={110}
               />
             </div>
           )}

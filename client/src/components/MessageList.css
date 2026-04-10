@@ -32,13 +32,13 @@ div.chatScroller .chatMoveLog {
 }
 
 div.chatScroller .chatSender {
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.6);
 }
 
 div.chatScroller .chatMe .chatSender {
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.6);
   text-align: right;
@@ -51,7 +51,7 @@ div.chatScroller .chatContent {
   padding-block: 0.5rem;
   padding-inline: 0.75rem;
   border-radius: 0.5rem;
-  background-color: #0d1a14;
+  background-color: rgb(20, 47, 30);
   color: rgba(255, 255, 255, 0.9);
   font-weight: bold;
 }

@@ -11,6 +11,13 @@ export default function DirectMessageList() {
   const [dms, setDms] = useState<DirectMessageInfo[] | null>(null);
   const { unreadCounts } = useDmContext();
 
+  const customBackground = (user.customBackground || "").trim();
+  const sidebarStyle = customBackground
+    ? /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(customBackground)
+      ? { backgroundColor: customBackground }
+      : { backgroundImage: `url("${customBackground}")`, backgroundSize: "cover", backgroundPosition: "center" }
+    : {};
+
   useEffect(() => {
     void getDirectMessages(user.username).then((result) => {
       if ("error" in result) return;
@@ -50,7 +57,7 @@ export default function DirectMessageList() {
 
   return (
     <div className="dm-layout">
-      <div className="dm-sidebar">
+      <div className="dm-sidebar" style={sidebarStyle}>
         <h3 className="dm-sidebar-title">Direct Messages</h3>
         {dms === null ? (
           <p className="dm-sidebar-empty">Loading...</p>
