@@ -204,6 +204,28 @@ describe("POST/api/user/:username", () => {
       });
     expect(response.status).toBe(200);
     expect(response.body).toStrictEqual({ error: "Invalid URL for platform type!" });
+    response = await supertest(app)
+      .post("/api/user/user1")
+      .send({
+        auth: newAuth,
+        payload: {
+          profilesToAdd: [{ link: "https://notx.com", type: "twitter", verified: false }],
+        },
+      });
+    expect(response.status).toBe(200);
+    expect(response.body).toStrictEqual({ error: "Invalid URL for platform type!" });
+    response = await supertest(app)
+      .post("/api/user/user1")
+      .send({
+        auth: newAuth,
+        payload: {
+          profilesToAdd: [
+            { link: "https://faketwitch.com/testuser", type: "twitch", verified: false },
+          ],
+        },
+      });
+    expect(response.status).toBe(200);
+    expect(response.body).toStrictEqual({ error: "Invalid URL for platform type!" });
 
     // Deleting a linked social profile should remove it from profileLinks
     response = await supertest(app)
@@ -218,6 +240,34 @@ describe("POST/api/user/:username", () => {
       privateProfile: false,
       profileLinks: [],
     });
+
+    // adding and deleting x profile link format
+    response = await supertest(app)
+      .post("/api/user/user1")
+      .send({
+        auth: newAuth,
+        payload: {
+          profilesToAdd: [{ link: "https://x.com/elmo", type: "twitter", verified: false }],
+        },
+      });
+    expect(response.status).toBe(200);
+    expect(response.body).toStrictEqual({
+      ...user1,
+      display: "Newer User 1 Display",
+      createdAt: expect.anything(),
+      hideUsername: false,
+      privateProfile: false,
+      profileLinks: [{ link: "https://x.com/elmo", type: "twitter", verified: false }],
+    });
+    response = await supertest(app)
+      .post("/api/user/user1")
+      .send({
+        auth: newAuth,
+        payload: {
+          profilesToDelete: [{ link: "https://x.com/elmo", type: "twitter", verified: false }],
+        },
+      });
+    expect(response.status).toBe(200);
 
     // adding a different type should succeed
     response = await supertest(app)
