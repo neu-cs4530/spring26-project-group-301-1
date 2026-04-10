@@ -49,6 +49,16 @@ export const postByUsername: RestAPI<SafeUserInfo, { username: string }> = async
     return;
   }
 
+  if (body.data.payload.display) {
+    const safeDisplay = await moderateMessage(body.data.payload.display);
+    if (safeDisplay.label === "UNSAFE") {
+      res.send({
+        error: "Display name violates content policy. Reason: " + safeDisplay.categories.join(", "),
+      });
+      return;
+    }
+  }
+
   res.send(await updateUser(req.params.username, body.data.payload));
 };
 
