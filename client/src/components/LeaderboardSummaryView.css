@@ -158,6 +158,11 @@
   font-style: italic;
 }
 
+.leaderboard-summary-multiple {
+  color: #1a1a2e;
+  font-weight: 900;
+}
+
 .leaderboard-summary-state {
   font-size: 0.875rem;
   color: var(--gray-foreground);

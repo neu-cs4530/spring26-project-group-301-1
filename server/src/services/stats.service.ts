@@ -114,16 +114,26 @@ export async function getLeaderboard(
   ranked.sort((a, b) => b.wins - a.wins);
   const top = entryLimit === undefined ? ranked : ranked.slice(0, entryLimit);
 
+  let prevWins: number | null = null;
+  let currentRank = 0;
   const entries: LeaderboardEntry[] = await Promise.all(
-    top.map(async (r, i) => ({
-      rank: i + 1,
-      user: await safeUserFromUsername(r.username),
-      wins: r.wins,
-      losses: r.losses,
-      draws: r.draws,
-      gamesPlayed: r.gamesPlayed,
-      winRate: r.gamesPlayed > 0 ? r.wins / r.gamesPlayed : 0,
-    })),
+    top.map(async (r) => {
+      if (prevWins !== r.wins) {
+        currentRank += 1;
+      }
+      const rank = currentRank;
+      prevWins = r.wins;
+
+      return {
+        rank,
+        user: await safeUserFromUsername(r.username),
+        wins: r.wins,
+        losses: r.losses,
+        draws: r.draws,
+        gamesPlayed: r.gamesPlayed,
+        winRate: r.gamesPlayed > 0 ? r.wins / r.gamesPlayed : 0,
+      };
+    }),
   );
 
   return { gameType, entries, generatedAt: new Date() };

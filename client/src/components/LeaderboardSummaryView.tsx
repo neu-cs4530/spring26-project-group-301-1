@@ -84,6 +84,13 @@ export default function LeaderboardSummaryView({
   const first = entries.find((e) => e.rank === 1);
   const second = entries.find((e) => e.rank === 2);
   const third = entries.find((e) => e.rank === 3);
+  const rankCounts = entries.reduce<Record<number, number>>((acc, entry) => {
+    acc[entry.rank] = (acc[entry.rank] ?? 0) + 1;
+    return acc;
+  }, {});
+  const isFirstTied = (rankCounts[1] ?? 0) > 1;
+  const isSecondTied = (rankCounts[2] ?? 0) > 1;
+  const isThirdTied = (rankCounts[3] ?? 0) > 1;
 
   return (
     <div className={`leaderboard-summary ${topLeft ? "leaderboard-summary--with-toprow" : ""}`}>
@@ -177,13 +184,17 @@ export default function LeaderboardSummaryView({
           <div className="leaderboard-summary-podium" aria-label="Top three players">
             <div
               className={`leaderboard-summary-podium__slot leaderboard-summary-podium__slot--second ${
-                second?.user ? "clickable" : "is-empty"
+                second?.user ? (isSecondTied ? "" : "clickable") : "is-empty"
               }`}
-              onClick={() => second?.user && navigate(`/profile/${second.user.username}`)}
+              onClick={() =>
+                second?.user && !isSecondTied && navigate(`/profile/${second.user.username}`)
+              }
             >
               <div className="leaderboard-summary-podium__medal">🥈 2nd</div>
               <div className="leaderboard-summary-podium__name">
-                {second?.user ? (
+                {isSecondTied ? (
+                  <span className="leaderboard-summary-multiple">Multiple Players</span>
+                ) : second?.user ? (
                   <UserLink user={second.user} capitalize />
                 ) : (
                   <span className="leaderboard-summary-unknown">—</span>
@@ -193,13 +204,17 @@ export default function LeaderboardSummaryView({
 
             <div
               className={`leaderboard-summary-podium__slot leaderboard-summary-podium__slot--first ${
-                first?.user ? "clickable" : "is-empty"
+                first?.user ? (isFirstTied ? "" : "clickable") : "is-empty"
               }`}
-              onClick={() => first?.user && navigate(`/profile/${first.user.username}`)}
+              onClick={() =>
+                first?.user && !isFirstTied && navigate(`/profile/${first.user.username}`)
+              }
             >
               <div className="leaderboard-summary-podium__medal">🥇 1st</div>
               <div className="leaderboard-summary-podium__name">
-                {first?.user ? (
+                {isFirstTied ? (
+                  <span className="leaderboard-summary-multiple">Multiple Players</span>
+                ) : first?.user ? (
                   <UserLink user={first.user} capitalize />
                 ) : (
                   <span className="leaderboard-summary-unknown">—</span>
@@ -209,13 +224,17 @@ export default function LeaderboardSummaryView({
 
             <div
               className={`leaderboard-summary-podium__slot leaderboard-summary-podium__slot--third ${
-                third?.user ? "clickable" : "is-empty"
+                third?.user ? (isThirdTied ? "" : "clickable") : "is-empty"
               }`}
-              onClick={() => third?.user && navigate(`/profile/${third.user.username}`)}
+              onClick={() =>
+                third?.user && !isThirdTied && navigate(`/profile/${third.user.username}`)
+              }
             >
               <div className="leaderboard-summary-podium__medal">🥉 3rd</div>
               <div className="leaderboard-summary-podium__name">
-                {third?.user ? (
+                {isThirdTied ? (
+                  <span className="leaderboard-summary-multiple">Multiple Players</span>
+                ) : third?.user ? (
                   <UserLink user={third.user} capitalize />
                 ) : (
                   <span className="leaderboard-summary-unknown">—</span>
