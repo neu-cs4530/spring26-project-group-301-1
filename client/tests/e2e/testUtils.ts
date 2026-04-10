@@ -50,7 +50,7 @@ export async function createAndLoadGame(
   await page1.waitForURL("/");
 
   // User 1 creates a new game
-  await page1.getByRole("button", { name: "Create New Game" }).click();
+  await page1.getByRole("button", { name: "New Game" }).click();
   await page1.waitForURL("/game/new");
   await page1.waitForSelector('select[aria-label="Game selection"]');
   await page1.getByLabel("Game selection").selectOption(gameId);
@@ -73,22 +73,13 @@ export async function createAndLoadGame(
   // The always-on expectation here gives the page a chance to load
   await expect(page2.getByRole("listitem").filter({ hasText: username1 })).toHaveCount(1);
 
+  const createdGameCard = page2.getByRole("listitem").filter({ hasText: username1 }).first();
+
   if (doAssess) {
-    // Check that at least one link exists in the listitem for the created game
-    const linkCount = await page2
-      .getByRole("listitem")
-      .filter({ hasText: username1 })
-      .getByRole("link")
-      .count();
-    expect(linkCount).toBeGreaterThan(0);
+    await expect(createdGameCard).toBeVisible();
   }
 
-  await page2
-    .getByRole("listitem")
-    .filter({ hasText: username1 })
-    .getByRole("link")
-    .first()
-    .click();
+  await createdGameCard.click();
 
   if (doAssess) {
     await expect(page1.getByText("waiting for game to begin")).toBeVisible();

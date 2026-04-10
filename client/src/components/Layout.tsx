@@ -105,7 +105,7 @@ export default function Layout() {
                 items={dockItems}
                 baseItemSize={90}
                 magnification={105}
-                panelHeight={85}
+                panelHeight={110}
                 dockHeight={85}
               />
             </div>
@@ -113,7 +113,7 @@ export default function Layout() {
         </div>
       ) : (
         <div className="dock-wrapper">
-          <Dock items={dockItems} baseItemSize={90} magnification={105} panelHeight={85} />
+          <Dock items={dockItems} baseItemSize={90} magnification={105} panelHeight={110} />
         </div>
       )}
     </div>

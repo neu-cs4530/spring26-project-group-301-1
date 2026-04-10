@@ -9,12 +9,13 @@ import { ShieldCheck, ShieldOff } from "lucide-react";
 interface ChatProps {
   chatId: string;
   lightText?: boolean;
+  darkText?: boolean;
 }
 
 /**
  * A chat panel allows viewing and updating messages in live chat
  */
-export default function ChatPanel({ chatId, lightText = false }: ChatProps) {
+export default function ChatPanel({ chatId, lightText = false, darkText = false }: ChatProps) {
   const { user } = useLoginContext();
   const {
     messages,
@@ -36,7 +37,9 @@ export default function ChatPanel({ chatId, lightText = false }: ChatProps) {
 
   return (
     messages && (
-      <div className={lightText ? "chatContainer chatContainer--lightText" : "chatContainer"}>
+      <div
+        className={`chatContainer ${lightText ? "chatContainer--lightText" : ""} ${darkText ? "chatContainer--darkText" : ""}`}
+      >
         <div className="chatHeader">
           <h3 className="chatHeader__title">
             Game Chat{" "}

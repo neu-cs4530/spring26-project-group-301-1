@@ -25,7 +25,7 @@ export default function NewThread() {
         enableMagnetism={false}
       >
         <form onSubmit={handleSubmit}>
-          <h2 className="newThreadPage__title">Create New Post</h2>
+          <h2 className="newThreadPage__title">New Post</h2>
           <div className="newThreadField">
             <label className="newThreadField__label" htmlFor="new-thread-title">
               Title

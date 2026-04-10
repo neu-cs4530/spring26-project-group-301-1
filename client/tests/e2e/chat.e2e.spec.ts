@@ -60,12 +60,7 @@ test.describe("Chat in the context of a Nim game", () => {
       .getByRole("button", { name: "Games" })
       .click();
     await expect(page2.getByRole("listitem").filter({ hasText: username1 })).toHaveCount(1);
-    await page2
-      .getByRole("listitem")
-      .filter({ hasText: username1 })
-      .getByRole("link")
-      .first()
-      .click();
+    await page2.getByRole("listitem").filter({ hasText: username1 }).first().click();
 
     for (let i = 0; i < ITERATIONS; i += 1) {
       await expect(page2.getByText(new RegExp(`^message ${i} [AB]$`)).first()).toBeVisible();

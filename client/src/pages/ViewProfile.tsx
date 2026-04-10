@@ -13,6 +13,7 @@ import usePlayersStatsInfo from "../hooks/usePlayerStatsInfo";
 import GameSummaryView from "../components/GameSummaryView";
 import UserLink from "../components/UserLink";
 import { getIconByPlatform } from "../components/SocialPlatformLink";
+import { getCustomBackgroundStyle, isLightHexColor } from "../util/customBackground.ts";
 
 type FriendStatus =
   | "loading"
@@ -52,20 +53,12 @@ export default function ViewProfile({ username }: ViewProfileProps) {
   const publicProfileBackgroundStyle = useMemo<CSSProperties>(() => {
     if (componentState.type !== "profile") return {};
 
-    const customBackground = (componentState.user.customBackground || "").trim();
-    if (!customBackground) return {};
+    return getCustomBackgroundStyle(componentState.user.customBackground);
+  }, [componentState]);
 
-    const isHex = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(customBackground);
-    if (isHex) {
-      return { backgroundColor: customBackground };
-    }
-
-    return {
-      backgroundImage: `url("${customBackground}")`,
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      backgroundRepeat: "no-repeat",
-    };
+  const useDarkTextForContrast = useMemo(() => {
+    if (componentState.type !== "profile") return false;
+    return isLightHexColor(componentState.user.customBackground);
   }, [componentState]);
 
   useEffect(() => {
@@ -179,7 +172,7 @@ export default function ViewProfile({ username }: ViewProfileProps) {
           </button>
         );
       case "request-sent":
-        return <span className="smallAndGray">Friend request sent</span>;
+        return <span className="smallAndGray friendRequestStatusText">Friend request sent</span>;
       case "request-received":
         return <span className="smallAndGray">They sent you a friend request</span>;
       case "error":
@@ -282,7 +275,7 @@ export default function ViewProfile({ username }: ViewProfileProps) {
     case "profile":
       return (
         <div
-          className="profileForm profileForm--publicBackground"
+          className={`profileForm profileForm--publicBackground ${useDarkTextForContrast ? "profileForm--darkText" : ""}`}
           style={publicProfileBackgroundStyle}
         >
           {(componentState.user.privateProfile && friendStatus === "friends") ||
@@ -305,7 +298,7 @@ export default function ViewProfile({ username }: ViewProfileProps) {
                           <span className="profileIdentityMetaDot" aria-hidden="true">
                             •
                           </span>
-                          <span className="profileIdtoentityStatusPill">{friendStatusLabel()}</span>
+                          <span className="profileIdentityStatusPill">{friendStatusLabel()}</span>
                         </>
                       )}
                     </div>

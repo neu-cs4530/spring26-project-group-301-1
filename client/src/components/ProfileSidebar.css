@@ -27,11 +27,12 @@
   width: 260px;
   min-width: 260px;
   max-width: 260px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 14px;
-  box-shadow: none;
-  padding: 0.95rem;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.04)), rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 16px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+  padding: 1.05rem;
   font-size: 1.08rem;
   height: fit-content;
   align-self: flex-start;
@@ -55,10 +56,14 @@
 }
 
 .profileSidebar__groupHeading {
-  margin: 0 0 0.45rem;
+  margin: 0 0 0.6rem;
   padding: 0 0.4rem;
   letter-spacing: 0.02em;
   color: #64748b;
+  font-size: 1.05rem;
+  font-weight: 800;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  padding-bottom: 0.38rem;
 }
 .profileSidebar ul {
   list-style: none;
@@ -115,4 +120,49 @@
 }
 .sidebarLink.is-active .sidebarIcon {
   color: rgba(116, 148, 235, 1);
+}
+
+.profile-card--darkText .profileSidebar {
+  background: rgba(255, 255, 255, 0.62);
+  border-color: rgba(17, 24, 39, 0.2);
+  box-shadow: 0 10px 28px rgba(17, 24, 39, 0.12);
+}
+
+.profile-card--darkText .profileSidebar__groupHeading {
+  color: rgba(17, 24, 39, 0.96);
+  font-weight: 800;
+  border-bottom-color: rgba(17, 24, 39, 0.2);
+}
+
+.profile-card--darkText .sidebarLink {
+  color: rgba(17, 24, 39, 0.84);
+}
+
+.profile-card--darkText .sidebarLink:hover {
+  background: rgba(17, 24, 39, 0.08);
+  color: rgba(17, 24, 39, 0.95);
+}
+
+.profile-card--darkText .sidebarLink.is-active {
+  background: rgba(17, 24, 39, 0.12);
+  border-color: rgba(17, 24, 39, 0.25);
+  color: rgba(17, 24, 39, 0.95);
+}
+
+.profile-card--darkText .sidebarIcon,
+.profile-card--darkText .sidebarLink.is-active .sidebarIcon {
+  color: rgba(17, 24, 39, 0.72);
+}
+
+.profile-card--darkText .profileSidebar__saveButton {
+  color: rgba(17, 24, 39, 0.92);
+  border-color: rgba(17, 24, 39, 0.24);
+  background: rgba(17, 24, 39, 0.08);
+}
+
+.profile-card--darkText .profileSidebar__saveButton:hover,
+.profile-card--darkText .profileSidebar__saveButton:focus {
+  background: rgba(17, 24, 39, 0.14);
+  border-color: rgba(17, 24, 39, 0.32);
+  color: rgba(17, 24, 39, 0.98);
 }

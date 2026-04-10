@@ -25,7 +25,7 @@ export default function UpdateProfile() {
   const timeSince = useTimeSince();
   const [showPass, setShowPass] = useState(false);
   const [hideSelectionCheck, setHideSelectionCheck] = useState(false); // add
-  const [customColor, setCustomColor] = useState("#3b82f6");
+  const [customColor, setCustomColor] = useState("#41ba65");
   const [socialProfileErr, setSocialProfileErr] = useState<string | null>(null);
 
   const [requests, setRequests] = useState<FriendRequestInfo[]>([]);
@@ -39,7 +39,6 @@ export default function UpdateProfile() {
     setColor,
     imageUrl,
     setImageUrl,
-    presetColors,
     password,
     setPassword,
     confirm,
@@ -196,7 +195,7 @@ export default function UpdateProfile() {
               <div className="profileIdentityMeta">Joined {timeSince(user.createdAt)}</div>
             </div>
           </div>
-          <div className="profileIdentityRight">
+          <div className="profileIdentityRight profileIdentityRight--stackedTabs">
             <button
               type="button"
               className={
@@ -236,7 +235,12 @@ export default function UpdateProfile() {
                   : "profileFriendRequestsTab"
               }
               onClick={() => setActiveSection("friend-requests")}
-              style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                position: "relative",
+              }}
             >
               Friend Requests
               {requests.length > 0 && (
@@ -254,6 +258,8 @@ export default function UpdateProfile() {
                     fontSize: "0.95rem",
                     fontWeight: 700,
                     boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
+                    position: "absolute",
+                    right: "0.7rem",
                   }}
                 >
                   {requests.length}
@@ -346,7 +352,7 @@ export default function UpdateProfile() {
                     onClick={() => {
                       setBackgroundType("color");
                       setImageUrl("");
-                      setColor(presetColors[0] ?? "#3b82f6");
+                      setColor("");
                       setHideSelectionCheck(true); // hide checks after reset
                     }}
                   >

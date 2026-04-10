@@ -9,6 +9,7 @@ import useHiddenIds from "../hooks/useHiddenIds.ts";
 import { ShieldCheck, ShieldOff } from "lucide-react";
 import { useRef } from "react";
 import { ParticleCard, GlobalSpotlight } from "../components/ui/MagicBento.tsx";
+import { getCustomBackgroundStyle } from "../util/customBackground.ts";
 
 export default function ThreadPage() {
   const formatTimeSince = useTimeSince();
@@ -29,24 +30,12 @@ export default function ThreadPage() {
     entityId: activeThreadId,
   });
 
-  // Only apply background if the current user is the author
-  let forumBackgroundStyle = {};
-  if (!("message" in threadInfo)) {
-    const customBackground = (user.customBackground || "").trim();
-    if (customBackground) {
-      const isHex = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(customBackground);
-      if (isHex) {
-        forumBackgroundStyle = { backgroundColor: customBackground };
-      } else {
-        forumBackgroundStyle = {
-          backgroundImage: `url("${customBackground}")`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        };
-      }
-    }
-  }
+  const forumBackgroundStyle =
+    "message" in threadInfo ? {} : getCustomBackgroundStyle(user.customBackground);
+  const threadCardStyle =
+    Object.keys(forumBackgroundStyle).length > 0
+      ? forumBackgroundStyle
+      : ({ backgroundColor: "#000001" } satisfies React.CSSProperties);
 
   return (
     <div className="content threadPage">
@@ -66,13 +55,7 @@ export default function ThreadPage() {
 
           <ParticleCard
             className="threadCard magic-bento-card magic-bento-card--border-glow"
-            style={{
-              ...forumBackgroundStyle,
-              backgroundColor:
-                forumBackgroundStyle && "backgroundImage" in forumBackgroundStyle
-                  ? undefined
-                  : "#000001",
-            }}
+            style={threadCardStyle}
             glowColor="253, 238, 101"
             particleCount={0}
             enableTilt={false}

@@ -25,3 +25,17 @@ form.messageCreation textarea:focus {
   border-color: rgba(106, 248, 158, 0.5);
   box-shadow: 0 0 0 2px rgba(106, 248, 158, 0.15);
 }
+
+div.chatContainer--darkText form.messageCreation {
+  border-top-color: rgba(17, 24, 39, 0.16);
+}
+
+div.chatContainer--darkText form.messageCreation textarea {
+  background-color: rgba(255, 255, 255, 0.75);
+  border-color: rgba(17, 24, 39, 0.26);
+  color: rgba(17, 24, 39, 0.96);
+}
+
+div.chatContainer--darkText form.messageCreation textarea::placeholder {
+  color: rgba(17, 24, 39, 0.56);
+}

@@ -63,7 +63,10 @@ export default function GameSummaryView({
       </div>
 
       <div className="gameSummary__lastActivity">
-        <UserLink user={createdBy} capitalize /> created {timeSince(createdAt)}
+        <span onClick={(e) => e.stopPropagation()}>
+          <UserLink user={createdBy} capitalize />
+        </span>{" "}
+        created {timeSince(createdAt)}
       </div>
     </div>
   );

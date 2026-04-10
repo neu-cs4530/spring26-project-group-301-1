@@ -60,3 +60,19 @@ div.chatContainer--lightText .messageCreation textarea {
 div.chatContainer--lightText .messageCreation textarea::placeholder {
   color: rgba(248, 250, 252, 0.85);
 }
+
+div.chatContainer--darkText .chatHeader {
+  border-bottom-color: rgba(17, 24, 39, 0.18);
+}
+
+div.chatContainer--darkText .chatHeader__title {
+  color: rgba(17, 24, 39, 0.96);
+}
+
+div.chatContainer--darkText .chatMeta,
+div.chatContainer--darkText .chatSender,
+div.chatContainer--darkText .chatMe .chatSender,
+div.chatContainer--darkText .chatMeta a,
+div.chatContainer--darkText .chatSender a {
+  color: rgba(17, 24, 39, 0.86);
+}

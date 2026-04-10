@@ -19,6 +19,7 @@
 .newGameCard__header {
   text-align: center;
   max-height: 100px;
+  margin-top: 1rem;
 }
 
 .newGameCard__title {
@@ -42,6 +43,7 @@
   padding: 1rem;
   display: grid;
   gap: 0.82rem;
+  margin-bottom: 2rem;
 }
 
 .newGameCard__selectRow {
@@ -113,6 +115,7 @@
   justify-self: center;
   min-width: 240px;
   min-height: 2.6rem;
+  margin-top: 0.75rem;
   border: 1px solid rgba(106, 248, 158, 0.35);
   border-radius: 10px;
   background: rgba(106, 248, 158, 0.1);

@@ -29,8 +29,22 @@
   line-height: 1.35;
 }
 
-.newForumComment__input::placeholder {
-  color: rgba(255, 255, 255, 0.3);
+textarea.newForumComment__input::placeholder {
+  color: rgba(255, 255, 255, 0.68) !important;
+  opacity: 1;
+  font-weight: 600;
+}
+
+textarea.newForumComment__input::-webkit-input-placeholder {
+  color: rgba(255, 255, 255, 0.68) !important;
+  opacity: 1;
+  font-weight: 600;
+}
+
+textarea.newForumComment__input::-moz-placeholder {
+  color: rgba(255, 255, 255, 0.68) !important;
+  opacity: 1;
+  font-weight: 600;
 }
 
 .newForumComment__actions {
@@ -44,9 +58,9 @@
   border-radius: 10px;
   background: rgba(253, 238, 101, 0.1);
   color: rgba(253, 238, 101, 0.9);
-  font-size: 0.95rem;
-  font-weight: 700;
-  padding: 0.42rem 1.05rem;
+  font-size: 1.16rem;
+  font-weight: 800;
+  padding: 0.68rem 1.35rem;
 }
 
 .newForumComment__submit:hover {
