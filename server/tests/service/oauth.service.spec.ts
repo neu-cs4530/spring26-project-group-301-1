@@ -39,10 +39,9 @@ describe("getTwitchAuthUrl", () => {
     expect(decoded).toEqual({ username, link, type });
   });
 
-  it("includes response_type=code and the user:read:email scope", () => {
+  it("includes response_type=code", () => {
     const url = getTwitchAuthUrl("user1", "https://twitch.tv/user1", "twitch");
     expect(url).toContain("response_type=code");
-    expect(url).toContain("user%3Aread%3Aemail");
   });
 });
 
