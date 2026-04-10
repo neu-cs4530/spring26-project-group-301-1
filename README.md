@@ -230,7 +230,13 @@ erDiagram
     }
     FriendRequest ||--|| User: "FriendRequest.from"
     FriendRequest ||--|| User: "FriendRequest.to"
-
+    FriendRecord {
+        string usernameA ""
+        string usernameB ""
+        string friendsSince ""
+    }
+    FriendRecord ||--|| User : "usernameA"
+    FriendRecord ||--|| User : "usernameB"
     UserStats {
         userId userId "foreign key"
         GameKey gameType "optional"
