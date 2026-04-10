@@ -4,6 +4,7 @@ import { MemoryRouter } from "react-router-dom";
 
 import Header from "../../src/components/Header.tsx";
 import { LoginContext } from "../../src/contexts/LoginContext.ts";
+import { DmContext } from "../../src/contexts/DmContext.tsx";
 import type { GameSocket } from "../../src/util/types.ts";
 
 const mockedReset = vi.fn();
@@ -31,7 +32,16 @@ describe("Header component", () => {
             reset: mockedReset,
           }}
         >
-          <Header />
+          <DmContext.Provider
+            value={{
+              unreadCounts: {},
+              totalUnread: 0,
+              setUnreadCount: vi.fn(),
+              setActiveDmId: vi.fn(),
+            }}
+          >
+            <Header />
+          </DmContext.Provider>
         </LoginContext.Provider>
       </MemoryRouter>,
     );

@@ -20,6 +20,9 @@ import fallback from "./fallback.tsx";
 import NewThread from "./pages/NewThread.tsx";
 import OAuthResult from "./pages/OAuthResult.tsx";
 import TimeContextKeeper from "./components/UpdatingTimeContext.tsx";
+import { DmContextProvider } from "./contexts/DmContext.tsx";
+import DirectMessageList from "./pages/DirectMessageList.tsx";
+import DirectMessage from "./pages/DirectMessage.tsx";
 import { Provider } from "./components/ui/provider.tsx";
 import Particles from "./components/ui/Particles.tsx";
 import Leaderboard from "./pages/Leaderboard.tsx";
@@ -99,11 +102,13 @@ export default function App() {
               <Route
                 element={
                   <LoggedInRoute auth={auth} socket={socket}>
-                    <TimeContextKeeper updateFrequency={20 * 1000}>
-                      <ErrorBoundary fallbackRender={fallback}>
-                        <Layout />
-                      </ErrorBoundary>
-                    </TimeContextKeeper>
+                    <DmContextProvider>
+                      <TimeContextKeeper updateFrequency={20 * 1000}>
+                        <ErrorBoundary fallbackRender={fallback}>
+                          <Layout />
+                        </ErrorBoundary>
+                      </TimeContextKeeper>
+                    </DmContextProvider>
                   </LoggedInRoute>
                 }
               >
@@ -116,6 +121,9 @@ export default function App() {
                 <Route path="/game/new" element={<NewGame />} />
                 <Route path="/game/:gameId" element={<Game />} />
                 <Route path="/profile/:username" element={<Profile />} />
+                <Route path="/messages" element={<DirectMessageList />}>
+                  <Route path=":dmId" element={<DirectMessage />} />
+                </Route>
                 <Route path="/*" element={<NoSuchRoute />} />
               </Route>
             </Routes>

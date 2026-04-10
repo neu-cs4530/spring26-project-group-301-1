@@ -7,7 +7,12 @@ import {
   type ChatMessageDeletedPayload,
   type ChatDeleteMessagePayload,
 } from "./chat.types.ts";
-import { type NewMessagePayload } from "./message.types.ts";
+import {
+  type DirectMessageNewPayload,
+  type DirectMessageDeleteMessagePayload,
+  type DirectMessageDeletedPayload,
+} from "./dm.types.ts";
+import { type NewMessagePayload, type NewDirectMessagePayload } from "./message.types.ts";
 import { type WithAuth } from "./auth.types.ts";
 import { type GameMakeMovePayload, type GamePlayInfo, type TaggedGameView } from "./game.types.ts";
 import { type SafeUserInfo } from "./user.types.ts";
@@ -25,6 +30,9 @@ export interface ClientToServerEvents {
   gameWatch: (payload: WithAuth<string>) => void;
   gameNotWatched: (payload: WithAuth<string>) => void;
   chatDeleteMessage: (payload: WithAuth<ChatDeleteMessagePayload>) => void;
+  directMessageRegister: (payload: WithAuth<null>) => void; // serves as an inbox room
+  directMessageNew: (payload: WithAuth<NewDirectMessagePayload>) => void;
+  directMessageDeleteMessage: (payload: WithAuth<DirectMessageDeleteMessagePayload>) => void;
 }
 
 /**
@@ -43,6 +51,10 @@ export interface ServerToClientEvents {
   chatSendError: (payload: ChatSendErrorPayload) => void;
   error: (payload: ChatSendErrorPayload) => void;
   chatMessageDeleted: (payload: ChatMessageDeletedPayload) => void;
+  directMessageNew: (payload: DirectMessageNewPayload) => void;
+  directMessageDeleted: (payload: DirectMessageDeletedPayload) => void;
+  directMessageNotify: (payload: { dmId: string; unreadCount: number }) => void;
+  friendRemoved: (payload: { otherUsername: string }) => void;
 }
 
 export type ChatSendErrorPayload = {

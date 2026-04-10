@@ -2,6 +2,7 @@ import { createRepo } from "./keyv.ts";
 import type {
   AuthRecord,
   ChatRecord,
+  DirectMessageRecord,
   CommentRecord,
   GameRecord,
   MessageRecord,
@@ -14,6 +15,7 @@ import type {
 
 export const AuthRepo = createRepo<AuthRecord>("auth");
 export const ChatRepo = createRepo<ChatRecord>("chat");
+export const DirectMessageRepo = createRepo<DirectMessageRecord>("directMessage");
 export const CommentRepo = createRepo<CommentRecord>("comment");
 export const GameRepo = createRepo<GameRecord>("game");
 export const MessageRepo = createRepo<MessageRecord>("message");
