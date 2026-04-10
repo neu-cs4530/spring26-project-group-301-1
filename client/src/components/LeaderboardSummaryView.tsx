@@ -1,5 +1,5 @@
 import "./LeaderboardSummaryView.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import useTimeSince from "../hooks/useTimeSince.ts";
 import UserLink from "./UserLink.tsx";
@@ -13,6 +13,9 @@ type ViewMode = "all" | GameKey;
 
 interface LeaderboardSummaryViewProps {
   entryLimit?: number;
+  rowLimit?: number;
+  onEntriesLoaded?: (entries: LeaderboardEntry[]) => void;
+  topLeft?: ReactNode;
 }
 
 function rankClassName(rank: number) {
@@ -22,7 +25,12 @@ function rankClassName(rank: number) {
   return "leaderboard-summary-rank";
 }
 
-export default function LeaderboardSummaryView({ entryLimit = 10 }: LeaderboardSummaryViewProps) {
+export default function LeaderboardSummaryView({
+  entryLimit,
+  rowLimit,
+  onEntriesLoaded,
+  topLeft,
+}: LeaderboardSummaryViewProps) {
   const navigate = useNavigate();
   const timeSince = useTimeSince();
 
@@ -46,12 +54,21 @@ export default function LeaderboardSummaryView({ entryLimit = 10 }: LeaderboardS
         if (cancelled) return;
         if ("error" in res) {
           setError(res.error);
+          setEntries([]);
+          setGeneratedAt(null);
+          onEntriesLoaded?.([]);
         } else {
           setEntries(res.entries);
           setGeneratedAt(res.generatedAt);
+          onEntriesLoaded?.(res.entries);
         }
       } catch {
-        if (!cancelled) setError("Failed to load leaderboard.");
+        if (!cancelled) {
+          setError("Failed to load leaderboard.");
+          setEntries([]);
+          setGeneratedAt(null);
+          onEntriesLoaded?.([]);
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -61,39 +78,73 @@ export default function LeaderboardSummaryView({ entryLimit = 10 }: LeaderboardS
     return () => {
       cancelled = true;
     };
-  }, [viewMode, entryLimit]);
+  }, [viewMode, entryLimit, onEntriesLoaded]);
 
+  const displayedEntries = rowLimit === undefined ? entries : entries.slice(0, rowLimit);
   const first = entries.find((e) => e.rank === 1);
   const second = entries.find((e) => e.rank === 2);
   const third = entries.find((e) => e.rank === 3);
+  const rankCounts = entries.reduce<Record<number, number>>((acc, entry) => {
+    acc[entry.rank] = (acc[entry.rank] ?? 0) + 1;
+    return acc;
+  }, {});
+  const isFirstTied = (rankCounts[1] ?? 0) > 1;
+  const isSecondTied = (rankCounts[2] ?? 0) > 1;
+  const isThirdTied = (rankCounts[3] ?? 0) > 1;
 
   return (
-    <div className="leaderboard-summary">
-      <div className="leaderboard-summary-toggle">
-        <label htmlFor="leaderboard-game-filter" className="leaderboard-summary-toggle-label">
-          Game:
-        </label>
-        <select
-          id="leaderboard-game-filter"
-          value={viewMode}
-          onChange={(e) => setViewMode(e.target.value as ViewMode)}
-          aria-label="Leaderboard game selection"
-        >
-          <option value="all">All Games</option>
-          {GAME_TYPES.map((g) => (
-            <option key={g} value={g}>
-              {gameNames[g]}
-            </option>
-          ))}
-        </select>
-      </div>
+    <div className={`leaderboard-summary ${topLeft ? "leaderboard-summary--with-toprow" : ""}`}>
+      {topLeft ? (
+        <div className="leaderboard-summary-toprow">
+          <div className="leaderboard-summary-toprow__left">{topLeft}</div>
+          <div className="leaderboard-summary-toggle">
+            <label htmlFor="leaderboard-game-filter" className="leaderboard-summary-toggle-label">
+              Game:
+            </label>
+            <select
+              id="leaderboard-game-filter"
+              value={viewMode}
+              onChange={(e) => setViewMode(e.target.value as ViewMode)}
+              aria-label="Leaderboard game selection"
+            >
+              <option value="all">All Games</option>
+              {GAME_TYPES.map((g) => (
+                <option key={g} value={g}>
+                  {gameNames[g]}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      ) : (
+        <div className="leaderboard-summary-toggle">
+          <label htmlFor="leaderboard-game-filter" className="leaderboard-summary-toggle-label">
+            Game:
+          </label>
+          <select
+            id="leaderboard-game-filter"
+            value={viewMode}
+            onChange={(e) => setViewMode(e.target.value as ViewMode)}
+            aria-label="Leaderboard game selection"
+          >
+            <option value="all">All Games</option>
+            {GAME_TYPES.map((g) => (
+              <option key={g} value={g}>
+                {gameNames[g]}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       {loading ? (
         <p className="leaderboard-summary-state">Loading…</p>
       ) : error ? (
         <p className="leaderboard-summary-state leaderboard-summary-state--error">{error}</p>
       ) : entries.length === 0 ? (
-        <p className="leaderboard-summary-state">No results yet.</p>
+        <p className="leaderboard-summary-state leaderboard-summary-state--empty">
+          No results yet.
+        </p>
       ) : (
         <>
           <table className="leaderboard-summary-table">
@@ -107,7 +158,7 @@ export default function LeaderboardSummaryView({ entryLimit = 10 }: LeaderboardS
               </tr>
             </thead>
             <tbody>
-              {entries.slice(0, 3).map((entry) => (
+              {displayedEntries.map((entry) => (
                 <tr
                   key={entry.user?.username ?? entry.rank}
                   aria-label={"leaderboard-" + entry.user.display}
@@ -133,13 +184,17 @@ export default function LeaderboardSummaryView({ entryLimit = 10 }: LeaderboardS
           <div className="leaderboard-summary-podium" aria-label="Top three players">
             <div
               className={`leaderboard-summary-podium__slot leaderboard-summary-podium__slot--second ${
-                second?.user ? "clickable" : "is-empty"
+                second?.user ? (isSecondTied ? "" : "clickable") : "is-empty"
               }`}
-              onClick={() => second?.user && navigate(`/profile/${second.user.username}`)}
+              onClick={() =>
+                second?.user && !isSecondTied && navigate(`/profile/${second.user.username}`)
+              }
             >
               <div className="leaderboard-summary-podium__medal">🥈 2nd</div>
               <div className="leaderboard-summary-podium__name">
-                {second?.user ? (
+                {isSecondTied ? (
+                  <span className="leaderboard-summary-multiple">Multiple Players</span>
+                ) : second?.user ? (
                   <UserLink user={second.user} capitalize />
                 ) : (
                   <span className="leaderboard-summary-unknown">—</span>
@@ -149,13 +204,17 @@ export default function LeaderboardSummaryView({ entryLimit = 10 }: LeaderboardS
 
             <div
               className={`leaderboard-summary-podium__slot leaderboard-summary-podium__slot--first ${
-                first?.user ? "clickable" : "is-empty"
+                first?.user ? (isFirstTied ? "" : "clickable") : "is-empty"
               }`}
-              onClick={() => first?.user && navigate(`/profile/${first.user.username}`)}
+              onClick={() =>
+                first?.user && !isFirstTied && navigate(`/profile/${first.user.username}`)
+              }
             >
               <div className="leaderboard-summary-podium__medal">🥇 1st</div>
               <div className="leaderboard-summary-podium__name">
-                {first?.user ? (
+                {isFirstTied ? (
+                  <span className="leaderboard-summary-multiple">Multiple Players</span>
+                ) : first?.user ? (
                   <UserLink user={first.user} capitalize />
                 ) : (
                   <span className="leaderboard-summary-unknown">—</span>
@@ -165,13 +224,17 @@ export default function LeaderboardSummaryView({ entryLimit = 10 }: LeaderboardS
 
             <div
               className={`leaderboard-summary-podium__slot leaderboard-summary-podium__slot--third ${
-                third?.user ? "clickable" : "is-empty"
+                third?.user ? (isThirdTied ? "" : "clickable") : "is-empty"
               }`}
-              onClick={() => third?.user && navigate(`/profile/${third.user.username}`)}
+              onClick={() =>
+                third?.user && !isThirdTied && navigate(`/profile/${third.user.username}`)
+              }
             >
               <div className="leaderboard-summary-podium__medal">🥉 3rd</div>
               <div className="leaderboard-summary-podium__name">
-                {third?.user ? (
+                {isThirdTied ? (
+                  <span className="leaderboard-summary-multiple">Multiple Players</span>
+                ) : third?.user ? (
                   <UserLink user={third.user} capitalize />
                 ) : (
                   <span className="leaderboard-summary-unknown">—</span>

@@ -117,7 +117,7 @@ export default function Home() {
             </Box>
 
             <Box my={4} className="home-card__body home-leaderboard">
-              <LeaderboardSummaryView />
+              <LeaderboardSummaryView entryLimit={3} rowLimit={3} />
             </Box>
           </ParticleCard>
 

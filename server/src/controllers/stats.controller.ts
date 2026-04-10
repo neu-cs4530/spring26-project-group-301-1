@@ -10,7 +10,7 @@ export const getLeaderboardRoute: RestAPI = async (req, res) => {
   const query = z
     .object({
       gameType: zGameKey.optional(),
-      limit: z.coerce.number().int().min(1).max(100).default(10),
+      limit: z.coerce.number().int().min(1).max(100).optional(),
     })
     .safeParse(req.query);
 

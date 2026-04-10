@@ -137,6 +137,13 @@
   color: white;
 }
 
+.home-list-page__title {
+  color: #fff;
+  font-size: 2.5rem;
+  font-weight: 900;
+  line-height: 1.05;
+}
+
 /* Card header and divider never shrink */
 .home-card__header {
   flex-shrink: 0;
@@ -214,6 +221,34 @@
   flex: 1;
   min-height: 0;
   overflow: hidden;
+}
+
+/* Home-only leaderboard podium sizing */
+.home-leaderboard .leaderboard-summary {
+  flex: 1;
+  min-height: 0;
+  gap: 0rem;
+}
+
+.home-leaderboard .leaderboard-summary-table {
+  margin-top: 0;
+}
+
+.home-leaderboard .leaderboard-summary-podium {
+  margin-top: auto;
+  min-height: clamp(9.4rem, 17vh, 12.2rem) !important;
+}
+
+.home-leaderboard .leaderboard-summary-podium__slot--first {
+  min-height: clamp(7.8rem, 13.5vh, 10.7rem);
+}
+
+.home-leaderboard .leaderboard-summary-podium__slot--second {
+  min-height: clamp(5.9rem, 10.2vh, 7.9rem);
+}
+
+.home-leaderboard .leaderboard-summary-podium__slot--third {
+  min-height: clamp(3.9rem, 7vh, 5.4rem);
 }
 
 @media (max-width: 768px) {

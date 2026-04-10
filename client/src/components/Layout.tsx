@@ -2,7 +2,7 @@ import "./Layout.css";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Header from "./Header.tsx";
-import { House, Gamepad2, Mail, Menu, MessageCircle, User, X } from "lucide-react";
+import { House, Gamepad2, Mail, Trophy, Menu, MessageCircle, User, X } from "lucide-react";
 import useAuth from "../hooks/useAuth.ts";
 import Dock from "./ui/Dock.tsx";
 
@@ -67,6 +67,16 @@ export default function Layout() {
       ),
       label: "",
       onClick: () => navigateFromDock("/messages"),
+    },
+    {
+      icon: (
+        <div className="dock-item-content">
+          <Trophy size={40} color="#fff" />
+          <span className="dock-item-label">Podium</span>
+        </div>
+      ),
+      label: "",
+      onClick: () => navigateFromDock("/leaderboard"),
     },
     {
       icon: (

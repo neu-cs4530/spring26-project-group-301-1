@@ -211,13 +211,13 @@ export default function TicTacToeGame({
           className="tttDifficultyButton__action--easy"
           onClick={() => makeMove({ type: "move", difficulty: "random" })}
         >
-          Easy
+          Easy (Random)
         </button>
         <button
           className="tttDifficultyButton__action--hard"
           onClick={() => makeMove({ type: "move", difficulty: "minimax" })}
         >
-          Hard
+          Hard (Optimal)
         </button>
       </div>
     </div>
