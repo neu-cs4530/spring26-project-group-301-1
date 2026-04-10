@@ -135,7 +135,9 @@ export default function LeaderboardSummaryView({
       ) : error ? (
         <p className="leaderboard-summary-state leaderboard-summary-state--error">{error}</p>
       ) : entries.length === 0 ? (
-        <p className="leaderboard-summary-state">No results yet.</p>
+        <p className="leaderboard-summary-state leaderboard-summary-state--empty">
+          No results yet.
+        </p>
       ) : (
         <>
           <table className="leaderboard-summary-table">

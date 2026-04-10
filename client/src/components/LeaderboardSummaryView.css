@@ -163,6 +163,12 @@
   color: var(--gray-foreground);
 }
 
+.leaderboard-summary-state--empty {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1.12rem;
+  font-weight: 800;
+}
+
 .leaderboard-summary-state--error {
   color: #e57373;
 }
