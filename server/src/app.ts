@@ -5,6 +5,7 @@ import { Server } from "socket.io";
 import { z } from "zod";
 import * as http from "node:http";
 import * as chat from "./controllers/chat.controller.ts";
+import * as dm from "./controllers/dm.controller.ts";
 import * as game from "./controllers/game.controller.ts";
 import * as user from "./controllers/user.controller.ts";
 import * as thread from "./controllers/thread.controller.ts";
@@ -65,7 +66,15 @@ app.use(
         .post("/request", friends.postRequest)
         .post("/request/:requestId/resolve", friends.postResolve)
         .post("/:username/status", friends.getStatus)
-        .post("/remove", friends.postRemove),
+        .post("/remove", friends.postRemove(io)),
+    )
+    .use(
+      "/dms",
+      express
+        .Router()
+        .get("/:username", dm.getDirectMessagesByUsername)
+        .post("/:username", dm.postDirectMessage)
+        .post("/:dmId/read", dm.postDmRead),
     )
 
     .use(
@@ -88,6 +97,10 @@ io.on("connection", (socket) => {
   socket.on("chatLeave", chat.socketLeave(socket, io));
   socket.on("chatSendMessage", chat.socketSendMessage(socket, io));
   socket.on("chatDeleteMessage", chat.socketDeleteMessage(socket, io));
+
+  socket.on("directMessageRegister", dm.socketDirectMessageInbox(socket, io));
+  socket.on("directMessageNew", dm.socketDirectMessageNew(socket, io));
+  socket.on("directMessageDeleteMessage", dm.socketDirectMessageDeleteMessage(socket, io));
 
   socket.on("gameJoinAsPlayer", game.socketJoinAsPlayer(socket, io));
   socket.on("gameMakeMove", game.socketMakeMove(socket, io));

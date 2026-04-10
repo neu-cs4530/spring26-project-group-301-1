@@ -6,6 +6,8 @@ import useTimeSince from "../hooks/useTimeSince";
 import useLoginContext from "../hooks/useLoginContext";
 import { getUserById } from "../services/userService";
 import { getFriendStatus, sendFriendRequest, removeFriend } from "../services/friendsService";
+import { useNavigate } from "react-router-dom";
+import { openDirectMessage } from "../services/dmService";
 import useTopFriendsList from "../hooks/useTopFriendsList";
 import usePlayersStatsInfo from "../hooks/usePlayerStatsInfo";
 import GameSummaryView from "../components/GameSummaryView";
@@ -28,6 +30,7 @@ interface ViewProfileProps {
 export default function ViewProfile({ username }: ViewProfileProps) {
   const { user: self, pass } = useLoginContext();
   const timeSince = useTimeSince();
+  const navigate = useNavigate();
 
   const [componentState, setComponentState] = useState<
     { type: "waiting" } | { type: "error"; msg: string } | { type: "profile"; user: SafeUserInfo }
@@ -97,6 +100,12 @@ export default function ViewProfile({ username }: ViewProfileProps) {
     };
   }, [self.username, pass, username]);
 
+  async function handleSendMessage() {
+    const result = await openDirectMessage({ username: self.username, password: pass }, username);
+    if ("error" in result) return;
+    void navigate(`/messages/${result.dmId}`);
+  }
+
   async function handleSendRequest() {
     setFriendActionErr(null);
     const res = await sendFriendRequest({ username: self.username, password: pass }, username);
@@ -144,9 +153,17 @@ export default function ViewProfile({ username }: ViewProfileProps) {
         return <span className="smallAndGray">Loading...</span>;
       case "friends":
         return (
-          <button className="secondary narrow profileDangerButton" onClick={handleRemoveFriend}>
-            Remove Friend
-          </button>
+          <>
+            <button
+              className="primary narrow profilePrimaryButton"
+              onClick={() => void handleSendMessage()}
+            >
+              Send Message
+            </button>
+            <button className="secondary narrow profileDangerButton" onClick={handleRemoveFriend}>
+              Remove Friend
+            </button>
+          </>
         );
       case "not-friends":
         return (

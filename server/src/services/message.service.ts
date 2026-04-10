@@ -57,8 +57,9 @@ export async function createMessage(
   user: UserWithId,
   text: string,
   createdAt: Date,
+  skipCooldown = false,
 ): Promise<MessageInfo> {
-  enforceMessageCooldown(user.userId, createdAt);
+  if (!skipCooldown) enforceMessageCooldown(user.userId, createdAt);
 
   const messageId = await MessageRepo.add({
     text,

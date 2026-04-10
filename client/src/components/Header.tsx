@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import useLoginContext from "../hooks/useLoginContext.ts";
+import useDmContext from "../hooks/useDmContext.ts";
 import "./Header.css";
 import { Link } from "react-router-dom";
-import { LogOut, UserRound } from "lucide-react";
+import { LogOut, Mail, UserRound } from "lucide-react";
 import { getPendingRequests } from "../services/friendsService.ts";
 
 /**
@@ -10,6 +11,7 @@ import { getPendingRequests } from "../services/friendsService.ts";
  */
 export default function Header() {
   const { user, pass, reset } = useLoginContext();
+  const { totalUnread } = useDmContext();
   const [pendingRequestCount, setPendingRequestCount] = useState(0);
 
   useEffect(() => {
@@ -50,10 +52,16 @@ export default function Header() {
   return (
     <header id="header" className="header">
       <Link to="/" className="title">
+        <img src="/PlaySpace.png" alt="PlaySpace logo" className="header__logo" />
         PlaySpace!
       </Link>
 
       <nav className="header__right" aria-label="Header actions">
+        <Link to="/messages" className="header__link header__link--messages">
+          <Mail className="header__linkIcon" aria-hidden="true" />
+          {totalUnread > 0 && <span className="header__badge">{totalUnread}</span>}
+        </Link>
+
         <Link to={`/profile/${user.username}`} className="header__link header__link--profile">
           <UserRound className="header__linkIcon" aria-hidden="true" />
           View Profile
