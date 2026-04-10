@@ -1,7 +1,8 @@
 import { randomUUID } from "node:crypto";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import supertest, { type Response } from "supertest";
 import { app } from "../src/app.ts";
+import * as moderateService from "../src/services/moderate.service.ts";
 
 let response: Response;
 const auth1 = { username: "user1", password: "pwd1111" };
@@ -383,6 +384,19 @@ describe("POST /api/user/signup", () => {
     response = await supertest(app).post("/api/user/signup").send({ username, password });
     expect(response.status).toBe(200);
     expect(response.body).toStrictEqual({ error: "User already exists" });
+  });
+
+  it("should reject a username flagged as unsafe by the content moderator", async () => {
+    vi.spyOn(moderateService, "moderateMessage").mockResolvedValueOnce({
+      label: "UNSAFE",
+      categories: ["hate_speech"],
+    });
+    const username = randomUUID().toString();
+    response = await supertest(app).post("/api/user/signup").send({ username, password });
+    expect(response.status).toBe(200);
+    expect(response.body).toStrictEqual({
+      error: "Username violates content policy. Reason: hate_speech",
+    });
   });
 
   it("should not allow a username that conflicts with created paths", async () => {
