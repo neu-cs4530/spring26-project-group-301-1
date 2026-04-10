@@ -1,5 +1,5 @@
 import "./LeaderboardSummaryView.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import useTimeSince from "../hooks/useTimeSince.ts";
 import UserLink from "./UserLink.tsx";
@@ -13,6 +13,9 @@ type ViewMode = "all" | GameKey;
 
 interface LeaderboardSummaryViewProps {
   entryLimit?: number;
+  rowLimit?: number;
+  onEntriesLoaded?: (entries: LeaderboardEntry[]) => void;
+  topLeft?: ReactNode;
 }
 
 function rankClassName(rank: number) {
@@ -22,7 +25,12 @@ function rankClassName(rank: number) {
   return "leaderboard-summary-rank";
 }
 
-export default function LeaderboardSummaryView({ entryLimit = 10 }: LeaderboardSummaryViewProps) {
+export default function LeaderboardSummaryView({
+  entryLimit,
+  rowLimit,
+  onEntriesLoaded,
+  topLeft,
+}: LeaderboardSummaryViewProps) {
   const navigate = useNavigate();
   const timeSince = useTimeSince();
 
@@ -46,12 +54,21 @@ export default function LeaderboardSummaryView({ entryLimit = 10 }: LeaderboardS
         if (cancelled) return;
         if ("error" in res) {
           setError(res.error);
+          setEntries([]);
+          setGeneratedAt(null);
+          onEntriesLoaded?.([]);
         } else {
           setEntries(res.entries);
           setGeneratedAt(res.generatedAt);
+          onEntriesLoaded?.(res.entries);
         }
       } catch {
-        if (!cancelled) setError("Failed to load leaderboard.");
+        if (!cancelled) {
+          setError("Failed to load leaderboard.");
+          setEntries([]);
+          setGeneratedAt(null);
+          onEntriesLoaded?.([]);
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -61,32 +78,57 @@ export default function LeaderboardSummaryView({ entryLimit = 10 }: LeaderboardS
     return () => {
       cancelled = true;
     };
-  }, [viewMode, entryLimit]);
+  }, [viewMode, entryLimit, onEntriesLoaded]);
 
+  const displayedEntries = rowLimit === undefined ? entries : entries.slice(0, rowLimit);
   const first = entries.find((e) => e.rank === 1);
   const second = entries.find((e) => e.rank === 2);
   const third = entries.find((e) => e.rank === 3);
 
   return (
-    <div className="leaderboard-summary">
-      <div className="leaderboard-summary-toggle">
-        <label htmlFor="leaderboard-game-filter" className="leaderboard-summary-toggle-label">
-          Game:
-        </label>
-        <select
-          id="leaderboard-game-filter"
-          value={viewMode}
-          onChange={(e) => setViewMode(e.target.value as ViewMode)}
-          aria-label="Leaderboard game selection"
-        >
-          <option value="all">All Games</option>
-          {GAME_TYPES.map((g) => (
-            <option key={g} value={g}>
-              {gameNames[g]}
-            </option>
-          ))}
-        </select>
-      </div>
+    <div className={`leaderboard-summary ${topLeft ? "leaderboard-summary--with-toprow" : ""}`}>
+      {topLeft ? (
+        <div className="leaderboard-summary-toprow">
+          <div className="leaderboard-summary-toprow__left">{topLeft}</div>
+          <div className="leaderboard-summary-toggle">
+            <label htmlFor="leaderboard-game-filter" className="leaderboard-summary-toggle-label">
+              Game:
+            </label>
+            <select
+              id="leaderboard-game-filter"
+              value={viewMode}
+              onChange={(e) => setViewMode(e.target.value as ViewMode)}
+              aria-label="Leaderboard game selection"
+            >
+              <option value="all">All Games</option>
+              {GAME_TYPES.map((g) => (
+                <option key={g} value={g}>
+                  {gameNames[g]}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      ) : (
+        <div className="leaderboard-summary-toggle">
+          <label htmlFor="leaderboard-game-filter" className="leaderboard-summary-toggle-label">
+            Game:
+          </label>
+          <select
+            id="leaderboard-game-filter"
+            value={viewMode}
+            onChange={(e) => setViewMode(e.target.value as ViewMode)}
+            aria-label="Leaderboard game selection"
+          >
+            <option value="all">All Games</option>
+            {GAME_TYPES.map((g) => (
+              <option key={g} value={g}>
+                {gameNames[g]}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       {loading ? (
         <p className="leaderboard-summary-state">Loading…</p>
@@ -107,7 +149,7 @@ export default function LeaderboardSummaryView({ entryLimit = 10 }: LeaderboardS
               </tr>
             </thead>
             <tbody>
-              {entries.slice(0, 3).map((entry) => (
+              {displayedEntries.map((entry) => (
                 <tr
                   key={entry.user?.username ?? entry.rank}
                   aria-label={"leaderboard-" + entry.user.display}

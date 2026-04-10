@@ -61,13 +61,13 @@ export async function getUserStats(username: string): Promise<UserStatsRecord[]>
 /**
  * Returns a ranked leaderboard, sorted by wins descending.
  * @param opts.gameType filter to a specific game type; omit for all game types aggregated (will be labeled undefined in the result)
- * @param opts.entryLimit max number of entries to return (default 10)
+ * @param opts.entryLimit max number of entries to return; omit to return all entries
  *
  */
 export async function getLeaderboard(
   opts: LeaderboardOptions = {},
 ): Promise<{ gameType: GameKey | undefined; entries: LeaderboardEntry[]; generatedAt: Date }> {
-  const { gameType, entryLimit = 10 } = opts;
+  const { gameType, entryLimit } = opts;
   const keys = await UserStatsRepo.getAllKeys();
 
   const gameStatsRecords: UserStatsRecord[] = [];
@@ -112,7 +112,7 @@ export async function getLeaderboard(
   }
 
   ranked.sort((a, b) => b.wins - a.wins);
-  const top = ranked.slice(0, entryLimit);
+  const top = entryLimit === undefined ? ranked : ranked.slice(0, entryLimit);
 
   const entries: LeaderboardEntry[] = await Promise.all(
     top.map(async (r, i) => ({
