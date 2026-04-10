@@ -118,7 +118,15 @@ describe(`Nim's update() logic`, () => {
       nextPlayer: 0,
       forfeited: true,
     });
+    expect(
+      nimLogic.update({ remaining: 15, nextPlayer: 0, forfeited: false }, { type: "forfeit" }, 0),
+    ).toStrictEqual({
+      remaining: 15,
+      nextPlayer: 1,
+      forfeited: true,
+    });
   });
+
   it("Should not allow a forfeit after another forfeit", () => {
     expect(
       nimLogic.update({ remaining: 15, nextPlayer: 1, forfeited: true }, { type: "forfeit" }, 1),

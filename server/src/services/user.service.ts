@@ -108,10 +108,9 @@ function validateProfileURL(link: string, type: SocialProfilePlatform): boolean 
     return is.instagram.url(link);
   } else if (type === "twitch") {
     return is.twitch.url(link);
-  } else if (type === "youtube") {
+  } else {
     return is.youtube.url(link);
   }
-  return false;
 }
 
 /**

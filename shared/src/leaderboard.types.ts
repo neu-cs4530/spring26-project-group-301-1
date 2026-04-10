@@ -4,7 +4,7 @@ import { type GameKey } from "./game.types.ts";
 /**
  * Options for generating a leaderboard.
  * gameType: if specified, only include stats for this game type; otherwise aggregate across all game types.
- * entryLimit: max number of entries to return (default 10)
+ * entryLimit: max number of entries to return; omit to return all
  */
 export interface LeaderboardOptions {
   gameType?: GameKey;

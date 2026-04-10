@@ -16,8 +16,9 @@ const STATS_API_URL = `/api/stats`;
 export const getLeaderboard = async (
   opts: LeaderboardOptions = {},
 ): APIResponse<LeaderboardResponse> => {
-  const { gameType, entryLimit = 10 } = opts;
-  const params = new URLSearchParams({ limit: String(entryLimit) });
+  const { gameType, entryLimit } = opts;
+  const params = new URLSearchParams();
+  if (entryLimit !== undefined) params.set("limit", String(entryLimit));
   if (gameType) params.set("gameType", gameType);
   try {
     const res = await api.get<LeaderboardResponse | ErrorMsg>(

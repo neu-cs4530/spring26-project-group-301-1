@@ -17,7 +17,7 @@ export default function GameList() {
         mb={2}
         className="home-card__header"
       >
-        <Heading size="2xl" fontWeight="bold" className="home-card__title">
+        <Heading size="2xl" fontWeight="bold" className="home-card__title home-list-page__title">
           All Games
         </Heading>
         <Box display="flex" alignItems="center" gap={2} className="home-card__actions">

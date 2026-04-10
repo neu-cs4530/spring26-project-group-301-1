@@ -130,6 +130,45 @@ describe("getLeaderboard", () => {
     expect(result.entries).toHaveLength(2);
   });
 
+  it("assigns the same rank to players tied on wins", async () => {
+    await recordGameResult("user1", "nim", "win");
+    await recordGameResult("user2", "nim", "win");
+
+    const result = await getLeaderboard({ gameType: "nim" });
+    expect(result.entries).toHaveLength(2);
+    expect(result.entries[0].rank).toBe(1);
+    expect(result.entries[1].rank).toBe(1);
+  });
+
+  it("uses dense ranking for ties (e.g., 1,2,2,3)", async () => {
+    await createUser("user4", "pwd4444", new Date());
+
+    await recordGameResult("user1", "nim", "win");
+    await recordGameResult("user1", "nim", "win");
+    await recordGameResult("user1", "nim", "win");
+
+    await recordGameResult("user2", "nim", "win");
+    await recordGameResult("user2", "nim", "win");
+
+    await recordGameResult("user3", "nim", "win");
+    await recordGameResult("user3", "nim", "win");
+
+    await recordGameResult("user4", "nim", "win");
+
+    const result = await getLeaderboard({ gameType: "nim" });
+    expect(result.entries).toHaveLength(4);
+
+    const user1Entry = result.entries.find((entry) => entry.user.username === "user1");
+    const user2Entry = result.entries.find((entry) => entry.user.username === "user2");
+    const user3Entry = result.entries.find((entry) => entry.user.username === "user3");
+    const user4Entry = result.entries.find((entry) => entry.user.username === "user4");
+
+    expect(user1Entry?.rank).toBe(1);
+    expect(user2Entry?.rank).toBe(2);
+    expect(user3Entry?.rank).toBe(2);
+    expect(user4Entry?.rank).toBe(3);
+  });
+
   it("calculates winRate correctly", async () => {
     await recordGameResult("user1", "nim", "win");
     await recordGameResult("user1", "nim", "loss");

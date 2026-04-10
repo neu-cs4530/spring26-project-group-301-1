@@ -41,7 +41,7 @@ describe("GET /api/stats/leaderboard", () => {
     expect(status).toBe(200);
     expect(statsService.getLeaderboard).toHaveBeenCalledWith({
       gameType: undefined,
-      entryLimit: 10,
+      entryLimit: undefined,
     });
   });
 
@@ -52,7 +52,10 @@ describe("GET /api/stats/leaderboard", () => {
     const { status } = await request(app).get("/api/stats/leaderboard?gameType=nim");
 
     expect(status).toBe(200);
-    expect(statsService.getLeaderboard).toHaveBeenCalledWith({ gameType: "nim", entryLimit: 10 });
+    expect(statsService.getLeaderboard).toHaveBeenCalledWith({
+      gameType: "nim",
+      entryLimit: undefined,
+    });
   });
 
   it("passes limit query param to the service", async () => {
