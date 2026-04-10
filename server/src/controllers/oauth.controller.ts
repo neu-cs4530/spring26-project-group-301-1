@@ -23,14 +23,16 @@ const CLIENT_URL = process.env.RENDER_EXTERNAL_URL ?? "http://localhost:4530";
 function validateAuthByPlatform(
   platform: SocialProfilePlatformWithAuth,
   link: string,
-  login: string,
+  login: string
 ): boolean {
   if (platform === "twitch") {
     const linkedUsername = link.match(/twitch\.tv\/([^/?#]+)/i)?.[1]?.toLowerCase();
     return linkedUsername !== undefined && login === linkedUsername;
   } else {
-    const username = link.match(/(?:youtube\.com\/)(@[\w.]+|(?:c|user|channel)\/[\w.-]+)/);
-    return username?.[1] !== null && username?.[1].toLowerCase() === login;
+    const username = link
+      .match(/(?:youtube\.com\/)(@[\w.]+|(?:c|user|channel)\/[\w.-]+)/)?.[1]
+      ?.toLowerCase();
+    return username?.[1] !== null && username === login;
   }
 }
 
@@ -40,7 +42,7 @@ function validateAuthByPlatform(
  * @returns the platform with auth if supported, otherwise null
  */
 function convertSocialPlatformToSupported(
-  platform: SocialProfilePlatform,
+  platform: SocialProfilePlatform
 ): SocialProfilePlatformWithAuth | null {
   if (platform === "twitch") {
     return "twitch";
@@ -85,7 +87,7 @@ export const getAuthByPlatform: RestAPI<
  */
 export const getCallbackByPlatform: RestAPI<never, { platform: SocialProfilePlatform }> = async (
   req,
-  res,
+  res
 ) => {
   const callbackQuery = zOauthCallbackQuery.safeParse(req.query);
   // parse will never fail, because all fields are optional
@@ -97,7 +99,7 @@ export const getCallbackByPlatform: RestAPI<never, { platform: SocialProfilePlat
     return;
   }
   if (!code || !state) {
-    res.status(400).send({ error: "Invalid callback request" });
+    res.redirect(`${CLIENT_URL}/?oauth_error=${encodeURIComponent("Invalid callback request")}`);
     return;
   }
 
@@ -109,12 +111,12 @@ export const getCallbackByPlatform: RestAPI<never, { platform: SocialProfilePlat
   try {
     parsed = JSON.parse(decoded);
   } catch (error) {
-    res.status(400).send({ error: "Error decoding OAuth state" });
+    res.redirect(`${CLIENT_URL}/?oauth_error=${encodeURIComponent("Error decoding OAuth state")}`);
     return;
   }
   const result = zSocialPlatformState.safeParse(parsed);
   if (result.error) {
-    res.status(400).send({ error: "Invalid state parameter" });
+    res.redirect(`${CLIENT_URL}/?oauth_error=${encodeURIComponent("Invalid state parameter")}`);
     return;
   }
 
@@ -124,27 +126,48 @@ export const getCallbackByPlatform: RestAPI<never, { platform: SocialProfilePlat
 
   const user = await getUserByUsername(username);
   if (!user) {
-    res.status(400).send({ error: "User not found" });
+    res.redirect(`${CLIENT_URL}/?oauth_error=${encodeURIComponent("User not found")}`);
     return;
   }
 
-  const accessToken = await exchangeCode(code, type);
-  const login = await getLogin(accessToken, type);
+  let accessToken: string;
+  try {
+    accessToken = await exchangeCode(code, type);
+  } catch (error) {
+    res.redirect(
+      `${CLIENT_URL}/?oauth_error=${encodeURIComponent("Error exchanging OAuth token for code")}`
+    );
+    return;
+  }
+
+  let login: string;
+  try {
+    login = await getLogin(accessToken, type);
+  } catch (error) {
+    res.redirect(
+      `${CLIENT_URL}/?oauth_error=${encodeURIComponent("Error retrieving login information")}`
+    );
+    return;
+  }
 
   if (validateAuthByPlatform(type, link, login) === false) {
     res.redirect(
-      `${CLIENT_URL}/?oauth_error=${encodeURIComponent("Account does not match linked profile")}`,
+      `${CLIENT_URL}/?oauth_error=${encodeURIComponent("Account does not match linked profile")}`
     );
     return;
   }
 
   const record = await UserRepo.get(user.userId);
   if (record.profileLinks === undefined) {
-    res.status(400).send({ error: "User does not have any linked profiles to verify!" });
+    res.redirect(
+      `${CLIENT_URL}/?oauth_error=${encodeURIComponent(
+        "User does not have any linked profiles to verify!"
+      )}`
+    );
     return;
   }
   record.profileLinks = record.profileLinks.map((p) =>
-    p.link === link && p.type === type ? { ...p, verified: true } : p,
+    p.link === link && p.type === type ? { ...p, verified: true } : p
   );
   await UserRepo.set(user.userId, record);
 
