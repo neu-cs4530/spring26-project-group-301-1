@@ -1006,6 +1006,19 @@ button.profilePasswordRevealButton:focus {
   color: #1e40af;
 }
 
+.profile-card--darkText .linkedSocialMediaCard,
+.profileForm--darkText .linkedSocialMediaCard,
+.profile-card--darkText .profileSocialLink,
+.profileForm--darkText .profileSocialLink {
+  border-color: rgba(17, 24, 39, 0.34);
+}
+
+.profile-card--darkText .linkedSocialMediaCard:hover,
+.profileForm--darkText .linkedSocialMediaCard:hover {
+  border-color: rgba(17, 24, 39, 0.5);
+  box-shadow: 0 4px 20px rgba(17, 24, 39, 0.16);
+}
+
 .profileForm--darkText .home-game-list__item {
   background: rgba(255, 255, 255, 0.82) !important;
   border-color: rgba(17, 24, 39, 0.28) !important;
