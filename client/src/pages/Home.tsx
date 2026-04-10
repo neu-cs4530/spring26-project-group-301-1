@@ -65,17 +65,17 @@ export default function Home() {
               </Heading>
               <Box display="flex" alignItems="center" gap={2} className="home-card__actions">
                 <Button
-                  background="#f0fdf4"
-                  color="#166534"
-                  border="1px solid #bbf7d0"
-                  _hover={{ background: "#dcfce7", borderColor: "#86efac" }}
+                  background="#166534"
+                  color="#f0fdf4"
+                  border="1px solid #14532d"
+                  _hover={{ background: "#14532d", borderColor: "#134e4a" }}
                   size="sm"
                   borderRadius="md"
                   fontWeight="600"
                   onClick={() => navigate("/game/new")}
                   className="home-card__button home-card__button--create-game"
                 >
-                  Create New Game
+                  New Game
                 </Button>
               </Box>
             </Box>
@@ -143,17 +143,17 @@ export default function Home() {
 
               <Box display="flex" alignItems="center" gap={2} className="home-card__actions">
                 <Button
-                  background="#f0fdf4"
-                  color="#166534"
-                  border="1px solid #bbf7d0"
-                  _hover={{ background: "#dcfce7", borderColor: "#86efac" }}
+                  background="#166534"
+                  color="#f0fdf4"
+                  border="1px solid #14532d"
+                  _hover={{ background: "#14532d", borderColor: "#134e4a" }}
                   size="sm"
                   borderRadius="md"
                   fontWeight="600"
                   onClick={() => navigate("/forum/post/new")}
                   className="home-card__button home-card__button--create-post"
                 >
-                  Create New Post
+                  New Post
                 </Button>
               </Box>
             </Box>

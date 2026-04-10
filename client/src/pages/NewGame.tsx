@@ -11,7 +11,7 @@ export default function NewGame() {
     <div className="newGamePage">
       <form className="newGameCard" onSubmit={handleSubmit}>
         <div className="newGameCard__header">
-          <h2 className="newGameCard__title">Create New Game</h2>
+          <h2 className="newGameCard__title">New Game</h2>
           <p className="newGameCard__subtitle">Select a game to get started.</p>
         </div>
 

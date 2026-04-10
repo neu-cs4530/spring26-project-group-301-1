@@ -1,15 +1,15 @@
 .userLink {
-  color: #4683c7;
+  color: #7db8ff;
   text-decoration: none;
   cursor: pointer;
-  font-weight: 400;
+  font-weight: 700;
   transition:
     color 0.15s,
     text-decoration 0.15s;
 }
 .userLink:hover,
 .userLink:focus {
-  color: #1741a0;
+  color: #a7ceff;
   text-decoration: underline;
-  font-weight: 500;
+  font-weight: 800;
 }

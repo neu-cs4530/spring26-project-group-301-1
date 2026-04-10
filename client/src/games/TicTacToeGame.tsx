@@ -148,19 +148,27 @@ export default function TicTacToeGame({
   let winnerBanner: React.ReactNode = null;
   if (displayView.winningEntry) {
     const winnerIndex = (displayView.nextPlayer + 1) % 2;
-    const didUserWin = userPlayerIndex >= 0 && winnerIndex === userPlayerIndex;
+    const isUserAPlayer = userPlayerIndex >= 0;
+    const didUserWin = isUserAPlayer ? winnerIndex === userPlayerIndex : null;
+    const isAutomatedOpponentWinForSpectator =
+      didUserWin === null && players.length === 1 && winnerIndex === 1;
+    const losingPlayerName = players[0]?.display ?? "The player";
     const winnerName = players[winnerIndex]?.display ?? "A player";
     const bannerText = displayView.forfeited
       ? didUserWin
         ? "You won by forfeit"
         : didUserWin === false
           ? "You lost by forfeit"
-          : `${winnerName} won by forfeit`
+          : isAutomatedOpponentWinForSpectator
+            ? `${losingPlayerName} lost by forfeit`
+            : `${winnerName} won by forfeit`
       : didUserWin
         ? "You won!"
         : didUserWin === false
           ? "You lost."
-          : `${winnerName} won!`;
+          : isAutomatedOpponentWinForSpectator
+            ? `${losingPlayerName} lost.`
+            : `${winnerName} won!`;
     winnerBanner = (
       <div
         className={
@@ -197,19 +205,21 @@ export default function TicTacToeGame({
     </div>
   ) : (
     <div className="ticTacToeGame content">
-      <h3 style={{ fontSize: "1.5rem", fontWeight: "bold" }}>Select Difficulty:</h3>
-      <button
-        className="tttDifficultyButton__action--easy"
-        onClick={() => makeMove({ type: "move", difficulty: "random" })}
-      >
-        Random (easy)
-      </button>
-      <button
-        className="tttDifficultyButton__action--hard"
-        onClick={() => makeMove({ type: "move", difficulty: "minimax" })}
-      >
-        Minimax (hard)
-      </button>
+      <h3 className="tttDifficultyTitle">Select Difficulty:</h3>
+      <div className="tttDifficultyButtonsRow">
+        <button
+          className="tttDifficultyButton__action--easy"
+          onClick={() => makeMove({ type: "move", difficulty: "random" })}
+        >
+          Easy
+        </button>
+        <button
+          className="tttDifficultyButton__action--hard"
+          onClick={() => makeMove({ type: "move", difficulty: "minimax" })}
+        >
+          Hard
+        </button>
+      </div>
     </div>
   );
 }
