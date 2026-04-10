@@ -156,6 +156,110 @@ describe("POST/api/user/:username", () => {
       hideUsername: false,
       privateProfile: false,
     });
+
+    // link social profile accounts
+    const newAuth = { ...auth1, password: "new_password_1" };
+    const twitterProfile = { link: "https://twitter.com/testuser", type: "twitter", verified: false };
+
+    // Adding a valid social profile link should succeed and reflect in profileLinks
+    response = await supertest(app)
+      .post("/api/user/user1")
+      .send({ auth: newAuth, payload: { profilesToAdd: [twitterProfile] } });
+    expect(response.status).toBe(200);
+    expect(response.body).toStrictEqual({
+      ...user1,
+      display: "Newer User 1 Display",
+      createdAt: expect.anything(),
+      hideUsername: false,
+      privateProfile: false,
+      profileLinks: [twitterProfile],
+    });
+
+    // Adding the same platform type again should return an error
+    response = await supertest(app)
+      .post("/api/user/user1")
+      .send({
+        auth: newAuth,
+        payload: {
+          profilesToAdd: [{ link: "https://twitter.com/other", type: "twitter", verified: false }],
+        },
+      });
+    expect(response.status).toBe(200);
+    expect(response.body).toStrictEqual({ error: "Platform type is already linked-to!" });
+
+    // Adding an invalid URL for a platform should return an error
+    response = await supertest(app)
+      .post("/api/user/user1")
+      .send({
+        auth: newAuth,
+        payload: {
+          profilesToAdd: [
+            { link: "https://notinstagram.com/testuser", type: "instagram", verified: false },
+          ],
+        },
+      });
+    expect(response.status).toBe(200);
+    expect(response.body).toStrictEqual({ error: "Invalid URL for platform type!" });
+
+    // Deleting a linked social profile should remove it from profileLinks
+    response = await supertest(app)
+      .post("/api/user/user1")
+      .send({ auth: newAuth, payload: { profilesToDelete: [twitterProfile] } });
+    expect(response.status).toBe(200);
+    expect(response.body).toStrictEqual({
+      ...user1,
+      display: "Newer User 1 Display",
+      createdAt: expect.anything(),
+      hideUsername: false,
+      privateProfile: false,
+      profileLinks: [],
+    });
+
+    // set custom backgrounds
+    response = await supertest(app)
+      .post("/api/user/user1")
+      .send({ auth: newAuth, payload: { customBackground: "https://example.com/bg.png" } });
+    expect(response.status).toBe(200);
+    expect(response.body).toStrictEqual({
+      ...user1,
+      display: "Newer User 1 Display",
+      customBackground: "https://example.com/bg.png",
+      createdAt: expect.anything(),
+      hideUsername: false,
+      privateProfile: false,
+      profileLinks: [],
+    });
+
+    // toggle private profile
+    // Enabling privateProfile should be reflected in the response
+    response = await supertest(app)
+      .post("/api/user/user1")
+      .send({ auth: newAuth, payload: { privateProfile: true } });
+    expect(response.status).toBe(200);
+    expect(response.body).toStrictEqual({
+      ...user1,
+      display: "Newer User 1 Display",
+      customBackground: "https://example.com/bg.png",
+      createdAt: expect.anything(),
+      hideUsername: false,
+      privateProfile: true,
+      profileLinks: [],
+    });
+
+    // Disabling privateProfile should revert it back to false
+    response = await supertest(app)
+      .post("/api/user/user1")
+      .send({ auth: newAuth, payload: { privateProfile: false } });
+    expect(response.status).toBe(200);
+    expect(response.body).toStrictEqual({
+      ...user1,
+      display: "Newer User 1 Display",
+      customBackground: "https://example.com/bg.png",
+      createdAt: expect.anything(),
+      hideUsername: false,
+      privateProfile: false,
+      profileLinks: [],
+    });
   });
 });
 

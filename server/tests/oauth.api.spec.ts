@@ -200,6 +200,37 @@ describe("GET /api/oauth/:platform/callback", () => {
     });
   });
 
+  describe("exchangeCode throws", () => {
+    it("redirects with oauth_error when exchangeCode throws", async () => {
+      vi.mocked(oauthService.exchangeCode).mockRejectedValue(new Error("token exchange failed"));
+      const state = buildState("user0", twitchLink, "twitch");
+      response = await supertest(app)
+        .get("/api/oauth/twitch/callback")
+        .query({ code: "somecode", state });
+      expect(response.status).toBe(302);
+      expect(response.headers.location).toContain("oauth_error=");
+      expect(decodeURIComponent(response.headers.location)).toContain(
+        "Error exchanging OAuth token for code",
+      );
+    });
+  });
+
+  describe("getLogin throws", () => {
+    it("redirects with oauth_error when getLogin throws", async () => {
+      vi.mocked(oauthService.exchangeCode).mockResolvedValue("mock-access-token");
+      vi.mocked(oauthService.getLogin).mockRejectedValue(new Error("login fetch failed"));
+      const state = buildState("user0", twitchLink, "twitch");
+      response = await supertest(app)
+        .get("/api/oauth/twitch/callback")
+        .query({ code: "somecode", state });
+      expect(response.status).toBe(302);
+      expect(response.headers.location).toContain("oauth_error=");
+      expect(decodeURIComponent(response.headers.location)).toContain(
+        "Error retrieving login information",
+      );
+    });
+  });
+
   describe("account mismatch", () => {
     it("redirects with oauth_error when OAuth login does not match linked profile", async () => {
       vi.mocked(oauthService.getLogin).mockResolvedValue("differentuser");
