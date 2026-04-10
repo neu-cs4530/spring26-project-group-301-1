@@ -54,7 +54,7 @@ div.chatScroller .chatContent {
   background-color: rgb(31, 72, 46);
   color: rgba(255, 255, 255, 0.9);
   font-weight: bold;
-  font-size: 1.2rem
+  font-size: 1.2rem;
 }
 
 div.chatScroller .chatMe .chatContent {
