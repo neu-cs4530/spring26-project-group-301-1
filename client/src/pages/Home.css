@@ -223,6 +223,31 @@
   overflow: hidden;
 }
 
+/* Home-only leaderboard podium sizing */
+.home-leaderboard .leaderboard-summary {
+  gap: 0rem;
+}
+
+.home-leaderboard .leaderboard-summary-table {
+  margin-top: 0;
+}
+
+.home-leaderboard .leaderboard-summary-podium {
+  min-height: 10rem !important;
+}
+
+.home-leaderboard .leaderboard-summary-podium__slot--first {
+  min-height: 9.5rem;
+}
+
+.home-leaderboard .leaderboard-summary-podium__slot--second {
+  min-height: 7rem;
+}
+
+.home-leaderboard .leaderboard-summary-podium__slot--third {
+  min-height: 4.5rem;
+}
+
 @media (max-width: 768px) {
   .home-game-list__item {
     padding: 0.9rem;
