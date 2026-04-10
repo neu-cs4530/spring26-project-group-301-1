@@ -25,9 +25,9 @@ export default function ThreadSummaryView({
         {comments} {comments === 1 ? "reply" : "replies"}
       </div>
       <NavLink to={`/forum/post/${threadId}`} className="mid">
-        {title}{" "}
-        <span title={filtered ? "Filter on" : "Filter off"}>
-          {filtered ? <ShieldCheck size={14} /> : <ShieldOff size={14} />}
+        <span className="mid__title">{title}</span>
+        <span className="mid__icon" title={filtered ? "Filter on" : "Filter off"}>
+          {filtered ? <ShieldCheck size={20} /> : <ShieldOff size={20} />}
         </span>
       </NavLink>
       <div className="lastActivity">

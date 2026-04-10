@@ -53,11 +53,11 @@ export default function GameSummaryView({
         {status !== "done" && `, ${numPlayers} player${numPlayers === 1 ? "" : "s"}`}
         {chatFiltered ? (
           <span title="Chat filter on">
-            <ShieldCheck size={14} />
+            <ShieldCheck size={20} />
           </span>
         ) : (
           <span title="Chat filter off">
-            <ShieldOff size={14} />
+            <ShieldOff size={20} />
           </span>
         )}
       </div>

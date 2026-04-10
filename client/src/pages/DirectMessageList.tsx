@@ -9,6 +9,7 @@ import useDmContext from "../hooks/useDmContext.ts";
 export default function DirectMessageList() {
   const { user, socket } = useLoginContext();
   const [dms, setDms] = useState<DirectMessageInfo[] | null>(null);
+  const [solidBackground, setSolidBackground] = useState(false);
   const { unreadCounts } = useDmContext();
 
   const customBackground = (user.customBackground || "").trim();
@@ -87,8 +88,16 @@ export default function DirectMessageList() {
           </div>
         )}
       </div>
-      <div className="dm-main">
+      <div className={`dm-main${solidBackground ? " dm-main--solid" : ""}`}>
         <Outlet />
+        <label className="dm-solid-bg-toggle">
+          <input
+            type="checkbox"
+            checked={solidBackground}
+            onChange={(e) => setSolidBackground(e.target.checked)}
+          />
+          Solid background
+        </label>
       </div>
     </div>
   );
