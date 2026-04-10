@@ -225,6 +225,8 @@
 
 /* Home-only leaderboard podium sizing */
 .home-leaderboard .leaderboard-summary {
+  flex: 1;
+  min-height: 0;
   gap: 0rem;
 }
 
@@ -233,19 +235,20 @@
 }
 
 .home-leaderboard .leaderboard-summary-podium {
-  min-height: 10rem !important;
+  margin-top: auto;
+  min-height: clamp(9.4rem, 17vh, 12.2rem) !important;
 }
 
 .home-leaderboard .leaderboard-summary-podium__slot--first {
-  min-height: 9.5rem;
+  min-height: clamp(7.8rem, 13.5vh, 10.7rem);
 }
 
 .home-leaderboard .leaderboard-summary-podium__slot--second {
-  min-height: 7rem;
+  min-height: clamp(5.9rem, 10.2vh, 7.9rem);
 }
 
 .home-leaderboard .leaderboard-summary-podium__slot--third {
-  min-height: 4.5rem;
+  min-height: clamp(3.9rem, 7vh, 5.4rem);
 }
 
 @media (max-width: 768px) {
