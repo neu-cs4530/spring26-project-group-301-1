@@ -176,6 +176,13 @@ describe("getDirectMessagesForUser", () => {
     expect(result).toHaveLength(0);
   });
 
+  it("skips DMs that belong to other users", async () => {
+    await makeFriends("user1", "user2");
+    await createDirectMessage("user1", "user2");
+    const result = await getDirectMessagesForUser("user3");
+    expect(result).toHaveLength(0);
+  });
+
   it("returns a DM the user is involved in", async () => {
     await makeFriends("user1", "user2");
     await createDirectMessage("user1", "user2");
