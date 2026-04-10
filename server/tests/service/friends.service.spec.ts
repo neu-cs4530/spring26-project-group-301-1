@@ -33,21 +33,21 @@ describe("sendFriendRequest", () => {
 
   it("throws if sender and recipient are the same user", async () => {
     await expect(sendFriendRequest("user1", "user1")).rejects.toThrow(
-      "Cannot add yourself as a friend"
+      "Cannot add yourself as a friend",
     );
   });
 
   it("throws if a pending request already exists in the same direction", async () => {
     await sendFriendRequest("user1", "user2");
     await expect(sendFriendRequest("user1", "user2")).rejects.toThrow(
-      "Friend Request Already Pending"
+      "Friend Request Already Pending",
     );
   });
 
   it("throws if a pending request already exists in the reverse direction", async () => {
     await sendFriendRequest("user1", "user2");
     await expect(sendFriendRequest("user2", "user1")).rejects.toThrow(
-      "Friend Request Already Pending"
+      "Friend Request Already Pending",
     );
   });
 
@@ -80,13 +80,13 @@ describe("resolveRequest", () => {
     await sendFriendRequest("user1", "user2");
     const [req] = await getPendingRequests("user2");
     await expect(resolveRequest(req.requestId, "user1", "accept")).rejects.toThrow(
-      "Not authorised"
+      "Not authorised",
     );
   });
 
   it("throws if the request does not exist", async () => {
     await expect(resolveRequest("nonexistent-id", "user2", "accept")).rejects.toThrow(
-      "Request not found"
+      "Request not found",
     );
   });
 
@@ -95,7 +95,7 @@ describe("resolveRequest", () => {
     const [req] = await getPendingRequests("user2");
     await resolveRequest(req.requestId, "user2", "accept");
     await expect(resolveRequest(req.requestId, "user2", "decline")).rejects.toThrow(
-      "Request is no longer pending"
+      "Request is no longer pending",
     );
   });
 });
