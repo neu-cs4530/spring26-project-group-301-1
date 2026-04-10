@@ -364,6 +364,15 @@ button.profilePasswordRevealButton:focus {
   font-weight: 600;
 }
 
+.profile-card select {
+  color-scheme: dark;
+}
+
+.profile-card option {
+  background: #000000;
+  color: white;
+}
+
 .profile-card input::placeholder,
 .profile-card textarea::placeholder {
   color: rgba(255, 255, 255, 0.35);
