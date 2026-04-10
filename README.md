@@ -138,11 +138,11 @@ endpoints in `server/src/app.ts`.
 
 #### `/api/dms`
 
-| Endpoint       | Method |Description                                                               |
-| -------------- | ------ | ------------------------------------------------------------------------ |
-| `/:username`   | POST   | Either creates a new or obtains an existing direct message for a user    |
-| `/:dmId/read`  | POST   | Marks a direct message as read for a user                                |
-| `/:username`   | GET    | Gets the direct messages for that user                                   |
+| Endpoint      | Method | Description                                                           |
+| ------------- | ------ | --------------------------------------------------------------------- |
+| `/:username`  | POST   | Either creates a new or obtains an existing direct message for a user |
+| `/:dmId/read` | POST   | Marks a direct message as read for a user                             |
+| `/:username`  | GET    | Gets the direct messages for that user                                |
 
 ### Websockets
 
