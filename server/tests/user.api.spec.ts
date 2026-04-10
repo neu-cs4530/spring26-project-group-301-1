@@ -159,7 +159,11 @@ describe("POST/api/user/:username", () => {
 
     // link social profile accounts
     const newAuth = { ...auth1, password: "new_password_1" };
-    const twitterProfile = { link: "https://twitter.com/testuser", type: "twitter", verified: false };
+    const twitterProfile = {
+      link: "https://twitter.com/testuser",
+      type: "twitter",
+      verified: false,
+    };
 
     // Adding a valid social profile link should succeed and reflect in profileLinks
     response = await supertest(app)
@@ -214,6 +218,41 @@ describe("POST/api/user/:username", () => {
       privateProfile: false,
       profileLinks: [],
     });
+
+    // adding a different type should succeed
+    response = await supertest(app)
+      .post("/api/user/user1")
+      .send({
+        auth: newAuth,
+        payload: {
+          profilesToAdd: [
+            { link: "https://www.youtube.com/@User0CS4530", type: "youtube", verified: false },
+          ],
+        },
+      });
+    expect(response.status).toBe(200);
+    expect(response.body).toStrictEqual({
+      ...user1,
+      display: "Newer User 1 Display",
+      createdAt: expect.anything(),
+      hideUsername: false,
+      privateProfile: false,
+      profileLinks: [
+        { link: "https://www.youtube.com/@User0CS4530", type: "youtube", verified: false },
+      ],
+    });
+    // delete as clean-up
+    response = await supertest(app)
+      .post("/api/user/user1")
+      .send({
+        auth: newAuth,
+        payload: {
+          profilesToDelete: [
+            { link: "https://www.youtube.com/@User0CS4530", type: "youtube", verified: false },
+          ],
+        },
+      });
+    expect(response.status).toBe(200);
 
     // set custom backgrounds
     response = await supertest(app)

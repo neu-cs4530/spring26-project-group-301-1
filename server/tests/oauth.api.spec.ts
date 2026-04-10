@@ -4,6 +4,7 @@ import { app } from "../src/app.ts";
 import { resetEverythingToDefaults } from "../src/initRepository.ts";
 import { updateUser } from "../src/services/user.service.ts";
 import { type SafeUserInfo } from "@gamenite/shared";
+import { UserRepo } from "../src/repository.ts";
 
 vi.mock("../src/services/oauth.service.ts", async () => {
   const actual = await vi.importActual<typeof import("../src/services/oauth.service.ts")>(
@@ -254,6 +255,24 @@ describe("GET /api/oauth/:platform/callback", () => {
         .query({ code: "somecode", state });
       expect(response.status).toBe(302);
       expect(response.headers.location).toContain("oauth_error=");
+    });
+  });
+
+  describe("user does not have profiles linked", () => {
+    it("redirects with oauth_error when the user does not have any linked profiles", async () => {
+      const spy = vi.spyOn(UserRepo, "get").mockResolvedValueOnce({
+        username: "user0",
+        display: "fake display",
+        createdAt: new Date().toISOString(),
+        hideUsername: false,
+        privateProfile: false,
+      });
+      const state = buildState("user0", twitchLink, "twitch");
+      response = await supertest(app)
+        .get("/api/oauth/twitch/callback")
+        .query({ code: "somecode", state });
+      expect(response.headers.location).toContain("oauth_error=");
+      spy.mockRestore();
     });
   });
 
