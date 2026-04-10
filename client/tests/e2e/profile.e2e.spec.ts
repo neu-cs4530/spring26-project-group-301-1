@@ -185,7 +185,7 @@ test.describe("Friends count badge", () => {
     // Remove user0 as a friend
     await page2.getByRole("button", { name: "Home" }).click();
     await page2.waitForURL("/");
-    await page2.getByRole("link", { name: "The Knight Of Games" }).click();
+    await page2.getByRole("link", { name: "The Knight Of Games" }).first().click();
     await page2.waitForURL("/profile/user0");
     await page2.getByRole("button", { name: "Remove Friend" }).click();
     await expect(page2.getByText("Add Friend")).toBeVisible();

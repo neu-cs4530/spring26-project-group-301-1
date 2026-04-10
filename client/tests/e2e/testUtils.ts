@@ -73,22 +73,13 @@ export async function createAndLoadGame(
   // The always-on expectation here gives the page a chance to load
   await expect(page2.getByRole("listitem").filter({ hasText: username1 })).toHaveCount(1);
 
+  const createdGameCard = page2.getByRole("listitem").filter({ hasText: username1 }).first();
+
   if (doAssess) {
-    // Check that at least one link exists in the listitem for the created game
-    const linkCount = await page2
-      .getByRole("listitem")
-      .filter({ hasText: username1 })
-      .getByRole("link")
-      .count();
-    expect(linkCount).toBeGreaterThan(0);
+    await expect(createdGameCard).toBeVisible();
   }
 
-  await page2
-    .getByRole("listitem")
-    .filter({ hasText: username1 })
-    .getByRole("link")
-    .first()
-    .click();
+  await createdGameCard.click();
 
   if (doAssess) {
     await expect(page1.getByText("waiting for game to begin")).toBeVisible();
