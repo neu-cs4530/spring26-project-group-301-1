@@ -72,7 +72,7 @@ export default function Layout() {
       icon: (
         <div className="dock-item-content">
           <Trophy size={40} color="#fff" />
-          <span className="dock-item-label">Standings</span>
+          <span className="dock-item-label">Podium</span>
         </div>
       ),
       label: "",
