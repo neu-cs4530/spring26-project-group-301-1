@@ -33,21 +33,21 @@ describe("sendFriendRequest", () => {
 
   it("throws if sender and recipient are the same user", async () => {
     await expect(sendFriendRequest("user1", "user1")).rejects.toThrow(
-      "Cannot add yourself as a friend",
+      "Cannot add yourself as a friend"
     );
   });
 
   it("throws if a pending request already exists in the same direction", async () => {
     await sendFriendRequest("user1", "user2");
     await expect(sendFriendRequest("user1", "user2")).rejects.toThrow(
-      "Friend Request Already Pending",
+      "Friend Request Already Pending"
     );
   });
 
   it("throws if a pending request already exists in the reverse direction", async () => {
     await sendFriendRequest("user1", "user2");
     await expect(sendFriendRequest("user2", "user1")).rejects.toThrow(
-      "Friend Request Already Pending",
+      "Friend Request Already Pending"
     );
   });
 
@@ -80,13 +80,13 @@ describe("resolveRequest", () => {
     await sendFriendRequest("user1", "user2");
     const [req] = await getPendingRequests("user2");
     await expect(resolveRequest(req.requestId, "user1", "accept")).rejects.toThrow(
-      "Not authorised",
+      "Not authorised"
     );
   });
 
   it("throws if the request does not exist", async () => {
     await expect(resolveRequest("nonexistent-id", "user2", "accept")).rejects.toThrow(
-      "Request not found",
+      "Request not found"
     );
   });
 
@@ -95,7 +95,7 @@ describe("resolveRequest", () => {
     const [req] = await getPendingRequests("user2");
     await resolveRequest(req.requestId, "user2", "accept");
     await expect(resolveRequest(req.requestId, "user2", "decline")).rejects.toThrow(
-      "Request is no longer pending",
+      "Request is no longer pending"
     );
   });
 });
@@ -123,6 +123,36 @@ describe("getFriends", () => {
     await sendFriendRequest("user1", "user2");
     const [req] = await getPendingRequests("user2");
     await resolveRequest(req.requestId, "user2", "decline");
+    expect(await getFriends("user1")).toHaveLength(0);
+  });
+
+  it("returns an empty list for a user with no friends when other friendships exist", async () => {
+    await sendFriendRequest("user1", "user2");
+    const [req] = await getPendingRequests("user2");
+    await resolveRequest(req.requestId, "user2", "accept");
+    expect(await getFriends("user3")).toHaveLength(0);
+  });
+
+  it("skips records with missing usernames", async () => {
+    await FriendRepo.set("malformed:key", {
+      usernameA: "",
+      usernameB: "user1",
+      friendsSince: new Date().toISOString(),
+    });
+    expect(await getFriends("user1")).toHaveLength(0);
+  });
+
+  it("does not return a user after the friendship was deleted", async () => {
+    await sendFriendRequest("user1", "user2");
+    const [req] = await getPendingRequests("user2");
+    await resolveRequest(req.requestId, "user2", "accept");
+    await removeFriend("user1", "user2");
+    expect(await getFriends("user1")).toHaveLength(0);
+
+    await sendFriendRequest("user1", "user2");
+    const [req1] = await getPendingRequests("user2");
+    await resolveRequest(req1.requestId, "user2", "accept");
+    await removeFriend("user2", "user1");
     expect(await getFriends("user1")).toHaveLength(0);
   });
 });
@@ -195,6 +225,27 @@ describe("getFriendStatus", () => {
     await sendFriendRequest("user1", "user2");
     const [req] = await getPendingRequests("user2");
     await resolveRequest(req.requestId, "user2", "accept");
+    expect(await getFriendStatus("user1", "user2")).toBe("friends");
+    expect(await getFriendStatus("user2", "user1")).toBe("friends");
+  });
+
+  it("returns 'not-friends' and skips resolved requests for unrelated pairs", async () => {
+    await sendFriendRequest("user1", "user2");
+    const [req] = await getPendingRequests("user2");
+    await resolveRequest(req.requestId, "user2", "accept");
+    expect(await getFriendStatus("user3", "user1")).toBe("not-friends");
+  });
+
+  it("returns 'not-friends' when no pending request matches the queried pair", async () => {
+    await sendFriendRequest("user1", "user2");
+    expect(await getFriendStatus("user1", "user3")).toBe("not-friends");
+  });
+
+  it("returns 'friends' for accepted requests, ignoring pending requests", async () => {
+    await sendFriendRequest("user1", "user2");
+    const [req] = await getPendingRequests("user2");
+    await resolveRequest(req.requestId, "user2", "accept");
+    await sendFriendRequest("user3", "user2");
     expect(await getFriendStatus("user1", "user2")).toBe("friends");
     expect(await getFriendStatus("user2", "user1")).toBe("friends");
   });
