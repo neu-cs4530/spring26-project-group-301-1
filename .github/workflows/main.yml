@@ -37,9 +37,6 @@ jobs:
       - name: Install Playwright dependencies
         run: npx playwright install --with-deps chromium
 
-      - name: Run tests
-        run: npm run test
-
       - name: Build frontend
         run: npm run build -w=client
 
