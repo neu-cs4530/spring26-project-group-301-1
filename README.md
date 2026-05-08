@@ -12,7 +12,7 @@ chat filter keeps the environment safe and welcoming.
 ## Getting Started
 
 Run `npm install` in the root directory to install all dependencies for the
-   `client`, `server`, and `shared` folders.
+`client`, `server`, and `shared` folders.
 
 ### Working on the application
 
